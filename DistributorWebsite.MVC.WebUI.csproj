@@ -1,0 +1,1098 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>
+    </ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{9B62C384-EDB1-4AE8-8518-E5F748DDB7AB}</ProjectGuid>
+    <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>DistributorWebsite.MVC.WebUI</RootNamespace>
+    <AssemblyName>DistributorWebsite.MVC.WebUI</AssemblyName>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <MvcBuildViews>false</MvcBuildViews>
+    <UseIISExpress>true</UseIISExpress>
+    <IISExpressSSLPort>44301</IISExpressSSLPort>
+    <IISExpressAnonymousAuthentication>disabled</IISExpressAnonymousAuthentication>
+    <IISExpressWindowsAuthentication>enabled</IISExpressWindowsAuthentication>
+    <IISExpressUseClassicPipelineMode />
+    <UseGlobalApplicationHostFile />
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+    <TargetFrameworkProfile />
+    <Use64BitIISExpress />
+    <ApplicationInsightsResourceId>/subscriptions/8b4ff2ec-fc4f-4673-8a0c-d9944892de25/resourcegroups/dev-misc/providers/microsoft.insights/components/dev-internaldistributors-app-scus</ApplicationInsightsResourceId>
+    <ApplicationInsightsAnnotationResourceId>/subscriptions/8b4ff2ec-fc4f-4673-8a0c-d9944892de25/resourcegroups/dev-misc/providers/microsoft.insights/components/dev-internaldistributors-app-scus</ApplicationInsightsAnnotationResourceId>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Antlr3.Runtime, Version=3.5.0.2, Culture=neutral, PublicKeyToken=eb42632606e9261f, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Antlr.3.5.0.2\lib\Antlr3.Runtime.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="HyCite.MVC.DynamicDisplay, Version=1.0.0.12, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\HyCite.MVC.DynamicDisplay.1.0.0.12\lib\net46\HyCite.MVC.DynamicDisplay.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="HyCite.Utility.DomainHelper, Version=1.0.0.2, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\HyCite.Utility.DomainHelper.1.0.0.2\lib\net40\HyCite.Utility.DomainHelper.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="HyCite.Validation, Version=2.0.0.2, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\HyCite.Validation.2.0.0.2\lib\net46\HyCite.Validation.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="HyCite.Validation.Web, Version=2.0.0.2, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\HyCite.Validation.Web.2.0.0.2\lib\net46\HyCite.Validation.Web.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="IdentityModel, Version=3.10.10.0, Culture=neutral, PublicKeyToken=e7877f4675df049f, processorArchitecture=MSIL">
+      <HintPath>..\packages\IdentityModel.3.10.10\lib\net452\IdentityModel.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AI.Agent.Intercept, Version=2.4.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.ApplicationInsights.Agent.Intercept.2.4.0\lib\net45\Microsoft.AI.Agent.Intercept.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AI.DependencyCollector, Version=2.10.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.ApplicationInsights.DependencyCollector.2.10.0\lib\net45\Microsoft.AI.DependencyCollector.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AI.PerfCounterCollector, Version=2.10.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.ApplicationInsights.PerfCounterCollector.2.10.0\lib\net45\Microsoft.AI.PerfCounterCollector.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AI.ServerTelemetryChannel, Version=2.10.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.ApplicationInsights.WindowsServer.TelemetryChannel.2.10.0\lib\net45\Microsoft.AI.ServerTelemetryChannel.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AI.Web, Version=2.10.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.ApplicationInsights.Web.2.10.0\lib\net45\Microsoft.AI.Web.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AI.WindowsServer, Version=2.10.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.ApplicationInsights.WindowsServer.2.10.0\lib\net45\Microsoft.AI.WindowsServer.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.ApplicationInsights, Version=2.10.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.ApplicationInsights.2.10.0\lib\net46\Microsoft.ApplicationInsights.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.ApplicationInsights.TraceListener, Version=2.10.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.ApplicationInsights.TraceListener.2.10.0\lib\net45\Microsoft.ApplicationInsights.TraceListener.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNet.TelemetryCorrelation, Version=1.0.5.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.TelemetryCorrelation.1.0.5\lib\net45\Microsoft.AspNet.TelemetryCorrelation.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform, Version=3.6.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.3.6.0\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.IdentityModel.JsonWebTokens, Version=5.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.IdentityModel.JsonWebTokens.5.5.0\lib\net451\Microsoft.IdentityModel.JsonWebTokens.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.IdentityModel.Logging, Version=5.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.IdentityModel.Logging.5.5.0\lib\net451\Microsoft.IdentityModel.Logging.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.IdentityModel.Protocol.Extensions, Version=1.0.40306.1554, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.IdentityModel.Protocol.Extensions.1.0.4.403061554\lib\net45\Microsoft.IdentityModel.Protocol.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.IdentityModel.Protocols, Version=5.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.IdentityModel.Protocols.5.5.0\lib\net451\Microsoft.IdentityModel.Protocols.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.IdentityModel.Protocols.OpenIdConnect, Version=5.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.IdentityModel.Protocols.OpenIdConnect.5.5.0\lib\net451\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.IdentityModel.Tokens, Version=5.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.IdentityModel.Tokens.5.5.0\lib\net451\Microsoft.IdentityModel.Tokens.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin, Version=4.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Owin.4.0.1\lib\net45\Microsoft.Owin.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Host.SystemWeb, Version=4.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Owin.Host.SystemWeb.4.0.1\lib\net45\Microsoft.Owin.Host.SystemWeb.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Security, Version=4.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Owin.Security.4.0.1\lib\net45\Microsoft.Owin.Security.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Security.Cookies, Version=4.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Owin.Security.Cookies.4.0.1\lib\net45\Microsoft.Owin.Security.Cookies.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Security.OpenIdConnect, Version=4.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Owin.Security.OpenIdConnect.4.0.1\lib\net45\Microsoft.Owin.Security.OpenIdConnect.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Spatial, Version=7.6.0.30605, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Spatial.7.6.0\lib\portable-net45+win8+wpa81\Microsoft.Spatial.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="Owin">
+      <HintPath>..\packages\Owin.1.0\lib\net40\Owin.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Serilog, Version=2.0.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10, processorArchitecture=MSIL">
+      <HintPath>..\packages\Serilog.2.8.0\lib\net46\Serilog.dll</HintPath>
+    </Reference>
+    <Reference Include="Serilog.Sinks.Trace, Version=2.0.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10, processorArchitecture=MSIL">
+      <HintPath>..\packages\Serilog.Sinks.Trace.2.1.0\lib\net45\Serilog.Sinks.Trace.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="netstandard">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Diagnostics.DiagnosticSource, Version=4.0.3.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Diagnostics.DiagnosticSource.4.5.1\lib\net46\System.Diagnostics.DiagnosticSource.dll</HintPath>
+    </Reference>
+    <Reference Include="System.DirectoryServices" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.IdentityModel" />
+    <Reference Include="System.IdentityModel.Tokens.Jwt, Version=5.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.IdentityModel.Tokens.Jwt.5.5.0\lib\net451\System.IdentityModel.Tokens.Jwt.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Management" />
+    <Reference Include="System.Net.Http, Version=4.1.1.3, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Net.Http.4.3.4\lib\net46\System.Net.Http.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.Caching" />
+    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=4.0.4.1, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.4.5.2\lib\netstandard1.0\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security.Cryptography.Algorithms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Security.Cryptography.Algorithms.4.3.1\lib\net46\System.Security.Cryptography.Algorithms.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Security.Cryptography.Encoding, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Security.Cryptography.Encoding.4.3.0\lib\net46\System.Security.Cryptography.Encoding.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Security.Cryptography.Primitives, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Security.Cryptography.Primitives.4.3.0\lib\net46\System.Security.Cryptography.Primitives.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Security.Cryptography.X509Certificates, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Security.Cryptography.X509Certificates.4.3.2\lib\net46\System.Security.Cryptography.X509Certificates.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Text.Encodings.Web, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Text.Encodings.Web.4.5.0\lib\netstandard1.0\System.Text.Encodings.Web.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.DynamicData" />
+    <Reference Include="System.Web.Entity" />
+    <Reference Include="System.Web.ApplicationServices" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Abstractions" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Web.Helpers, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.7\lib\net45\System.Web.Helpers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Mvc, Version=5.2.7.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.Mvc.5.2.7\lib\net45\System.Web.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.Razor.3.2.7\lib\net45\System.Web.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Routing" />
+    <Reference Include="System.Web.WebPages, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.7\lib\net45\System.Web.WebPages.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Deployment, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.7\lib\net45\System.Web.WebPages.Deployment.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.7\lib\net45\System.Web.WebPages.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.EnterpriseServices" />
+    <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http.WebRequest">
+    </Reference>
+    <Reference Include="System.Web.Optimization">
+      <HintPath>..\packages\Microsoft.AspNet.Web.Optimization.1.1.3\lib\net40\System.Web.Optimization.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="Unity.Abstractions, Version=5.11.1.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0, processorArchitecture=MSIL">
+      <HintPath>..\packages\Unity.5.11.1\lib\net46\Unity.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.Container, Version=5.11.1.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0, processorArchitecture=MSIL">
+      <HintPath>..\packages\Unity.5.11.1\lib\net46\Unity.Container.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.Mvc5, Version=1.4.0.0, Culture=neutral, PublicKeyToken=43da31bc42a85347, processorArchitecture=MSIL">
+      <HintPath>..\packages\Unity.Mvc5.1.4.0\lib\net45\Unity.Mvc5.dll</HintPath>
+    </Reference>
+    <Reference Include="WebGrease, Version=1.6.5135.21930, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\WebGrease.1.6.0\lib\WebGrease.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="App_Start\BundleConfig.cs" />
+    <Compile Include="App_Start\FilterConfig.cs" />
+    <Compile Include="App_Start\LoggerConfig.cs" />
+    <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="App_Start\UnityConfig.cs" />
+    <Compile Include="Controllers\BaseWorkflowController.cs" />
+    <Compile Include="Controllers\InCiteController.cs" />
+    <Compile Include="Controllers\JuniorDistributorController.cs" />
+    <Compile Include="Controllers\SalesLeadAdministrationController.cs" />
+    <Compile Include="Controllers\LayawayController.cs" />
+    <Compile Include="Controllers\DistributorFinancingController.cs" />
+    <Compile Include="Controllers\OverridesController.cs" />
+    <Compile Include="Controllers\DistributorServiceController.cs" />
+    <Compile Include="Controllers\SalesAndMarketingController.cs" />
+    <Compile Include="Controllers\APIController.cs" />
+    <Compile Include="Controllers\BaseController.cs" />
+    <Compile Include="Controllers\CompanyController.cs" />
+    <Compile Include="Controllers\DocumentsController.cs" />
+    <Compile Include="Controllers\ErrorController.cs" />
+    <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\InternalController.cs" />
+    <Compile Include="Controllers\CompetitiveArena.cs" />
+    <Compile Include="Controllers\AccountsReceivableController.cs" />
+    <Compile Include="Controllers\ReportsController.cs" />
+    <Compile Include="Controllers\PurchasesController.cs" />
+    <Compile Include="Controllers\ProfileController.cs" />
+    <Compile Include="Controllers\WorkflowController.cs" />
+    <Compile Include="ErrorHandler\AiHandleErrorAttribute.cs" />
+    <Compile Include="Global.asax.cs">
+      <DependentUpon>Global.asax</DependentUpon>
+    </Compile>
+    <Compile Include="Helpers\API\WebAPI.cs" />
+    <Compile Include="Helpers\Application.cs" />
+    <Compile Include="Helpers\Attributes\CompareStringsAttribute.cs" />
+    <Compile Include="Helpers\Attributes\CreditCardStringAttribute.cs" />
+    <Compile Include="Helpers\Attributes\HCAllowAnonymous.cs" />
+    <Compile Include="Helpers\Attributes\HCAuthorizeInternalMenuAttribute.cs" />
+    <Compile Include="Helpers\Attributes\HCAuthorizeMenuAttribute.cs" />
+    <Compile Include="Helpers\Attributes\HCAuthorizeAttribute.cs" />
+    <Compile Include="Helpers\Attributes\DISTMVCFieldAttribute.cs" />
+    <Compile Include="Helpers\Attributes\NoCacheAttribute.cs" />
+    <Compile Include="Helpers\Attributes\SkipNocacheFilterAttribute.cs" />
+    <Compile Include="Helpers\Attributes\ValidationAttributes.cs" />
+    <Compile Include="Helpers\Common.cs" />
+    <Compile Include="Helpers\Configuration\IdentityServerConfig.cs" />
+    <Compile Include="Helpers\Constants.cs" />
+    <Compile Include="Helpers\CookieHelper.cs" />
+    <Compile Include="Helpers\CultureAwareControllerActivator.cs" />
+    <Compile Include="Helpers\CultureHelper.cs" />
+    <Compile Include="Helpers\DI\PerRequestLifetimeManager.cs" />
+    <Compile Include="Helpers\Documents.cs" />
+    <Compile Include="Helpers\EndpointAndTokenHelper.cs" />
+    <Compile Include="Helpers\Enums\Enums.cs" />
+    <Compile Include="Helpers\Enums\eSecurityItems.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>eSecurityItems.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Helpers\Enums\UserInfoBitmaskEnums.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>UserInfoBitmaskEnums.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Helpers\ErrorInfo.cs" />
+    <Compile Include="Helpers\Exceptions\ExceptionHelpers.cs" />
+    <Compile Include="Helpers\Exceptions\HCForbiddenException.cs" />
+    <Compile Include="Helpers\Exceptions\IdentityServerTokenException.cs" />
+    <Compile Include="Helpers\Filters\HyCiteErrorFilter.cs" />
+    <Compile Include="Helpers\Generated Code\Common.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Common.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Helpers\Html\HtmlHelpers.cs" />
+    <Compile Include="Helpers\JsonConverters.cs" />
+    <Compile Include="Helpers\Logger.cs" />
+    <Compile Include="Helpers\Models\ClientInfo.cs" />
+    <Compile Include="Helpers\Models\ClientPaymentSettingsDTO.cs" />
+    <Compile Include="Helpers\Models\ESignClient.cs" />
+    <Compile Include="Helpers\Models\HCFileInfo.cs" />
+    <Compile Include="Helpers\Models\ODataResponse.cs" />
+    <Compile Include="Helpers\Models\PaymentStatusDTO.cs" />
+    <Compile Include="Helpers\Models\PhoneCountryCodeDTO.cs" />
+    <Compile Include="Helpers\Models\RecentUser.cs" />
+    <Compile Include="Helpers\Security\Tokens\IUserAccessToken.cs" />
+    <Compile Include="Helpers\Security\Models\AccessToken.cs" />
+    <Compile Include="Helpers\Security\SecurityBitEnums.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>SecurityBitEnums.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Helpers\Security\Models\UserInfoClaim.cs" />
+    <Compile Include="Helpers\Security\Models\UserInfoDistributor.cs" />
+    <Compile Include="Helpers\Security\Models\UserInfoEntity.cs" />
+    <Compile Include="Helpers\Security\Models\UserInfoEntityClient.cs" />
+    <Compile Include="Helpers\Security\Tokens\UserAccessTokenBase.cs" />
+    <Compile Include="Models\AccountReceivable\CustomerPaymentDTO.cs" />
+    <Compile Include="Models\AccountReceivable\CustomerPaymentEntryDTO.cs" />
+    <Compile Include="Models\AccountReceivable\CreditReportSearchDTO.cs" />
+    <Compile Include="Models\AccountReceivable\BalanceSummaryDTO.cs" />
+    <Compile Include="Models\AccountReceivable\AddonAccountSearchDTO.cs" />
+    <Compile Include="Models\AccountReceivable\CollectorMessagesDTO.cs" />
+    <Compile Include="Models\AccountReceivable\BalanceTransferDTO.cs" />
+    <Compile Include="Models\AccountReceivable\ReturnEOriginalDTO.cs" />
+    <Compile Include="Models\AccountReceivable\SampleBalanceDetailDTO.cs" />
+    <Compile Include="Models\CompetitiveArena\SalespersonSearchDTO.cs" />
+    <Compile Include="Models\CompetitiveArena\IcebreakerDTO.cs" />
+    <Compile Include="Models\CompetitiveArena\IcebreakerEntryDTO.cs" />
+    <Compile Include="Models\CompetitiveArena\VolumeDetailDTO.cs" />
+    <Compile Include="Models\CompetitiveArena\VolumeEntryDTO.cs" />
+    <Compile Include="Models\DistributorFinancing\DFPaymentEntryDTO.cs" />
+    <Compile Include="Models\DistributorFinancing\DFPaymentsCustomerDTO.cs" />
+    <Compile Include="Models\DistributorFinancing\DFPaymentsDTO.cs" />
+    <Compile Include="Models\CompetitiveArena\RecommendationDTO.cs" />
+    <Compile Include="Models\CompetitiveArena\RecommendationEntryDTO.cs" />
+    <Compile Include="Models\DistributorFinancing\DFEligibleCustomersDTO.cs" />
+    <Compile Include="Models\DistributorService\JDCOTaxFactorDTO.cs" />
+    <Compile Include="Models\DistributorService\COTaxFactorDTO.cs" />
+    <Compile Include="Models\DistributorService\FacturaDTO.cs" />
+    <Compile Include="Models\DistributorService\AccountActivityPaymentEntryDTO.cs" />
+    <Compile Include="Models\DistributorService\AccountActivityPaymentDTO.cs" />
+    <Compile Include="Models\DistributorService\PriceQuoteDTO.cs" />
+    <Compile Include="Models\DistributorService\PriceQuoteEntryDTO.cs" />
+    <Compile Include="Models\DistributorService\PriceQuoteProductDTO.cs" />
+    <Compile Include="Models\DistributorService\TaxLookupDTO.cs" />
+    <Compile Include="Models\GenericError.cs" />
+    <Compile Include="Models\InCite\InCiteEntityDTO.cs" />
+    <Compile Include="Models\JuniorDistributor\RegionDTO.cs" />
+    <Compile Include="Models\Profile\PaymentAccountDTO.cs" />
+    <Compile Include="Models\Profile\AdminUserDTO.cs" />
+    <Compile Include="Models\Profile\IdentityDistributorDTO.cs" />
+    <Compile Include="Models\Profile\IdentitySalespersonDTO.cs" />
+    <Compile Include="Models\Profile\PaymentAccountEntryDTO.cs" />
+    <Compile Include="Models\Profile\TelemarketerDTO.cs" />
+    <Compile Include="Models\Profile\TelemarketerEntryDTO.cs" />
+    <Compile Include="Models\Profile\TelemarketerSetupInfoDTO.cs" />
+    <Compile Include="Models\SalesAndMarketing\CARPActivityReportDTO.cs" />
+    <Compile Include="Models\SalesAndMarketing\MagazineCustomerCategoriesDTO.cs" />
+    <Compile Include="Models\SalesAndMarketing\MagazineCustomerDTO.cs" />
+    <Compile Include="Models\SalesAndMarketing\CARPCustomerDTO.cs" />
+    <Compile Include="Models\SalesLeadAdministration\PurchaseLeadDTO.cs" />
+    <Compile Include="Models\SalesLeadAdministration\PossibleLeadDTO.cs" />
+    <Compile Include="Models\Shared\PriceLevelChartDTO.cs" />
+    <Compile Include="Models\TextValueDTO.cs" />
+    <Compile Include="Models\UserStatusDTO.cs" />
+    <Compile Include="Models\Workflow\DocumentUploadsEntryDTO.cs" />
+    <Compile Include="Models\Workflow\MobileOrderPendingApprovalDTO.cs" />
+    <Compile Include="Models\Workflow\MobileOrderEntryDTO.cs" />
+    <Compile Include="Models\Workflow\MobileOrderDTO.cs" />
+    <Compile Include="Models\DistributorService\ShoppingCartDTO.cs" />
+    <Compile Include="Models\DistributorService\BackorderReportLinkDTO.cs" />
+    <Compile Include="Models\DistributorService\AccessPointDTO.cs" />
+    <Compile Include="Models\DistributorService\PriceListDTO.cs" />
+    <Compile Include="Models\DistributorService\PreQualificationHotlineDTO.cs" />
+    <Compile Include="Models\DistributorService\ShippedOrderDTO.cs" />
+    <Compile Include="Models\DistributorService\TDMeetingFundReceiptsDTO.cs" />
+    <Compile Include="Models\DistributorService\TDMeetingFundDetailDTO.cs" />
+    <Compile Include="Models\DistributorService\TransmittalSummaryReportDTO.cs" />
+    <Compile Include="Models\DistributorService\TransmittalSummaryDTO.cs" />
+    <Compile Include="Models\DistributorService\WebOrderDTO.cs" />
+    <Compile Include="Models\DistributorService\WebProductDTO.cs" />
+    <Compile Include="Models\EmailVerificationResultDTO.cs" />
+    <Compile Include="Models\LayoutModel.cs" />
+    <Compile Include="Models\Overrides\OverrideDTO.cs" />
+    <Compile Include="Models\Profile\AvailableSalespeopleDTO.cs" />
+    <Compile Include="Models\Profile\PrivateMessages.cs" />
+    <Compile Include="Models\Profile\SalespersonProfileDTO.cs" />
+    <Compile Include="Models\Profile\UserEntryDTO.cs" />
+    <Compile Include="Models\Profile\UsersDTO.cs" />
+    <Compile Include="Models\Purchases\JVPaymentDTO.cs" />
+    <Compile Include="Models\Purchases\TDMeetingFundDTO.cs" />
+    <Compile Include="Models\Overrides\ReserveAdjustmentPurchasesDTO.cs" />
+    <Compile Include="Models\Shared\AddressControlDTO.cs" />
+    <Compile Include="Models\Shared\CollectorNoteDTO.cs" />
+    <Compile Include="Models\Shared\CreditCardPaymentCustomerDTO.cs" />
+    <Compile Include="Models\Shared\CustomerMessageDTO.cs" />
+    <Compile Include="Models\Shared\CustomerServiceNoteDTO.cs" />
+    <Compile Include="Models\Shared\DocumentCategoryDTO.cs" />
+    <Compile Include="Models\Shared\DocumentWithIconDTO.cs" />
+    <Compile Include="Models\Shared\GenericEntity.cs" />
+    <Compile Include="Models\Shared\HomePageLinksDTO.cs" />
+    <Compile Include="Models\Shared\LandingPageInfoDTO.cs" />
+    <Compile Include="Models\Shared\PerformanceChartDTO.cs" />
+    <Compile Include="Models\Shared\RecaptchaResponseDTO.cs" />
+    <Compile Include="Models\Shared\ReportFormDTO.cs" />
+    <Compile Include="Models\Shared\ReportSectionDTO.cs" />
+    <Compile Include="Models\Shared\ReportSectionItemDTO.cs" />
+    <Compile Include="Models\Shared\StateDTO.cs" />
+    <Compile Include="Models\Shared\TransactionDTO.cs" />
+    <Compile Include="Models\Shared\CustomersDTO.cs" />
+    <Compile Include="Models\CompetitiveArena\VolumeDTO.cs" />
+    <Compile Include="Models\Purchases\PurchasesDTO.cs" />
+    <Compile Include="Models\Shared\CreditCardPaymentDTO.cs" />
+    <Compile Include="Models\Shared\CustomerOrderDTO.cs" />
+    <Compile Include="Models\Shared\PaymentDTO.cs" />
+    <Compile Include="Models\Shared\UserAlertsDTO.cs" />
+    <Compile Include="Models\Shared\WebOrderEntryDTO.cs" />
+    <Compile Include="Models\Workflow\LayawayWorkflowDTO.cs" />
+    <Compile Include="Models\Workflow\ReturnsWorkflowDTO.cs" />
+    <Compile Include="Models\Workflow\DistributorWorkflowNoteDTO.cs" />
+    <Compile Include="Models\Workflow\DistributorWorkflowDTO.cs" />
+    <Compile Include="Models\Workflow\CustomerWorkflowDTO.cs" />
+    <Compile Include="Models\Workflow\CustomerWorkflowNoteDTO.cs" />
+    <Compile Include="Models\Company\DocumentDTO.cs" />
+    <Compile Include="Models\SecurityItemDTO.cs" />
+    <Compile Include="Helpers\Navigation\APIMenuItem.cs" />
+    <Compile Include="Helpers\Navigation\IMenuItem.cs" />
+    <Compile Include="Helpers\Navigation\Navigation.cs" />
+    <Compile Include="Helpers\Models\TokenRefreshResponse.cs" />
+    <Compile Include="Models\DTOModels\DistributorsInternalDTO.cs" />
+    <Compile Include="Models\Company\HyCiteEmployeesDTO.cs" />
+    <Compile Include="Models\InputModels\InternalLoginModel.cs" />
+    <Compile Include="Models\NautilusWorkflowDTO.cs" />
+    <Compile Include="Models\Workflow\OLD-CustomerWorkflowDTO.cs" />
+    <Compile Include="Models\Company\DistributorDTO.cs" />
+    <Compile Include="Models\Company\MemoDTO.cs" />
+    <Compile Include="Models\Company\AnnouncementDTO.cs" />
+    <Compile Include="Models\ODataResult.cs" />
+    <Compile Include="Models\ReportDTO.cs" />
+    <Compile Include="Models\DTOModels\SalespersonInternalDTO.cs" />
+    <Compile Include="Models\Workflow\OLD-UserNoteDTO.cs" />
+    <Compile Include="Models\Workflow\SalespersonCommissionSummary.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="App_Start\Startup.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Content\bootstrap-datetimepicker.css" />
+    <Content Include="Content\bootstrap-datetimepicker.min.css" />
+    <Content Include="Content\bootstrap-dialog.css" />
+    <Content Include="Content\bootstrap-dialog.min.css" />
+    <Content Include="Content\bootstrap-theme.css" />
+    <Content Include="Content\bootstrap-theme.min.css" />
+    <Content Include="Content\bootstrap.css" />
+    <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\font-awesome.css" />
+    <Content Include="Content\font-awesome.min.css" />
+    <Content Include="Content\hc.validation-2.0.0.2.css" />
+    <Content Include="Content\images\4in14Button.jpg" />
+    <Content Include="Content\images\colombia-flag-icon-16.png" />
+    <Content Include="Content\images\colombia-flag-icon-32.png" />
+    <Content Include="Content\images\docInvite-white.png" />
+    <Content Include="Content\images\DocuSignlogo-small.png" />
+    <Content Include="Content\images\Email_PowerByLogo.png" />
+    <Content Include="Content\images\Everify.jpg" />
+    <Content Include="Content\images\Icon_eSign.png" />
+    <Content Include="Content\images\Icon_eSignInformation.png" />
+    <Content Include="Content\images\Icon_Resend.png" />
+    <Content Include="Content\images\Icon_Void.png" />
+    <Content Include="Content\images\IMGGetAdobeReader.gif" />
+    <Content Include="Content\images\InCiteLogo-Small-White.png" />
+    <Content Include="Content\images\IPADICODownloadCenter.jpg" />
+    <Content Include="Content\images\IPADICODownloadCenter5PLY.jpg" />
+    <Content Include="Content\images\IPADICOInnove.jpg" />
+    <Content Include="Content\images\NOIMAGE-THUMB-ES.gif" />
+    <Content Include="Content\images\NOIMAGE-THUMB-EN.gif" />
+    <Content Include="Content\images\NOIMAGE-THUMB-PT.gif" />
+    <Content Include="Content\images\SalesForceLOGO-Small-Original.png" />
+    <Content Include="Content\images\SalesForceLOGO-Small.png" />
+    <Content Include="Content\images\SalesRegionLink-Small.png" />
+    <Content Include="Content\images\SASButton.jpg" />
+    <Content Include="Content\images\SASMXButton.jpg" />
+    <Content Include="Content\images\University.jpg" />
+    <Content Include="Content\images\VimeoTrainingButton.jpg" />
+    <Content Include="Content\OLD-hc.dynamicdisplay-1.0.0.css" />
+    <Content Include="Content\hc.dynamicdisplay-1.0.12.css" />
+    <Content Include="Content\hc.navigation-1.0.0.css" />
+    <Content Include="Content\hc.navigation-1.0.2.css" />
+    <Content Include="Content\images\HEADERRoyalPrestige.png" />
+    <Content Include="Content\images\HEADERSmallRoyalPrestige.png" />
+    <Content Include="Content\images\HEADERTinyHycite.png" />
+    <Content Include="Content\icons\apple-touch-icon-114x114.png" />
+    <Content Include="Content\icons\apple-touch-icon-120x120.png" />
+    <Content Include="Content\icons\apple-touch-icon-144x144.png" />
+    <Content Include="Content\icons\apple-touch-icon-152x152.png" />
+    <Content Include="Content\icons\apple-touch-icon-57x57.png" />
+    <Content Include="Content\icons\apple-touch-icon-60x60.png" />
+    <Content Include="Content\icons\apple-touch-icon-72x72.png" />
+    <Content Include="Content\icons\apple-touch-icon-76x76.png" />
+    <Content Include="Content\icons\favicon-128.png" />
+    <Content Include="Content\icons\favicon-16x16.png" />
+    <Content Include="Content\icons\favicon-196x196.png" />
+    <Content Include="Content\icons\favicon-32x32.png" />
+    <Content Include="Content\icons\favicon-96x96.png" />
+    <Content Include="Content\icons\favicon.ico" />
+    <Content Include="Content\icons\mstile-144x144.png" />
+    <Content Include="Content\icons\mstile-150x150.png" />
+    <Content Include="Content\icons\mstile-310x150.png" />
+    <Content Include="Content\icons\mstile-310x310.png" />
+    <Content Include="Content\icons\mstile-70x70.png" />
+    <Content Include="Content\images\ANIGreenLight.gif" />
+    <Content Include="Content\images\ANINewMessage.gif" />
+    <Content Include="Content\images\ANIProgress.gif" />
+    <Content Include="Content\images\Background.png" />
+    <Content Include="Content\images\HEADERBackground.png" />
+    <Content Include="Content\images\HEADERKitchenCharm.png" />
+    <Content Include="Content\images\HEADERNutraEase.png" />
+    <Content Include="Content\images\HEADERSmallNutraEase.png" />
+    <Content Include="Content\images\HEADERTinyKitchenCharm.png" />
+    <Content Include="Content\images\HEADERTinyNutraEase.png" />
+    <Content Include="Content\images\HEADERTinyRoyalPrestige.png" />
+    <Content Include="Content\images\ICOHyciteLogoSmall.png" />
+    <Content Include="Content\images\ICOMenuSelBlue.png" />
+    <Content Include="Content\images\ICOMenuSelDarkOrange.png" />
+    <Content Include="Content\images\ICOMenuSelGreen.png" />
+    <Content Include="Content\images\ICOMenuSelLightBlue.png" />
+    <Content Include="Content\images\ICOMenuSelOrange.png" />
+    <Content Include="Content\images\ICOMenuSelPurple.png" />
+    <Content Include="Content\images\ICOMenuSelRed.png" />
+    <Content Include="Content\images\ICOMenuSelYellow.png" />
+    <Content Include="Content\images\ICOMenuSelYellowGreen.png" />
+    <Content Include="Content\images\ICOPDF32X32.png" />
+    <Content Include="Content\images\ICOSortable.png" />
+    <Content Include="Content\images\ICOSortAscending.png" />
+    <Content Include="Content\images\ICOSortDescending.png" />
+    <Content Include="Content\images\LOGOHycite.png" />
+    <Content Include="Content\images\LOGOHyciteColor.png" />
+    <Content Include="Content\images\LOGOHyciteSmall.png" />
+    <Content Include="Content\images\LOGOHyciteSmallTransparant.png" />
+    <Content Include="Content\images\LOGOHyciteTiny.png" />
+    <Content Include="Content\images\LOGOHyciteTinyTransparent.png" />
+    <Content Include="Content\images\LOGOHyciteWhite.png" />
+    <Content Include="Content\images\LOGOHyciteWhiteTiny.png" />
+    <Content Include="Content\images\LOGOKitchenCharm.png" />
+    <Content Include="Content\images\LOGOKitchenCharmSmall.png" />
+    <Content Include="Content\images\LOGONautilus.png" />
+    <Content Include="Content\images\LOGONautilusSmall.png" />
+    <Content Include="Content\images\LOGONutraease.png" />
+    <Content Include="Content\images\LOGONutraeaseSmall.png" />
+    <Content Include="Content\images\LOGORoyalPrestige.png" />
+    <Content Include="Content\images\LOGORoyalPrestigeSmall.png" />
+    <Content Include="Content\images\NAVBackground.png" />
+    <Content Include="Content\Site.LoginPage-1.0.0.css" />
+    <Content Include="Content\Site.Internal-1.0.0.css" />
+    <Content Include="Content\Standalone-1.0.0.css" />
+    <Content Include="Content\toastr.css" />
+    <Content Include="Content\toastr.min.css" />
+    <Content Include="fonts\fontawesome-webfont.svg" />
+    <Content Include="fonts\glyphicons-halflings-regular.svg" />
+    <Content Include="Global.asax" />
+    <Content Include="Content\Site-1.0.0.css" />
+    <Content Include="Content\toastr.scss" />
+    <Content Include="Content\toastr.less" />
+    <Content Include="favicon.ico" />
+    <Content Include="helper.htm" />
+    <Content Include="Helpers\Enums\eSecurityItems.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>eSecurityItems.cs</LastGenOutput>
+    </Content>
+    <Content Include="Helpers\Enums\UserInfoBitmaskEnums.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>UserInfoBitmaskEnums.cs</LastGenOutput>
+    </Content>
+    <Content Include="Helpers\Generated Code\Common.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>Common.cs</LastGenOutput>
+    </Content>
+    <Content Include="Helpers\Security\SecurityBitEnums.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>SecurityBitEnums.cs</LastGenOutput>
+    </Content>
+    <Content Include="Public\HTML Templates\IcebreakerEmail-EN.html" />
+    <Content Include="Public\Images\Everify.jpg" />
+    <Content Include="Public\Images\LOGOHycite.png" />
+    <Content Include="Public\Images\LOGOHyciteColor.png" />
+    <Content Include="Public\Images\LOGOHyciteSmall.png" />
+    <Content Include="Public\Images\LOGOKitchenCharm.png" />
+    <Content Include="Public\Images\LOGOKitchenCharmSmall.png" />
+    <Content Include="Public\Images\LOGONutraease.png" />
+    <Content Include="Public\Images\LOGONutraeaseSmall.png" />
+    <Content Include="Public\Images\LOGORoyalPrestige.png" />
+    <Content Include="Public\Images\LOGORoyalPrestigeSmall.png" />
+    <Content Include="Public\Images\SalesRegionLink-Small.png" />
+    <Content Include="Readme.txt" />
+    <Content Include="Scripts\accounting.js" />
+    <Content Include="Scripts\accounting.min.js" />
+    <Content Include="fonts\FontAwesome.otf" />
+    <Content Include="fonts\fontawesome-webfont.woff2" />
+    <Content Include="fonts\fontawesome-webfont.woff" />
+    <Content Include="fonts\fontawesome-webfont.ttf" />
+    <Content Include="fonts\fontawesome-webfont.eot" />
+    <Content Include="Scripts\angular-mocks.js" />
+    <Content Include="Scripts\angular.js" />
+    <Content Include="Scripts\angular.min.js" />
+    <Content Include="Scripts\bootstrap-datetimepicker.js" />
+    <Content Include="Scripts\bootstrap-datetimepicker.min.js" />
+    <Content Include="Scripts\bootstrap-dialog.min.js" />
+    <Content Include="Scripts\bootstrap-dialog.js" />
+    <Content Include="Scripts\bootstrap.js" />
+    <Content Include="Scripts\bootstrap.min.js" />
+    <Content Include="Scripts\Chart.js" />
+    <Content Include="Scripts\Chart.min.js" />
+    <Content Include="Scripts\hc.angular.customfilters-1.0.12.js" />
+    <Content Include="Scripts\hc.dynamicdisplay.core-1.0.0.js" />
+    <Content Include="Scripts\hc.dynamicdisplay-1.0.12.js" />
+    <Content Include="Scripts\hc.dynamicdisplay.en-1.0.12.js" />
+    <Content Include="Scripts\hc.dynamicdisplay.es-1.0.12.js" />
+    <Content Include="Scripts\hc.dynamicdisplay.pt-1.0.12.js" />
+    <Content Include="Scripts\hc.treeview-1.0.0.js" />
+    <Content Include="Scripts\hc.validation-2.0.0.2.js" />
+    <Compile Include="Helpers\Security\Tokens\UserAccessToken.DebugToken.cs" />
+    <Content Include="ApplicationInsights.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Connected Services\Application Insights\ConnectedService.json" />
+    <Content Include="Scripts\angular.min.js.map" />
+    <Content Include="fonts\glyphicons-halflings-regular.woff2" />
+    <Content Include="fonts\glyphicons-halflings-regular.woff" />
+    <Content Include="fonts\glyphicons-halflings-regular.ttf" />
+    <Content Include="fonts\glyphicons-halflings-regular.eot" />
+    <Content Include="Content\bootstrap.min.css.map" />
+    <Content Include="Content\bootstrap.css.map" />
+    <Content Include="Content\bootstrap-theme.min.css.map" />
+    <Content Include="Content\bootstrap-theme.css.map" />
+    <Content Include="Content\images\Privacy_EN.pdf" />
+    <Content Include="Content\images\Privacy_ES.pdf" />
+    <None Include="Properties\PublishProfiles\AZURE-PROD-STAGING.pubxml" />
+    <None Include="Scripts\jquery-3.4.1.intellisense.js" />
+    <Content Include="Scripts\jquery-3.4.1.js" />
+    <Content Include="Scripts\jquery-3.4.1.min.js" />
+    <Content Include="Scripts\jquery-3.4.1.slim.js" />
+    <Content Include="Scripts\jquery-3.4.1.slim.min.js" />
+    <Content Include="Scripts\jquery-3.4.1.slim.min.map" />
+    <Content Include="Scripts\jquery-3.4.1.min.map" />
+    <Content Include="Scripts\jquery.validate.unobtrusive.js" />
+    <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
+    <Content Include="Scripts\moment-with-locales.js" />
+    <Content Include="Scripts\moment-with-locales.min.js" />
+    <Content Include="Scripts\moment.js" />
+    <Content Include="Scripts\moment.min.js" />
+    <Content Include="Scripts\Pages\AccountsReceivable\HCE.CustomerPayments-1.0.0.js" />
+    <Content Include="Scripts\Pages\AccountsReceivable\HCE.ReturnsEOriginals-1.0.0.js" />
+    <Content Include="Scripts\Pages\DistributorService\HCE.COTaxFactor-1.0.0.js" />
+    <Content Include="Scripts\Pages\DistributorService\HCE.AccountActivityPayments-1.0.0.js" />
+    <Content Include="Scripts\Pages\DistributorService\HCE.JDCOTaxfactor-1.0.0.js" />
+    <Content Include="Scripts\Pages\DistributorService\HCE.TaxLookup-1.0.0.js" />
+    <Content Include="Scripts\Pages\Profile\HCE.AdminUsers-1.0.0.js" />
+    <Content Include="Scripts\Pages\Profile\HCE.PaymentAccounts-1.0.0.js" />
+    <Content Include="Scripts\Pages\Profile\HCE.Telemarketers-1.0.0.js" />
+    <Content Include="Scripts\Pages\SalesForce\HCE.SFLogin-1.0.0.js" />
+    <Content Include="Scripts\Pages\Shared\HCE.ScanUpload-1.0.0.js" />
+    <Content Include="Scripts\Pages\Workflow\HCE.SPCommissions-1.0.0.js" />
+    <Content Include="WingScan\HCE.ScanUploadInIframe-1.0.0.js" />
+    <Content Include="Scripts\Pages\Shared\HCE.ScanUpload-Debug-1.0.0.js" />
+    <Content Include="WingScan\atalaWebCapture.js" />
+    <None Include="Properties\PublishProfiles\AZURE-DEV %28distweb.devapp.hycite.com%29.pubxml" />
+    <None Include="Properties\PublishProfiles\AZURE-PROD %28distributors.hycite.com%29.pubxml">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Properties\PublishProfiles\PROD %28internaldistributors.hycite.com%29.pubxml" />
+    <Content Include="Public\Web.config" />
+    <None Include="Scripts\jquery.validate-vsdoc.js" />
+    <Content Include="Scripts\jquery.validate.js" />
+    <Content Include="Scripts\jquery.validate.min.js" />
+    <Content Include="Scripts\Pages\AccountsReceivable\HCE.BalanceSummary-1.0.0.js" />
+    <Content Include="Scripts\Pages\AccountsReceivable\HCE.CollectorMessages-1.0.0.js" />
+    <Content Include="Scripts\Pages\AccountsReceivable\HCE.AddonCustomers-1.0.0.js" />
+    <Content Include="Scripts\Pages\AccountsReceivable\HCE.ListPayments-1.0.0.js" />
+    <Content Include="Scripts\Pages\Company\HCE.Reports-1.0.0.js" />
+    <Content Include="Scripts\Pages\AccountsReceivable\HCE.Customers-1.0.0.js" />
+    <Content Include="Scripts\Pages\Company\HCE.Employees-1.0.0.js" />
+    <Content Include="Scripts\Pages\Company\HCE.EthicsTraining-1.0.0.js" />
+    <Content Include="Scripts\Pages\CompetitiveArena\HCE.Awards-1.0.0.js" />
+    <Content Include="Scripts\Pages\CompetitiveArena\HCE.Rules-1.0.0.js" />
+    <Content Include="Scripts\Pages\CompetitiveArena\HCE.VolumeDetails-1.0.0.js" />
+    <Content Include="Scripts\Pages\CompetitiveArena\HCE.VolumeEntry-1.0.0.js" />
+    <Content Include="Scripts\Pages\CompetitiveArena\HCE.Salespeople-1.0.0.js" />
+    <Content Include="Scripts\Pages\CompetitiveArena\HCE.Recommendations-1.0.0.js" />
+    <Content Include="Scripts\Pages\CompetitiveArena\HCE.MXPacemakers-1.0.0.js" />
+    <Content Include="Scripts\Pages\CompetitiveArena\HCE.Icebreakers-1.0.0.js" />
+    <Content Include="Scripts\Pages\CompetitiveArena\HCE.Pacesetters-1.0.0.js" />
+    <Content Include="Scripts\Pages\CompetitiveArena\HCE.Pacemakers-1.0.0.js" />
+    <Content Include="Scripts\Pages\CompetitiveArena\HCE.Bulletins-1.0.0.js" />
+    <Content Include="Scripts\Pages\CompetitiveArena\HCE.Volume-1.0.0.js" />
+    <Content Include="Scripts\Pages\DistributorFinancing\HCE.AccountSearch-1.0.0.js" />
+    <Content Include="Scripts\Pages\DistributorFinancing\HCE.BalanceSummary-1.0.0.js" />
+    <Content Include="Scripts\Pages\DistributorFinancing\HCE.EligibleAccounts-1.0.0.js" />
+    <Content Include="Scripts\Pages\DistributorFinancing\HCE.Reports-1.0.0.js" />
+    <Content Include="Scripts\Pages\DistributorService\HCE.Backorders-1.0.0.js" />
+    <Content Include="Scripts\Pages\DistributorService\HCE.PriceLists-1.0.0.js" />
+    <Content Include="Scripts\Pages\DistributorService\HCE.PriceQuotes-1.0.0.js" />
+    <Content Include="Scripts\Pages\DistributorService\HCE.PreQualifications-1.0.0.js" />
+    <Content Include="Scripts\Pages\DistributorService\HCE.FacturaSearch-1.0.0.js" />
+    <Content Include="Scripts\Pages\Workflow\HCE.DocumentUploads-1.0.0.js" />
+    <Content Include="Scripts\Pages\DistributorService\HCE.AccessPoints-1.0.0.js" />
+    <Content Include="Scripts\Pages\DistributorService\HCE.TDMeetingFundDetails-1.0.0.js" />
+    <Content Include="Scripts\Pages\DistributorService\HCE.WebOrders-1.0.0.js" />
+    <Content Include="Scripts\Pages\DistributorService\HCE.ShippingSearch-1.0.0.js" />
+    <Content Include="Scripts\Pages\DistributorService\HCE.TransmittalSummary-1.0.0.js" />
+    <Content Include="Scripts\Pages\DistributorService\HCE.Transmittals-1.0.0.js" />
+    <Content Include="Scripts\Pages\Layaway\HCE.Workflow-1.0.0.js" />
+    <Content Include="Scripts\Pages\DistributorFinancing\HCE.PaymentPosting-1.0.0.js" />
+    <Content Include="Scripts\Pages\Layaway\HCE.EligibleAccounts-1.0.0.js" />
+    <Content Include="Scripts\Pages\Layaway\HCE.AccountSearch-1.0.0.js" />
+    <Content Include="Scripts\Pages\Layaway\HCE.Reports-1.0.0.js" />
+    <Content Include="Scripts\Pages\Layaway\HCE.BalanceSummary-1.0.0.js" />
+    <Content Include="Scripts\Pages\Overrides\HCE.Overrides-1.0.0.js" />
+    <Content Include="Scripts\Pages\Profile\HCE.Messages-1.0.0.js" />
+    <Content Include="Scripts\Pages\Profile\HCE.SalespersonProfile-1.0.0.js" />
+    <Content Include="Scripts\Pages\Profile\HCE.DistributorProfile-1.0.0.js" />
+    <Content Include="Scripts\Pages\Profile\HCE.UserProfile-1.0.0.js" />
+    <Content Include="Scripts\Pages\Profile\HCE.Users-1.0.0.js" />
+    <Content Include="Scripts\Pages\Purchases\HCE.JVPayments-1.0.0.js" />
+    <Content Include="Scripts\Pages\Purchases\HCE.TDMeetingFund-1.0.0.js" />
+    <Content Include="Scripts\Pages\Purchases\HCE.Purchases-1.0.0.js" />
+    <Content Include="Scripts\Pages\Overrides\HCE.ReserveAdjustmentMemos-1.0.0.js" />
+    <Content Include="Scripts\Pages\Overrides\HCE.ReserveAdjustment-1.0.0.js" />
+    <Content Include="Scripts\Pages\SalesAndMarketing\HCE.Conventions-1.0.0.js" />
+    <Content Include="Scripts\Pages\SalesAndMarketing\HCE.MagazineLeads-1.0.0.js" />
+    <Content Include="Scripts\Pages\SalesAndMarketing\HCE.RecipeClubCampaign-1.0.0.js" />
+    <Content Include="Scripts\Pages\SalesAndMarketing\HCE.CARP-1.0.0.js" />
+    <Content Include="Scripts\Pages\SalesAndMarketing\HCE.DownloadCenter-1.0.0.js" />
+    <Content Include="Scripts\Pages\SalesAndMarketing\HCE.TrainingSeminars-1.0.0.js" />
+    <Content Include="Scripts\Pages\SalesAndMarketing\HCE.SalesMaterials-1.0.0.js" />
+    <Content Include="Scripts\Pages\SalesAndMarketing\HCE.Universidad-1.0.0.js" />
+    <Content Include="Scripts\Pages\SalesAndMarketing\HCE.Training-1.0.0.js" />
+    <Content Include="Scripts\Pages\SalesAndMarketing\HCE.RPToday-1.0.0.js" />
+    <Content Include="Scripts\Pages\SalesLeadAdministration\HCE.PossibleLeads-1.0.0.js" />
+    <Content Include="Scripts\Pages\SalesLeadAdministration\HCE.PurchasedLeads-1.0.0.js" />
+    <Content Include="Scripts\Pages\Shared\HCE.AccountSearch-1.0.0.js" />
+    <Content Include="Scripts\Pages\Shared\HCE.AddressControl-1.0.0.js" />
+    <Content Include="Scripts\Pages\Shared\HCE.CCPayments-1.0.0.js" />
+    <Content Include="Scripts\Pages\Shared\HCE.PerformanceCharts-1.0.0.js" />
+    <Content Include="Scripts\Pages\Shared\HCE.SPSetup-1.0.0.js" />
+    <Content Include="Scripts\Pages\Shared\HCE.Wizard-1.0.0.js" />
+    <Content Include="Scripts\Pages\Workflow\HCE.CreditCardPayments-1.0.0.js" />
+    <Content Include="Scripts\Pages\Workflow\HCE.WarehouseSalesOrders-1.0.0.js" />
+    <Content Include="Scripts\Pages\Workflow\HCE.OPDepositSlips-1.0.0.js" />
+    <Content Include="Scripts\Pages\Workflow\HCE.DCSDepositSlips-1.0.0.js" />
+    <Content Include="Scripts\Pages\Workflow\HCE.CreditReports-1.0.0.js" />
+    <Content Include="Scripts\Pages\Workflow\HCE.ReturnsWorkflow-1.0.0.js" />
+    <Content Include="Scripts\Pages\Workflow\HCE.DistributorWorkflow-1.0.0.js" />
+    <Content Include="Scripts\Pages\Workflow\HCE.CustomerWorkflow-1.0.0.js" />
+    <Content Include="Scripts\Pages\Company\HCE.Documents-1.0.0.js" />
+    <Content Include="Scripts\Pages\HCE.Index-1.0.0.js" />
+    <Content Include="Scripts\Pages\Company\HCE.PopupAnnouncements-1.0.0.js" />
+    <Content Include="Scripts\Site-1.0.1.angular.customfilters.js" />
+    <Content Include="Scripts\OLD-hc.angular.customfilters-1.0.10.js" />
+    <Content Include="Scripts\hc.navigation-1.0.2.js" />
+    <Content Include="Scripts\html5shiv.js" />
+    <None Include="Properties\PublishProfiles\DEV %28INTERNAL%29.pubxml" />
+    <Content Include="Scripts\jquery.cookie-1.4.1.min.js" />
+    <Content Include="Scripts\jquery.cookie.js" />
+    <Content Include="Scripts\modernizr-2.8.3.js" />
+    <Content Include="Scripts\myspin.js" />
+    <Content Include="Scripts\respond.js" />
+    <Content Include="Scripts\respond.matchmedia.addListener.js" />
+    <Content Include="Scripts\respond.matchmedia.addListener.min.js" />
+    <Content Include="Scripts\respond.min.js" />
+    <Content Include="Scripts\Site-1.0.1.js" />
+    <Content Include="Scripts\spin.js" />
+    <Content Include="Scripts\toastr.js" />
+    <Content Include="Scripts\toastr.min.js" />
+    <Content Include="Scripts\_references.js" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Web.Debug.config">
+      <DependentUpon>Web.config</DependentUpon>
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Web.Release.config">
+      <DependentUpon>Web.config</DependentUpon>
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Views\Web.config">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Views\_ViewStart.cshtml" />
+    <Content Include="Views\Shared\Error.cshtml" />
+    <Content Include="Views\Shared\_Layout.cshtml" />
+    <Content Include="Views\Home\Index.cshtml" />
+    <Content Include="Views\Shared\_html5shiv.cshtml" />
+    <Content Include="Views\Shared\_ErrorDialog.cshtml" />
+    <Content Include="Views\Shared\_SideNavigationMenu.cshtml" />
+    <Content Include="Views\Company\Announcements.cshtml" />
+    <Content Include="Views\Error\Index.cshtml" />
+    <Content Include="Views\Error\IndexNH.cshtml" />
+    <Content Include="Views\Home\CheckTokens.cshtml" />
+    <Content Include="Views\Home\CheckTokensRefreshed.cshtml" />
+    <Content Include="Views\Shared\_FavoriteIcons.cshtml" />
+    <Content Include="Views\Company\ContactUs.cshtml" />
+    <Content Include="Views\Company\EmployeeDirectory.cshtml" />
+    <Content Include="Views\Company\Memos.cshtml" />
+    <Content Include="Views\Company\Documents.cshtml" />
+    <Content Include="Views\Company\DistributorDirectory.cshtml" />
+    <Content Include="Views\Home\Settings.cshtml" />
+    <Content Include="Views\Internal\SelectEntity.cshtml" />
+    <Content Include="Views\Workflow\Customer.cshtml" />
+    <Content Include="Views\Workflow\Distributor.cshtml" />
+    <Content Include="Views\Workflow\Returns.cshtml" />
+    <Content Include="Views\Shared\_CCPaymentEntry.cshtml" />
+    <Content Include="Views\Workflow\CreditCardPayments.cshtml" />
+    <Content Include="Views\Purchases\Purchases.cshtml" />
+    <Content Include="Views\CompetitiveArena\Volume.cshtml" />
+    <Content Include="Views\AccountsReceivable\Customers.cshtml" />
+    <Content Include="Views\Workflow\CreditReports.cshtml" />
+    <Content Include="Views\Workflow\WarehouseSalesOrders.cshtml" />
+    <Content Include="Views\Workflow\OPDepositSlipNeeded.cshtml" />
+    <Content Include="Views\Workflow\DCSDepositSlipNeeded.cshtml" />
+    <Content Include="Views\Company\Ethics.cshtml" />
+    <Content Include="Views\AccountsReceivable\BalanceSummary.cshtml" />
+    <Content Include="Views\AccountsReceivable\CollectorMessages.cshtml" />
+    <Content Include="Views\AccountsReceivable\ListPayments.cshtml" />
+    <Content Include="Views\AccountsReceivable\AddonCustomers.cshtml" />
+    <Content Include="Views\Company\Reports.cshtml" />
+    <Content Include="Views\CompetitiveArena\AwardsCatalogs.cshtml" />
+    <Content Include="Views\CompetitiveArena\RulesAndDefinitions.cshtml" />
+    <Content Include="Views\CompetitiveArena\MexicoPacemakers.cshtml" />
+    <Content Include="Views\CompetitiveArena\Pacesetters.cshtml" />
+    <Content Include="Views\CompetitiveArena\Pacemakers.cshtml" />
+    <Content Include="Views\CompetitiveArena\VolumeEntry.cshtml" />
+    <Content Include="Views\CompetitiveArena\Salespeople.cshtml" />
+    <Content Include="Views\CompetitiveArena\Recommendations.cshtml" />
+    <Content Include="Views\CompetitiveArena\Icebreakers.cshtml" />
+    <Content Include="Views\CompetitiveArena\WeeklyBulletins.cshtml" />
+    <Content Include="Views\SalesAndMarketing\RPToday.cshtml" />
+    <Content Include="Views\SalesAndMarketing\Training.cshtml" />
+    <Content Include="Views\SalesAndMarketing\Universidad.cshtml" />
+    <Content Include="Views\SalesAndMarketing\SalesMaterials.cshtml" />
+    <Content Include="Views\SalesAndMarketing\Conventions.cshtml" />
+    <Content Include="Views\SalesAndMarketing\TrainingSeminars.cshtml" />
+    <Content Include="Views\SalesAndMarketing\MagazineLeads.cshtml" />
+    <Content Include="Views\SalesAndMarketing\RecipeClubCampaign.cshtml" />
+    <Content Include="Views\SalesAndMarketing\CARP.cshtml" />
+    <Content Include="Views\Purchases\JVPayments.cshtml" />
+    <Content Include="Views\Purchases\TDMeetingFund.cshtml" />
+    <Content Include="Views\Overrides\MonthlyOverrides.cshtml" />
+    <Content Include="Views\Overrides\EligiblePurchases.cshtml" />
+    <Content Include="Views\Overrides\Memos.cshtml" />
+    <Content Include="Views\DistributorService\Transmittals.cshtml" />
+    <Content Include="Views\Workflow\DocumentUploads.cshtml" />
+    <Content Include="Views\DistributorService\FacturaSearch.cshtml" />
+    <Content Include="Views\DistributorService\PreQualificationHotline.cshtml" />
+    <Content Include="Views\DistributorService\WebOrders.cshtml" />
+    <Content Include="Views\DistributorService\PriceQuote.cshtml" />
+    <Content Include="Views\DistributorService\Pricelist.cshtml" />
+    <Content Include="Views\DistributorService\Backorders.cshtml" />
+    <Content Include="Views\DistributorService\ShippingSearch.cshtml" />
+    <Content Include="Views\DistributorService\TransmittalSummary.cshtml" />
+    <Content Include="Views\DistributorService\AccessPoints.cshtml" />
+    <Content Include="Views\DistributorFinancing\BalanceSummary.cshtml" />
+    <Content Include="Views\DistributorFinancing\AccountSearch.cshtml" />
+    <Content Include="Views\DistributorFinancing\Reports.cshtml" />
+    <Content Include="Views\DistributorFinancing\EligibleAccounts.cshtml" />
+    <Content Include="Views\DistributorFinancing\Payments.cshtml" />
+    <Content Include="Views\Layaway\Workflow.cshtml" />
+    <Content Include="Views\Layaway\AccountSearch.cshtml" />
+    <Content Include="Views\Layaway\EligibleAccounts.cshtml" />
+    <Content Include="Views\Layaway\BalanceSummary.cshtml" />
+    <Content Include="Views\Layaway\Reports.cshtml" />
+    <Content Include="Views\SalesLeadAdministration\PossibleLeads.cshtml" />
+    <Content Include="Views\SalesLeadAdministration\PurchasedLeads.cshtml" />
+    <Content Include="Views\Shared\_OrderDetailsModal.cshtml" />
+    <Content Include="Views\Shared\_CustomerDetails.cshtml" />
+    <Content Include="Views\Shared\_CustomerWorkflowDetails.cshtml" />
+    <Content Include="Views\Shared\_OrderDetails.cshtml" />
+    <Content Include="Views\AccountsReceivable\_TransferExcessReserveBox.cshtml" />
+    <Content Include="Views\Shared\_ReportForm.cshtml" />
+    <Content Include="Views\Shared\_CCPaymentEntryCustomer.cshtml" />
+    <Content Include="Views\Shared\_AddressControl.cshtml" />
+    <Content Include="Views\Shared\_PerformanceChart.cshtml" />
+    <Content Include="Views\DistributorService\_WebOrderSummary.cshtml" />
+    <Content Include="Views\Profile\Users.cshtml" />
+    <Content Include="Views\Profile\UserProfile.cshtml" />
+    <Content Include="Views\Profile\DistributorProfile.cshtml" />
+    <Content Include="Views\Profile\SalespersonProfile.cshtml" />
+    <Content Include="Views\Shared\_DistributorInfo.cshtml" />
+    <Content Include="Views\Shared\_DocumentList.cshtml" />
+    <Content Include="Views\DistributorService\TDMeetingFundDetails.cshtml" />
+    <Content Include="Views\Shared\_SPSetup.cshtml" />
+    <Content Include="Views\Home\VerifyEmail.cshtml" />
+    <Content Include="Views\CompetitiveArena\_IcebreakerFileUploadBox.cshtml" />
+    <Content Include="Views\Profile\Messages.cshtml" />
+    <Content Include="Views\SalesAndMarketing\DownloadCenter.cshtml" />
+    <Content Include="Views\Shared\_AccountSearch.cshtml" />
+    <Content Include="Views\CompetitiveArena\SalesVolume.cshtml" />
+    <Content Include="Views\Shared\_ScannerUI-Debug.cshtml" />
+    <Content Include="WingScan\ScannerIframe.cshtml" />
+    <Content Include="Views\Shared\_ScannerUI.cshtml" />
+    <Content Include="Views\Profile\Telemarketers.cshtml" />
+    <Content Include="Views\Profile\AdminUsers.cshtml" />
+    <Content Include="Views\InCite\Login.cshtml" />
+    <Content Include="Views\Workflow\SalespersonCommissions.cshtml" />
+    <Content Include="Views\Home\TermsOfUse.cshtml" />
+    <Content Include="Views\Home\PrivacyPolicy.cshtml" />
+    <Content Include="Views\AccountsReceivable\ReturnsEOriginals.cshtml" />
+    <Content Include="Views\DistributorService\COTaxFactor.cshtml" />
+    <Content Include="Views\AccountsReceivable\CustomerPayments.cshtml" />
+    <Content Include="Views\Profile\PaymentAccounts.cshtml" />
+    <Content Include="Views\DistributorService\AccountActivityPayments.cshtml" />
+    <Content Include="Views\DistributorService\JDCOTaxFactor.cshtml" />
+    <Content Include="Views\JuniorDistributor\Reports.cshtml" />
+    <Content Include="Views\DistributorService\TaxLookup.cshtml" />
+    <None Include="Web.AzureDebug.config">
+      <DependentUpon>Web.config</DependentUpon>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Web.AzureDEV.config">
+      <DependentUpon>Web.config</DependentUpon>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Web.AzurePROD.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </None>
+    <Content Include="WingScan\Kofax.WebCapture.Installer.msi" />
+    <Content Include="WingScan\Kofax.WebCapture.macOS.pkg" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="App_Data\" />
+    <Folder Include="Helpers\Validation\" />
+    <Folder Include="Views\API\" />
+    <Folder Include="Views\BaseWorkflow\" />
+    <Folder Include="Views\Base\" />
+    <Folder Include="Views\Documents\" />
+    <Folder Include="Views\Reports\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="packages.config">
+      <SubType>Designer</SubType>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DistributorWebsite.MVC.LocalResources\DistributorWebsite.MVC.LocalResources.csproj">
+      <Project>{21344628-4df4-4bf9-90e2-bdf8145d4af0}</Project>
+      <Name>DistributorWebsite.MVC.LocalResources</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services\" />
+  </ItemGroup>
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'AzureDebug|AnyCPU'">
+    <OutputPath>bin\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'AzureDEV|AnyCPU'">
+    <OutputPath>bin\</OutputPath>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'AzurePROD|AnyCPU'">
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <FilesToIncludeForPublish>OnlyFilesToRunTheApp</FilesToIncludeForPublish>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'AzureDebug|x64'">
+    <OutputPath>bin\</OutputPath>
+    <PlatformTarget>x64</PlatformTarget>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'AzureDEV|x64'">
+    <OutputPath>bin\</OutputPath>
+    <PlatformTarget>x64</PlatformTarget>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'AzurePROD|x64'">
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />
+  <Target Name="MvcBuildViews" AfterTargets="AfterBuild" Condition="'$(MvcBuildViews)'=='true'">
+    <AspNetCompiler VirtualPath="temp" PhysicalPath="$(WebProjectOutputDir)" />
+  </Target>
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <UseIIS>True</UseIIS>
+          <AutoAssignPort>True</AutoAssignPort>
+          <DevelopmentServerPort>31538</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>https://localhost:44361/</IISUrl>
+          <OverrideIISAppRootUrl>True</OverrideIISAppRootUrl>
+          <IISAppRootUrl>https://localhost:44361/</IISAppRootUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>False</UseCustomServer>
+          <CustomServerUrl>
+          </CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\Microsoft.ApplicationInsights.DependencyCollector.2.10.0\build\Microsoft.ApplicationInsights.DependencyCollector.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.ApplicationInsights.DependencyCollector.2.10.0\build\Microsoft.ApplicationInsights.DependencyCollector.targets'))" />
+    <Error Condition="!Exists('..\packages\Microsoft.ApplicationInsights.PerfCounterCollector.2.10.0\build\Microsoft.ApplicationInsights.PerfCounterCollector.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.ApplicationInsights.PerfCounterCollector.2.10.0\build\Microsoft.ApplicationInsights.PerfCounterCollector.targets'))" />
+    <Error Condition="!Exists('..\packages\Microsoft.ApplicationInsights.WindowsServer.TelemetryChannel.2.10.0\build\Microsoft.ApplicationInsights.WindowsServer.TelemetryChannel.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.ApplicationInsights.WindowsServer.TelemetryChannel.2.10.0\build\Microsoft.ApplicationInsights.WindowsServer.TelemetryChannel.targets'))" />
+    <Error Condition="!Exists('..\packages\Microsoft.ApplicationInsights.WindowsServer.2.10.0\build\Microsoft.ApplicationInsights.WindowsServer.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.ApplicationInsights.WindowsServer.2.10.0\build\Microsoft.ApplicationInsights.WindowsServer.targets'))" />
+    <Error Condition="!Exists('..\packages\Microsoft.ApplicationInsights.Web.2.10.0\build\Microsoft.ApplicationInsights.Web.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.ApplicationInsights.Web.2.10.0\build\Microsoft.ApplicationInsights.Web.targets'))" />
+    <Error Condition="!Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.3.6.0\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.3.6.0\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.targets'))" />
+  </Target>
+  <PropertyGroup>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+  <Import Project="..\packages\Microsoft.ApplicationInsights.DependencyCollector.2.10.0\build\Microsoft.ApplicationInsights.DependencyCollector.targets" Condition="Exists('..\packages\Microsoft.ApplicationInsights.DependencyCollector.2.10.0\build\Microsoft.ApplicationInsights.DependencyCollector.targets')" />
+  <Import Project="..\packages\Microsoft.ApplicationInsights.PerfCounterCollector.2.10.0\build\Microsoft.ApplicationInsights.PerfCounterCollector.targets" Condition="Exists('..\packages\Microsoft.ApplicationInsights.PerfCounterCollector.2.10.0\build\Microsoft.ApplicationInsights.PerfCounterCollector.targets')" />
+  <Import Project="..\packages\Microsoft.ApplicationInsights.WindowsServer.TelemetryChannel.2.10.0\build\Microsoft.ApplicationInsights.WindowsServer.TelemetryChannel.targets" Condition="Exists('..\packages\Microsoft.ApplicationInsights.WindowsServer.TelemetryChannel.2.10.0\build\Microsoft.ApplicationInsights.WindowsServer.TelemetryChannel.targets')" />
+  <Import Project="..\packages\Microsoft.ApplicationInsights.WindowsServer.2.10.0\build\Microsoft.ApplicationInsights.WindowsServer.targets" Condition="Exists('..\packages\Microsoft.ApplicationInsights.WindowsServer.2.10.0\build\Microsoft.ApplicationInsights.WindowsServer.targets')" />
+  <Import Project="..\packages\Microsoft.ApplicationInsights.Web.2.10.0\build\Microsoft.ApplicationInsights.Web.targets" Condition="Exists('..\packages\Microsoft.ApplicationInsights.Web.2.10.0\build\Microsoft.ApplicationInsights.Web.targets')" />
+  <Import Project="..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.3.6.0\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.targets" Condition="Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.3.6.0\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.targets')" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target> -->
+</Project>
