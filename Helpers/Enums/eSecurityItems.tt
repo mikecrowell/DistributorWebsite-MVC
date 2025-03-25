@@ -1,0 +1,80 @@
+﻿<#@ template debug="false" hostspecific="true" language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ assembly name="System.Xml" #>
+<#@ assembly name="System.Xml.Linq" #>
+<#@ assembly name="System.Data" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="System.Xml" #>
+<#@ import namespace="System" #>
+<#@ import namespace="System.Xml.Linq" #>
+<#@ import namespace="System.Data" #>
+<#@ import namespace="System.Data.SqlClient" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ output extension=".cs" #>
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+
+namespace DistributorWebsite.MVC.WebUI
+{
+	#region "ENUM: eSecurityItem"
+	/// <summary>
+	/// Define the various security item index positions
+	/// </summary>
+	public enum eSecurityItem
+	{			
+	   <#
+			try
+			{
+				Int32 recordID = 0;
+
+				//-- NEW RESULTS --
+				foreach(var item in GetSecurityItems()) 
+				{ 
+					String name = item.Split('|')[0];
+					String id = item.Split('|')[1];
+					String desc = item.Split('|')[2];
+					String separator = (recordID++ == 0 ? "" : ",");
+				#><#= separator #>
+		
+		/// <summary>
+		/// <#= desc #>
+		/// </summary>
+		<#= name #> = <#= id #><#   
+				}  
+			}
+			catch (Exception)
+			{
+				throw;
+			}
+		#>
+	
+	}
+	#endregion
+}
+
+<#+ 
+IEnumerable<string> GetSecurityItems()  
+{ 
+    var connectionString = @"Data Source=sql10-usdev\HCE,49483;Initial Catalog=DistributorWebsite;Integrated Security=True"; 
+ 
+    var commandText = "SELECT REPLACE(SecurityItemName,'|','') AS EntityName, CONVERT(VARCHAR,SecurityIndex) AS EntityID, REPLACE(SecurityItemDescription,'|','') AS EntityDescription FROM vIdentitySecurityItems WITH (NOLOCK) ORDER BY SecurityIndex"; 
+             
+    using(var connection = new SqlConnection(connectionString))         
+    { 
+        connection.Open(); 
+        using(var command = new SqlCommand(commandText, connection)) 
+        using(var reader = command.ExecuteReader()) 
+        { 
+            while (reader.Read()) 
+            {                                                 
+                yield return reader["EntityName"] + "|" + reader["EntityID"] + "|" + reader["EntityDescription"] as string; 
+            }     
+        } 
+    } 
+} 
+ 
+#>

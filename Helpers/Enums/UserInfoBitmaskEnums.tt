@@ -1,0 +1,51 @@
+﻿<#@ template debug="false" hostspecific="true" language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ assembly name="System.Xml" #>
+<#@ assembly name="System.Xml.Linq" #>
+<#@ assembly name="System.Data" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="System.Xml" #>
+<#@ import namespace="System" #>
+<#@ import namespace="System.Xml.Linq" #>
+<#@ import namespace="System.Data" #>
+<#@ import namespace="System.Data.SqlClient" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ output extension=".cs" #>
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+
+namespace DistributorWebsite.MVC.WebUI
+{
+	#region "ENUM: eClientBits"
+	/// <summary>
+	/// Define the various client bit types
+	/// </summary>
+	[Flags]
+	public enum eClientBits
+	{	
+	   Unknown = 0
+	   <#
+		var connectionString = @"Data Source=sql10-usdev\HCE,49483;Initial Catalog=DistributorWebsite;Integrated Security=True";  
+		var commandText = "SELECT Client, ClientBit FROM Clients WITH (NOLOCK) ORDER BY ClientBit"; 
+             
+		using(var connection = new SqlConnection(connectionString))         
+		{ 
+			connection.Open(); 
+			using(var command = new SqlCommand(commandText, connection)) 
+			using(var reader = command.ExecuteReader()) 
+			{ 
+				while (reader.Read()) 
+				{ #>
+	,<#= reader["Client"].ToString() #> = <#= reader["ClientBit"].ToString() #> 
+				  <#
+				}     
+			} 
+		} 
+		#>
+	}
+	#endregion
+}
