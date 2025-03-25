@@ -1,0 +1,363 @@
+﻿@using DistributorWebsite.MVC.WebUI.Models
+@model DistributorWebsite.MVC.WebUI.Models.LandingPageInfoDTO
+@{
+    ViewBag.Title = HCResources.HomePage;
+    Boolean displayGenericMessage = (!Model.HasPerformanceCharts);
+}
+
+@if (Model.ShowSPSetupForm)
+{
+    @Html.Partial("~/Views/Shared/_SPSetup.cshtml", null, new ViewDataDictionary { { "SOURCEGRIDID", "HCDYNAMICGRID_SPSetup" }, { "CANCELTEXT", HCResources.RemindMeLater }, { "ONLYSHOWDCPOPUP", "true" } })
+}
+
+@if (Model.TotalUnreadPrivateMessages.HasValue && Model.TotalUnreadPrivateMessages.Value > 0)
+{
+    <div class="modal modal-styled fade in" id="divUnreadMessages" role="dialog" aria-hidden="false" aria-labelledby="myModalLabel" data-detail-url="">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header modal-header-info">
+                    <button class="close" aria-hidden="true" type="button" data-dismiss="modal"><i class="fa fa-times fa-lg"></i></button>
+                    <h2 style="margin-top: 0; margin-bottom: 0;"><span class="fa fa-envelope"></span>&nbsp;@HCResources.UnreadMessageHeader</h2>
+                </div>
+
+                <div class="modal-body" style="display: block;">
+                    <p>@Html.Raw(HCResources.UnreadMessageText.Replace("[TOTAL]", Model.TotalUnreadPrivateMessages.Value.ToString()))</p>
+                </div>
+                <div class="modal-footer">
+                    <a href="@Url.Action("Messages","Profile")" class="btn btn-info">@HCResources.Yes</a>
+                    <button class="btn btn-default" type="button" data-dismiss="modal">@HCResources.No</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@if (ViewBag.HASLEADS)
+{
+    <div class="text-center">
+        <div style="height:25%; background-color:gold" class="alert">
+            <span class="badge"><h1><strong>@HCResources.Attention</strong></h1></span>
+            <h1><strong> @HCResources.LeadsAvailableMessage</strong></h1>
+        </div>
+    </div>
+}
+
+<div class="content-with-sides">
+
+    <!-- LEFT SIDE LINKS -->
+    <div style="@(Model.Links.ShowLeftColumn ? "" : "display:none;")">
+        @foreach (var link in Model.Links.LeftColumnLinks)
+        {
+            <a href="@(link.Link.StartsWith("~") ? Url.Content(link.Link) : link.Link)" target="@(link.Target)"><img id="@(link.Id)" src="@Url.Content(link.Image)" alt="@(link.Alt)" /></a>
+        }
+        @foreach (var link in Model.Links.RightColumnLinks)
+        {
+            <a href="@(link.Link.StartsWith("~") ? Url.Content(link.Link) : link.Link)" class="visible-small-only" target="@(link.Target)"><img id="@(link.Id)" src="@Url.Content(link.Image)" alt="@(link.Alt)" /></a>
+        }
+    </div>
+
+    <!-- CONTENT -->
+    <div class="container">
+
+        <div class="row">
+            <div class="col-lg-7">
+
+                @if (Model.Announcements != null && Model.Announcements.Count > 0)
+                {
+                    <!-- NEW ANNOUNCEMENTS POSTED WITHIN THE LAST 2 DAYS -->
+                    <div class="hidden-lg">
+                        @foreach (var ann in Model.Announcements.Where(o => o.IsNew))
+                        {
+                            <div class="panel panel-success">
+                                <div class="panel-heading">
+                                    <div class="panelheadervisual">
+                                        <i class="fa @(ann.Priority >= 1 ? "fa-exclamation-circle" : "fa-info-circle")"></i>
+                                    </div>
+                                    <h2 class="panel-title"><strong><span class="badge">@HCResources.New</span> @Html.Raw(ann.Title)</strong></h2>
+                                    @ann.DateFrom.ToShortDateString()
+                                </div>
+                                <div class="panel-body">
+                                    <div>@Html.Raw(ann.Description)</div>
+                                </div>
+                                @if (ann.HasAttachment)
+                                {
+                                    <div class="panel-footer">
+                                        <a href="@(Url.Content("~/Company/Announcement/") + ann.AnnouncementID.ToString())" target="@(ViewBag.UseInlineFiles == true ? "_blank" : "_self")" class="btn btn-success">
+                                            <span class="fa fa-search fa-lg"></span> &nbsp;@HCResources.ViewAttachment
+                                        </a><br />
+                                        <span class="smallgraytext">@ann.AttachmentType - @ann.AttachmentSize</span>
+                                    </div>
+                                }
+                            </div>
+                        }
+                    </div>
+                }
+
+                @if (Model.HasPerformanceCharts)
+                {
+                    <div class="padbottom-sm">
+
+                        @if (Model.HasPriceLevelChart)
+                        {
+                            <div>
+                                @Html.Partial("~/Views/Shared/_PerformanceChart.cshtml", Model.Charts.First(o => o.Tab == "PRICELEVEL"))
+                            </div>
+                        }
+
+                        <!-- Nav tabs -->
+                        <ul class="nav nav-tabs bordered" role="tablist">
+                            <li role="presentation" class="@(ViewBag.DEFAULTCHARTTAB == "VOLUME" ? "active" : "")"><a href="#pcVOLUME" data-type="PERFCHARTTAB" data-chart-group="VOLUME" aria-controls="home" role="tab" data-toggle="tab">@HCResources.SalesVolume</a></li>
+                            <li role="presentation" class="@(ViewBag.DEFAULTCHARTTAB == "ICEBREAKER" ? "active" : "")"><a href="#pcICEBREAKER" data-type="PERFCHARTTAB" data-chart-group="ICEBREAKER" aria-controls="profile" role="tab" data-toggle="tab">@HCResources.Icebreakers</a></li>
+                        </ul>
+
+                        <!-- Tab panes -->
+                        <div class="tab-content">
+                            @if (Model.HasVolumeCharts)
+                            {
+                                <div role="tabpanel" class="tab-pane bordered @(ViewBag.DEFAULTCHARTTAB == "VOLUME" ? "active" : "")" id="pcVOLUME">
+                                    @foreach (var chart in Model.Charts.Where(o => o.Tab == "VOLUME").OrderBy(o => o.TabItemSequence))
+                                    {
+                                        @Html.Partial("~/Views/Shared/_PerformanceChart.cshtml", chart)
+                                    }
+                                </div>
+                            }
+                            @if (Model.HasIcebreakerCharts)
+                            {
+                                <div role="tabpanel" class="tab-pane bordered @(ViewBag.DEFAULTCHARTTAB == "ICEBREAKER" ? "active" : "")" id="pcICEBREAKER">
+                                    @foreach (var chart in Model.Charts.Where(o => o.Tab == "ICEBREAKER").OrderBy(o => o.TabItemSequence))
+                                    {
+                                        @Html.Partial("~/Views/Shared/_PerformanceChart.cshtml", chart)
+                                    }
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
+
+                @if (displayGenericMessage)
+                {
+                    <div class="jumbotron">
+                        <div class="text-center"><img src="@Url.Content(Model.GenericMessageImage)" /></div>
+                        <h2>@HCResources.WelcomeToWebsiteHeader</h2>
+                        <p class="lead">@(Model.GenericMessageText)</p>
+                    </div>
+                }
+            </div>
+            <div class="col-lg-5">
+                <div>
+
+                    @foreach (var ann in Model.Announcements.Where(o => o.IsNew))
+                    {
+                        <div class="panel panel-success hidden-xs hidden-sm hidden-md">
+                            <div class="panel-heading">
+                                <div class="panelheadervisual">
+                                    <i class="fa @(ann.Priority >= 1 ? "fa-exclamation-circle" : "fa-info-circle")"></i>
+                                </div>
+                                <h2 class="panel-title"><strong><span class="badge">@HCResources.New</span> @Html.Raw(ann.Title)</strong></h2>
+                                @ann.DateFrom.ToShortDateString()
+                            </div>
+                            <div class="panel-body">
+                                <div>@Html.Raw(ann.Description)</div>
+                            </div>
+                            @if (ann.HasAttachment)
+                            {
+                                <div class="panel-footer">
+                                    <a href="@(Url.Content("~/Company/Announcement/") + ann.AnnouncementID.ToString())" target="@(ViewBag.UseInlineFiles == true ? "_blank" : "_self")" class="btn btn-success">
+                                        <span class="fa fa-search fa-lg"></span> &nbsp;@HCResources.ViewAttachment
+                                    </a><br />
+                                    <span class="smallgraytext">@ann.AttachmentType - @ann.AttachmentSize</span>
+                                </div>
+                            }
+                        </div>
+                    }
+
+                    @foreach (var ann in Model.Announcements.Where(o => !o.IsNew))
+                    {
+                        <div class="panel @(ann.Priority >= 1 ? "panel-danger" : "panel-info")">
+                            <div class="panel-heading">
+                                <div class="panelheadervisual">
+                                    <i class="fa @(ann.Priority >= 1 ? "fa-exclamation-circle" : "fa-info-circle")"></i>
+                                </div>
+                                <h2 class="panel-title"><strong>@Html.Raw(ann.Title)</strong></h2>
+                                @ann.DateFrom.ToShortDateString()
+                            </div>
+                            <div class="panel-body">
+                                <div>@Html.Raw(ann.Description)</div>
+                            </div>
+                            @if (ann.HasAttachment)
+                            {
+                                <div class="panel-footer">
+                                    <a href="@(Url.Content("~/Company/Announcement/") + ann.AnnouncementID.ToString())" target="@(ViewBag.UseInlineFiles == true ? "_blank" : "_self")" class="btn btn-primary">
+                                        <span class="fa fa-search fa-lg"></span> &nbsp;@HCResources.ViewAttachment
+                                    </a><br />
+                                    <span class="smallgraytext">@ann.AttachmentType - @ann.AttachmentSize</span>
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- RIGHT SIDE LINKS -->
+    <div style="@(Model.Links.ShowRightColumn ? "" : "display:none;")">
+        @foreach (var link in Model.Links.RightColumnLinks)
+        {
+            <a href="@(link.Link.StartsWith("~") ? Url.Content(link.Link) : link.Link)" target="@(link.Target)"><img id="@(link.Id)" src="@Url.Content(link.Image)" alt="@(link.Alt)" /></a>
+        }
+    </div>
+</div>
+
+<div class="row" style="clear: both; display: none;">
+    <div class="col-lg-7">
+
+        @if (Model.Announcements != null && Model.Announcements.Count > 0)
+        {
+            <div class="hidden-lg">
+                @foreach (var ann in Model.Announcements.Where(o => o.DateFrom >= DateTime.Now.AddDays(-2)))
+                {
+                    <div class="panel @(ann.Priority >= 1 ? "panel-danger" : "panel-info")">
+                        <div class="panel-heading">
+                            <div class="panelheadervisual">
+                                <i class="fa @(ann.Priority >= 1 ? "fa-exclamation-circle" : "fa-info-circle")"></i>
+                            </div>
+                            <h2 class="panel-title"><strong>@Html.Raw(ann.Title)</strong></h2>
+                            @ann.DateFrom.ToShortDateString()
+                        </div>
+                        <div class="panel-body">
+                            <div>@Html.Raw(ann.Description)</div>
+                        </div>
+                        @if (ann.HasAttachment)
+                        {
+                            <div class="panel-footer">
+                                <a href="@(Url.Content("~/Company/Announcement/") + ann.AnnouncementID.ToString())" target="@(ViewBag.UseInlineFiles == true ? "_blank" : "_self")" class="btn btn-primary">
+                                    <span class="fa fa-search fa-lg"></span> &nbsp;@HCResources.ViewAttachment
+                                </a><br />
+                                <span class="smallgraytext">@ann.AttachmentType - @ann.AttachmentSize</span>
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+        }
+    </div>
+    <div class="col-lg-4">
+        @foreach (var ann in Model.Announcements)
+        {
+            <div class="panel @(ann.Priority >= 1 ? "panel-danger" : "panel-info")">
+                <div class="panel-heading">
+                    <div class="panelheadervisual">
+                        <i class="fa @(ann.Priority >= 1 ? "fa-exclamation-circle" : "fa-info-circle")"></i>
+                    </div>
+                    <h2 class="panel-title"><strong>@Html.Raw(ann.Title)</strong></h2>
+                    @ann.DateFrom.ToShortDateString()
+                </div>
+                <div class="panel-body">
+                    <div>@Html.Raw(ann.Description)</div>
+                </div>
+                @if (ann.HasAttachment)
+                {
+                    <div class="panel-footer">
+                        <a href="@(Url.Content("~/Company/Announcement/") + ann.AnnouncementID.ToString())" target="@(ViewBag.UseInlineFiles == true ? "_blank" : "_self")" class="btn btn-primary">
+                            <span class="fa fa-search fa-lg"></span> &nbsp;@HCResources.ViewAttachment
+                        </a><br />
+                        <span class="smallgraytext">@ann.AttachmentType - @ann.AttachmentSize</span>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+    @*<div class="col-lg-1">
+            <div class="row">
+                <div class="col-xs-3 col-lg-12 padbottom-sm"><img src="~/Content/images/University.jpg" /></div>
+                <div class="col-xs-3 col-lg-12 padbottom-sm"><img src="~/Content/images/SASButton.jpg" /></div>
+                <div class="col-xs-3 col-lg-12 padbottom-sm"><img src="~/Content/images/SASMXButton.jpg" /></div>
+                <div class="col-xs-3 col-lg-12 padbottom-sm"><img src="~/Content/images/4in14Button.jpg" /></div>
+            </div>
+        </div>*@
+</div>
+
+<div ng-app="HCE">
+    @using (Html.BeginCustomDynamicForm<AnnouncementDTO>(DistributorWebsite.MVC.WebUI.Helpers.Application.Instance.APIS.DistributorWebAPI, "Popups", Constants.DYNAMICFORM, additionalTableClasses: "invisible", autoInit: false))
+    {
+        <div class="dynamic-search-table ng-cloak" data-defaultsort="DateFrom desc" style="padding-top: 5px;">
+        </div>
+    }
+
+    @if (Model.ShowSPSetupForm)
+    {
+        using (Html.BeginCustomDynamicForm<AnnouncementDTO>(DistributorWebsite.MVC.WebUI.Helpers.Application.Instance.APIS.DistributorWebAPI, "SPSetup", Constants.DYNAMICFORM, autoInit: false))
+        {
+            <div class="dynamic-search-table ng-cloak" data-defaultsort="DateFrom desc" style="padding-top: 5px;">
+            </div>
+        }
+    }
+</div>
+
+@section scripts {
+
+    @Scripts.Render("~/bundles/Pages/Home/Index")
+
+    @if (Model.ShowSPSetupForm)
+    {
+        @Scripts.Render("~/bundles/Pages/Profile/SalespersonSetup")
+    }
+
+    <script type="text/javascript">
+	 <!--
+		$(function () {
+
+            @if (Model.TotalUnreadPrivateMessages.HasValue && Model.TotalUnreadPrivateMessages.Value > 0)
+            {
+                @Html.Raw(@"$(""#divUnreadMessages"").modal('show');");
+            }
+
+            @if (Model.HasPerformanceCharts)
+            {
+                foreach (var chart in Model.Charts.OrderBy(o => o.Tab).ThenBy(o => o.TabItemSequence))
+                {
+                    @(Html.Raw(String.Format(@"HCE.PERFCharts.QueueChart(""{0}"",{1},""{2}"",""{3}"",""{4}"",""{5}"",""{6}"",[{7}],{8},""{9}"","""", ""{10}"",""{11}"",""{12}"",""{13}"",""{14}"");" + Environment.NewLine,
+                                    chart.Tab,
+                                    chart.DaysInPeriod,
+                                    "CHART" + chart.PerformanceChartType + chart.TotalType,
+                                    chart.TitleXAxis,
+                                    chart.TitleYAxis,
+                                    chart.TitleLegend,
+                                    chart.TitleLegendGoal,
+                                    chart.TotalValues,
+                                    chart.TotalTarget.ToString(System.Globalization.CultureInfo.CreateSpecificCulture("en-US")),
+                                    chart.Color,
+                                    chart.AmountDisplayType,
+                                    ViewBag.CurrentLanguage.ToString(),
+                                    chart.TitleSub,
+                                    chart.TitleSubFGColor,
+                                    chart.TitleSubBGColor)));
+                }
+
+                @(Html.Raw(@"HCE.PERFCharts.LoadCharts(""PRICELEVEL"");"));
+
+                if (ViewBag.DEFAULTCHARTTAB == "VOLUME")
+                {
+                    @(Html.Raw(@"HCE.PERFCharts.LoadCharts(""VOLUME"");"));
+                }
+                else if (ViewBag.DEFAULTCHARTTAB == "ICEBREAKER")
+                {
+                    @(Html.Raw(@"HCE.PERFCharts.LoadCharts(""ICEBREAKER"");"));
+                }
+            }
+
+            @if (!Model.ShowSPSetupForm && Model.HasPopupAnnouncements && DistributorWebsite.MVC.WebUI.Helpers.Common.CanUserAccessSecurityItem(eSecurityItem.mnuAnnouncements) && !DistributorWebsite.MVC.WebUI.Helpers.CookieHelper.HasDisplayedPopupsForEntity(ViewBag.CurrentEntity))
+            {
+               @("HCE.Popups.GetPopups();")
+            }
+
+            @if (Model.ShowSPSetupForm)
+            {
+                @("HCE.SPSetup.InitializeSetupForm();")
+            }
+        });
+
+	 //-->
+    </script>
+}

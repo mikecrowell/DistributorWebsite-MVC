@@ -1,0 +1,28 @@
+﻿@model DistributorWebsite.MVC.WebUI.Models.EmailVerificationResultDTO
+@{
+    ViewBag.Title = "VerifyEmail";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div style="max-width: 600px; margin-left: auto; margin-right: auto;">    
+    <div class="panel @(Model.PanelCSS) text-left">
+        <div class="panel-body">
+            <div class="text-center" style="padding-bottom: 15px;"><img src="@Url.Content("~/Content/images/LOGOHycite.png")" alt="Hy Cite Enterprises, LLC" /></div>
+            <div>@Html.Raw(Model.Message)</div>
+            @if (Model.ShowDocusignMessage)
+            {
+            <div class="well" style="background: none; background-color: #336699; color: white; margin-bottom: 1px;">
+                <div class="text-center padbottom"><img src="~/Content/images/docInvite-white.png" width="50" height="50" /></div>
+                <div>@Model.DocusignMessage</div>
+            </div>
+            <div class="text-right smallgraytext">@HCResources.PoweredBy.ToLower() <img src="~/Content/images/Email_PowerByLogo.png" /></div>
+            }
+        </div>
+    </div>
+</div>
+
+@section csslinks {
+    @Styles.Render("~/Content/HCCSSLOGIN")
+}
+
+

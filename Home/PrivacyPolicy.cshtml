@@ -1,0 +1,58 @@
+﻿@using DistributorWebsite.MVC.WebUI.Models
+@{
+    ViewBag.Title = HCResources.PrivacyPolicy;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1 class="HC-page-header">@ViewBag.Title</h1>
+
+<div ng-app="HCE">
+    @if (ViewBag.Client == "MX")
+    {
+        <div>@Html.Raw(@HCResources.PrivacyPolicyMXClient)</div>
+    }
+    else if (ViewBag.Client == "BA")
+    {
+        <div>@Html.Raw(@HCResources.PrivacyPolicyBAClient)</div>
+    }
+    else if (ViewBag.Client == "PE")
+    {
+        <div>@Html.Raw(@HCResources.PrivacyPolicyPEClient)</div>
+    }
+    else if (ViewBag.Client == "CO")
+    {
+        <div>@Html.Raw(@HCResources.PrivacyPolicyCOClient)</div>
+    }
+    else if (ViewBag.Client == "BZ")
+    {
+        <div>@Html.Raw(@HCResources.PrivacyPolicyBZClient)</div>
+    }
+    else if (ViewBag.Client == "DR")
+    {
+        <div>@Html.Raw(@HCResources.PrivacyPolicyDRClient)</div>
+    }
+    else if (ViewBag.Client == "EC")
+    {
+        <div>@Html.Raw(@HCResources.PrivacyPolicyECClient)</div>
+    }
+    else
+    {
+        <div>@Html.Raw(@HCResources.PrivacyPolicyHCClient)</div>
+    }
+
+
+</div>
+
+
+@section scripts {
+
+    <script type="text/javascript">
+	 <!--
+
+		$(function () {
+			//HCE.DynamicDisplay.InitializeDynamicSearch();
+		});
+
+	 //-->
+    </script>
+}

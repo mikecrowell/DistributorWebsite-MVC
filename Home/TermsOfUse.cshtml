@@ -1,0 +1,25 @@
+﻿@using DistributorWebsite.MVC.WebUI.Models
+@{
+    ViewBag.Title = HCResources.TermsOfUse;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1 class="HC-page-header">@ViewBag.Title</h1>
+
+<div ng-app="HCE">
+    @Html.Raw(@HCResources.TermsOfUserDescription)
+</div>
+
+
+@section scripts {
+
+    <script type="text/javascript">
+	 <!--
+
+		$(function () {
+			//HCE.DynamicDisplay.InitializeDynamicSearch();
+		});
+
+	 //-->
+    </script>
+}
