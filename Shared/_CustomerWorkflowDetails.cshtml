@@ -1,0 +1,389 @@
+﻿@using DistributorWebsite.MVC.WebUI.Models
+@model DistributorWebsite.MVC.WebUI.Models.CustomerWorkflowNoteDTO
+@{ 
+    bool ShowCreditReportLinks = false;
+
+    if ((ViewBag.ShowCBReportLinks != null) && ((Boolean)ViewBag.ShowCBReportLinks == true))
+    {
+        ShowCreditReportLinks = true;
+    }
+
+    bool AllowPayments = true;
+
+    if ((ViewBag.HIDEPAYMENTS != null) && ((Boolean)ViewBag.HIDEPAYMENTS == true))
+    {
+        AllowPayments = false;
+    }
+}
+<div class="panel HC-panel-det ng-cloak" data-type="HCDYNAMICDET" data-container="HCDYNAMICGRID_CustomerWorkflow" ng-show="showdetails">
+    <div class="panel-heading">
+        <div class="btn-group pull-right">
+            <a href="#" class="btn btn-default" onclick="HCE.Page.CloseDetailWindow(this)"><span class="fa fa-close fa-lg"></span></a>
+        </div>
+        <h1>@HCResources.OrderNo: {{ entity.OrderNo }}</h1>
+    </div>
+    <div class="panel-body">
+
+        <div style="padding-top: 5px;">
+            <div class="row detailsection even hidden-sm hidden-md hidden-lg">
+                <div class="col-sm-12 itemdetail">
+                    <h2 style="padding-top: 0; padding-bottom: 0;">{{ entity.CustomerName }}</h2>
+                    <span class="small">{{ entity.OrderDate | hcdate }}</span><br />
+                    <span class="label orderstatus ng-class:[ entity.OrderStatus.toLowerCase() ]">{{ entity.ActivityStage }} - {{ entity.OrderStatus }}</span>
+                </div>
+            </div>
+            <div class="row detailsection even hidden-xs">
+                <div class="col-sm-8 col-md-6 padbottom">
+                    <div class="row">
+                        <div class="col-md-12 itemheader">@HCResources.Customer:</div>
+                        <div class="col-md-12 itemdetail">{{ entity.CustomerName }}</div>
+                    </div>
+                </div>
+                <div class="col-sm-4 col-md-6 padbottom">
+                    <div class="row">
+                        <div class="col-md-12 itemheader">@HCResources.CustomerNo:</div>
+                        <div class="col-md-12 itemdetail">{{ entity.CustomerNo }}</div>
+                        <div class="col-md-12 itemheader" ng-hide="entity.ExternalCustomerNo == null || entity.ExternalCustomerNo == ''">@HCResources.ExternalCustomerNo:</div>
+                        <div class="col-md-12 itemdetail" ng-hide="entity.ExternalCustomerNo == null || entity.ExternalCustomerNo == ''">{{ entity.ExternalCustomerNo }}</div>
+                    </div>
+                </div>
+            </div>
+            <div class="row detailsection even hidden-xs">
+                <div class="col-sm-4 col-md-3">
+                    <div class="row padbottom">
+                        <div class="col-md-12 itemheader">@HCResources.OrderNo:</div>
+                        <div class="col-md-12 itemdetail">{{ entity.OrderNo }}</div>
+                    </div>
+                </div>
+                <div class="col-sm-4 col-md-3">
+                    <div class="row padbottom">
+                        <div class="col-md-12 itemheader">@HCResources.Date:</div>
+                        <div class="col-md-12 itemdetail">{{ entity.OrderDate | hcdate }}</div>
+                    </div>
+                </div>
+                <div class="col-sm-4 col-md-3">
+                    <div class="row padbottom">
+                        <div class="col-md-12 itemheader">@HCResources.Status:</div>
+                        <div class="col-md-12 itemdetail"><span class="label orderstatus ng-class:[ entity.OrderStatus.toLowerCase() ]">{{ entity.ActivityStage }} - {{ entity.OrderStatus }}</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Nav tabs -->
+        <ul id="custtablist" class="nav nav-tabs" role="tablist">
+            <li role="presentation"><a data-type="CUSTWFTAB" id="btnShowWFDetails" href="#wfdetails" aria-controls="wfdetails" role="tab" data-toggle="tab">@HCResources.Details</a></li>
+            <li role="presentation" ng-hide="entity.CustomerWorkflowNotes == null || entity.CustomerWorkflowNotes.length <= 0"><a data-type="CUSTWFTAB" id="btnShowWFNotes" href="#wfnotes" aria-controls="wfnotes" role="tab" data-toggle="tab">@HCResources.Notes</a></li>
+            @if (AllowPayments && DistributorWebsite.MVC.WebUI.Helpers.Common.CanUserAccessSecurityItem(eSecurityItem.opMakeCustomerWorkflowPayments))
+            {
+                <li role="presentation" ng-hide="@(ViewBag.APPLYPAYMENTSNGHIDE.ToString())"><a data-type="CUSTWFTAB" id="btnShowCCPayments" href="#ccpayments" aria-controls="ccpayments" role="tab" data-toggle="tab">@HCResources.Payments</a></li>
+            }
+        </ul>
+
+        <!-- Tab panes -->
+        <div class="tab-content">
+
+            <!-- WORKFLOW DETAILS -->
+            <div role="tabpanel" class="tab-pane" id="wfdetails" style="padding-top: 10px;">
+                <div>
+
+                    <div class="row detailsection odd">
+                        <div class="col-sm-12">
+                            <h2><i class="fa fa-user"></i> &nbsp;@HCResources.CustomerInformation</h2>
+                        </div>
+                        <div class="col-sm-8 col-md-6 padbottom">
+                            <div class="row">
+                                <div class="col-md-12 itemheader">@HCResources.Customer:</div>
+                                <div class="col-md-12">
+                                    <address>
+                                        <strong>{{ entity.CustomerName }}</strong><br />
+                                        <span ng-bind-html="entity.CustomerAddress | hcaddress"></span>
+                                    </address>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4 col-md-6 padbottom">
+                            <div class="row">
+                                <div class="col-md-12 itemheader">@HCResources.CustomerNo:</div>
+                                <div class="col-md-12 itemdetail">{{ entity.CustomerNo }}</div>
+                                <div class="col-md-12 itemheader" ng-hide="entity.ExternalCustomerNo == null || entity.ExternalCustomerNo == ''">@HCResources.ExternalCustomerNo:</div>
+                                <div class="col-md-12 itemdetail" ng-hide="entity.ExternalCustomerNo == null || entity.ExternalCustomerNo == ''">{{ entity.ExternalCustomerNo }}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row detailsection odd">
+                        <div class="col-sm-4 col-md-3">
+                            <div class="row">
+                                <div class="col-md-12 itemheader">@HCResources.HomePhone:</div>
+                                <div class="col-md-12 itemdetail" ng-bind-html="entity.HomePhone | hcphone:'':'':true"></div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4 col-md-3" ng-hide="entity.WorkPhone == null || entity.WorkPhone == ''">
+                            <div class="row">
+                                <div class="col-md-12 itemheader">@HCResources.WorkPhone:</div>
+                                <div class="col-md-12 itemdetail" ng-bind-html="entity.WorkPhone | hcphone:'':'':true"></div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4 col-md-3">
+                            <div class="row">
+                                <div class="col-md-12 itemheader">@HCResources.CellPhone:</div>
+                                <div class="col-md-12 itemdetail" ng-bind-html="entity.MobilePhone | hcphone:'cell':'':true"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    @if (ShowCreditReportLinks)
+                    {
+                        <div class="row detailsection odd" ng-show="entity.HasCustCreditReport === true || entity.HasCosignorCreditReport === true">
+                            <div class="col-xs-12">
+                                <button ng-hide="entity.HasCustCreditReport !== true" type="button" class="btn btn-primary" data-type="VIEWCBREPORT" data-cb-type="CUST" data-cb-orderno="{{entity.OrderNo}}" data-cb-customerno="{{entity.CustomerNo}}" data-cb-client="{{entity.Client}}">@HCResources.CustomerCreditReport <span class="fa fa-file-pdf-o"></span></button>
+                                <button ng-hide="entity.HasCosignorCreditReport !== true" type="button" class="btn btn-primary" data-type="VIEWCBREPORT" data-cb-type="COS" data-cb-orderno="{{entity.OrderNo}}" data-cb-customerno="{{entity.CustomerNo}}" data-cb-client="{{entity.Client}}">@HCResources.CosignorCreditReport <span class="fa fa-file-pdf-o"></span></button>
+                            </div>
+                        </div>
+                    }
+
+                    <div class="row detailsection even">
+                        <div class="col-sm-12">
+                            <h2><i class="fa fa-folder"></i> &nbsp;@HCResources.OrderInformation</h2>
+                        </div>
+                        <div class="col-sm-4 col-md-3">
+                            <div class="row padbottom">
+                                <div class="col-md-12 itemheader">@HCResources.OrderNo:</div>
+                                <div class="col-md-12 itemdetail">{{ entity.OrderNo }}</div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4 col-md-3">
+                            <div class="row padbottom">
+                                <div class="col-md-12 itemheader">@HCResources.Date:</div>
+                                <div class="col-md-12 itemdetail">{{ entity.OrderDate | hcdate }}</div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4 col-md-3">
+                            <div class="row padbottom">
+                                <div class="col-md-12 itemheader">@HCResources.Status:</div>
+                                <div class="col-md-12 itemdetail"><span class="label orderstatus ng-class:[ entity.OrderStatus.toLowerCase() ]">{{ entity.ActivityStage }} - {{ entity.OrderStatus }}</span></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row detailsection even">
+                        <div class="col-sm-4 col-md-3">
+                            <div class="row padbottom" ng-hide="entity.ExternalOrderNo == null || entity.ExternalOrderNo == ''">
+                                <div class="col-md-12 itemheader">@HCResources.ExternalOrderNo:</div>
+                                <div class="col-md-12 itemdetail">{{ entity.ExternalOrderNo }}</div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4 col-md-3">
+                            <div class="row padbottom">
+                                <div class="col-md-12 itemheader">@HCResources.AccountType:</div>
+                                <div class="col-md-12 itemdetail">{{ entity.OrderType }}</div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4 col-md-3">
+                            <div class="row padbottom">
+                                <div class="col-md-12 itemheader">@HCResources.Level:</div>
+                                <div class="col-md-12 itemdetail">{{ entity.FinanceLevel }}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row detailsection even">
+                        <div class="col-sm-4 col-md-3">
+                            <div class="row padbottom">
+                                <div class="col-md-12 itemheader">@HCResources.FolderNo:</div>
+                                <div class="col-md-12 itemdetail">{{ entity.FolderNo }}</div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4 col-md-3">
+                            <div class="row padbottom">
+                                <div class="col-md-12 itemheader">@HCResources.SalesPrice:</div>
+                                <div class="col-md-12 itemdetail" ng-bind-html="entity.SalesPriceJSON | hccurrency:'both':DisplayCurrency:2:true:false"></div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4 col-md-3">
+                            <div class="row padbottom">
+                                <div class="col-md-12 itemheader">@HCResources.IncomeFactor:</div>
+                                <div class="col-md-12 itemdetail"><div ng-bind-html="entity.CreditLimitJSON | hccurrency:'both':DisplayCurrency:2:true:false"></div><span class="label label-danger" ng-hide="entity.OrderStatus.toLowerCase() != 'undecided'"> ** @(HCResources.NotFinalized) **</span></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row detailsection even" ng-hide="entity.ActivityStage !== 'Layaway'">
+                        <div class="col-sm-4 col-md-3">
+                            <div class="row padbottom">
+                                <div class="col-md-12 itemheader">@HCResources.ShipCondition:</div>
+                                <div class="col-md-12 itemdetail">
+                                    <span ng-hide="entity.LayawayShipCondition !== 'FULL'">@HCResources.LayawayFULL</span>
+                                    <span ng-hide="entity.LayawayShipCondition !== 'DISTPRICE'">@HCResources.LayawayDISTRPRICE</span>
+                                    <span ng-hide="entity.LayawayShipCondition === 'DISTPRICE' || entity.LayawayShipCondition === 'FULL'">{{ entity.LayawayShipCondition }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-8 col-md-6">
+                            <div class="row padbottom">
+                                <div class="col-md-12 itemheader">@HCResources.AmountToPayByCustomer:</div>
+                                <div class="col-md-12 itemdetail" ng-bind-html="entity.LayawayCustomerAmountDueJSON | hccurrency:'both':DisplayCurrency:2:true:false"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row detailsection even" ng-hide="entity.DatePaid == null">
+                        <div class="col-sm-4 col-md-3">
+                            <div class="row padbottom">
+                                <div class="col-md-12 itemheader">@HCResources.DatePaid:</div>
+                                <div class="col-md-12 itemdetail">{{ entity.PaymentDate | hcdate }}&nbsp;</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row detailsection even">
+                        <div class="col-md-12">
+                            <div class="row padbottom" ng-hide="entity.SalespersonCode1 == null || entity.SalespersonCode1 == ''">
+                                <div class="col-md-12 itemheader">@HCResources.Salesperson:</div>
+                                <div class="col-md-12 itemdetail">{{ entity.SalespersonCode1 }}-{{ entity.Salesperson1.SalespersonName }}</div>
+                            </div>
+                            <div class="row padbottom" ng-hide="entity.SalespersonCode2 == null || entity.SalespersonCode2 == ''">
+                                <div class="col-md-12 itemheader">@HCResources.Salesperson:</div>
+                                <div class="col-md-12 itemdetail">{{ entity.SalespersonCode2 }}-{{ entity.Salesperson2.SalespersonName }}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row detailsection even">
+                        <div class="col-sm-8 col-md-9">
+                            <div class="row padbottom">
+                                <div class="col-md-12 itemheader">@HCResources.Activity:</div>
+                                <div class="col-md-12 itemdetail"><span ng-hide="entity.ActivityCode == ''"><strong>{{ entity.ActivityCode }}</strong></span></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row detailsection even">
+                        <div class="col-sm-12">
+                            <h2><i class="fa fa-shopping-cart"></i> &nbsp;@HCResources.MerchandiseSummary</h2>
+                        </div>
+                    </div>
+                    <div class="row detailsection even">
+                        <div class="col-sm-12">
+                            <table class="table table-striped table-bordered">
+
+                                <thead>
+                                    <tr class="column-header-row">
+                                        <th><div>#<div></div></div></th>
+                                        <th>@HCResources.Code</th>
+                                        <th class="hidden-sm hidden-xs"><div>@HCResources.Description<div></div></div></th>
+                                        <th><div>@HCResources.Quantity</div></th>
+                                        @*<th class="text-right"><div>@HCResources.Merchandise</div></th>*@
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+                                    <tr ng-repeat="item in entity.CustomerWorkflowItems | orderBy:'LineNumber'">
+                                        <td>{{ item.LineNumber }}</td>
+                                        <td>{{ item.ProductCode }}<span class="hidden-md hidden-lg smallgraytext"><br/>{{ item.ProductDescription }}</span></td>
+                                        <td class="hidden-xs hidden-sm">{{ item.ProductDescription }}</td>
+                                        <td>{{ item.Quantity}}</td>
+                                        @*<td class="text-right" ng-bind-html="item.MerchandiseChargeJSON | hccurrency:'both':DisplayCurrency:2:true:false"></td>*@
+                                    </tr>
+                                </tbody>
+
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- NOTES -->
+            <div role="tabpanel" class="tab-pane" id="wfnotes" style="padding-top: 10px;" ng-hide="entity.CustomerWorkflowNotes == null || entity.CustomerWorkflowNotes.length <= 0">
+
+                <div class="row detailsection odd">
+                    <div class="col-sm-12">
+                        <h2><i class="fa fa-list"></i> &nbsp;@HCResources.OrderNotes</h2>
+                    </div>
+                </div>
+
+                <div class="row detailsection odd">
+                    <div class="col-md-12">
+                        @if ((Boolean)ViewBag.CANENTERNOTES)
+                        {
+                            <div id="CustomerNoteEntryForm" class="textmessagebox user" ng-hide="entity.NewNotesEnabled != true || entity.CustomerWorkflowNotes.length <= 0">
+                                <form action="@(DistributorWebsite.MVC.WebUI.Helpers.Application.Instance.APIS.DistributorWebAPI)CustomerWorkflowNotes" data-type="HCCUSTOMFORM" data-callback="HCE.Page.HandleFormCallbacks" data-callback-source="CUSTOMERNOTE">
+                                    <input type="hidden" data-type="HCFORMVALUE" data-model="IsMailNote" value="false" />
+                                    <input type="hidden" data-type="HCFORMVALUE" data-model="OrderNo" value="{{ entity.OrderNo }}" />
+                                    <input type="hidden" data-type="HCFORMVALUE" data-model="Client" value="{{ entity.Client }}" />
+                                    @Html.TextAreaFor(o => o.Note, new { @class = "form-control nomax", placeholder = HCResources.TypeMessageHere, maxlength = 2000, ng_model = "CustomerNote", data_model = "Note", data_type = "HCFORMVALUE", rows = 3 })
+                                    @Html.ValidationMessageFor(o => o.Note)
+                                    <p><button type="submit" class="btn btn-primary" ng-disabled="CustomerNote == null || CustomerNote == ''">@HCResources.Send &nbsp;<span class="fa fa-envelope fa-lg"></span></button></p>
+                                </form>
+                            </div>
+                        }
+                        <div ng-repeat="note in customerNotes = (entity.CustomerWorkflowNotes | filter: { IsMailNote:false } | orderBy:'-NoteDate')">
+                            <div class="textmessagebox" ng-class="note.Source == 'H' ? 'hycite' : 'user'">
+                                <p>{{ note.Note }}</p>
+                                <div class="info">
+                                    {{ note.NoteDate | hcdatetime}}<span ng-hide="note.Source == 'H'"><br /><strong>{{ note.SourceCode}}</strong> ({{note.Username}})</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row detailsection odd">
+                    <div class="col-sm-12">
+                        <h2><i class="fa fa-list"></i> &nbsp;@HCResources.MailNotes</h2>
+                    </div>
+                </div>
+
+                <div class="row detailsection odd">
+                    <div class="col-md-12">
+                        @if ((Boolean)ViewBag.CANENTERNOTES)
+                        {
+                            <div id="MailNoteEntryForm" class="textmessagebox user" ng-hide="entity.NewMailNotesEnabled != true || entity.CustomerWorkflowNotes.length <= 0">
+                                <form action="@(DistributorWebsite.MVC.WebUI.Helpers.Application.Instance.APIS.DistributorWebAPI)CustomerWorkflowNotes" data-type="HCCUSTOMFORM" data-callback="HCE.Page.HandleFormCallbacks" data-callback-source="MAILNOTE">
+                                    <input type="hidden" data-type="HCFORMVALUE" data-model="IsMailNote" value="true" />
+                                    <input type="hidden" data-type="HCFORMVALUE" data-model="OrderNo" value="{{ entity.OrderNo }}" />
+                                    <input type="hidden" data-type="HCFORMVALUE" data-model="Client" value="{{ entity.Client }}" />
+                                    @Html.TextAreaFor(o => o.Note, new { @class = "form-control nomax", placeholder = HCResources.TypeMessageHere, maxlength = 2000, ng_model = "CustomerNote", data_model = "Note", data_type = "HCFORMVALUE", rows = 3 })
+                                    @Html.ValidationMessageFor(o => o.Note)
+                                    <p><button type="submit" class="btn btn-primary" ng-disabled="CustomerNote == null || CustomerNote == ''">@HCResources.Send &nbsp;<span class="fa fa-envelope fa-lg"></span></button></p>
+                                </form>
+                            </div>
+                        }
+                        <div ng-repeat="note in customerNotes = (entity.CustomerWorkflowNotes | filter: { IsMailNote:true } | orderBy:'-NoteDate')">
+                            <div class="textmessagebox" ng-class="note.Source == 'H' ? 'hycite' : 'user'">
+                                <p>{{ note.Note }}</p>
+                                <div class="info">
+                                    {{ note.NoteDate | hcdatetime}}<span ng-hide="note.Source == 'H'"><br /><strong>{{ note.SourceCode}}</strong> ({{note.Username}})</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                @if ((Boolean)ViewBag.CANENTERNOTES)
+                {
+                    <div class="row detailsection odd" ng-hide="entity.HasNewOrderNotes == false">
+                        <div class="col-md-12">
+                            <br />
+                            <form id="frmMarkNotesAsRead" action="" data-root-action="@(DistributorWebsite.MVC.WebUI.Helpers.Application.Instance.APIS.DistributorWebAPI)CustomerWorkflow(Client='[Client]',OrderNo=[OrderNo])/Default.MarkAllNotesAsRead" data-type="HCCUSTOMFORM" data-callback="HCE.Page.HandleFormCallbacks" data-callback-source="MARKASREAD">
+                                <p><button type="submit" class="btn btn-primary">@HCResources.MarkAllAsRead &nbsp;<span class="fa fa-check-square-o fa-lg"></span></button></p>
+                            </form>
+                            <br />
+                        </div>
+                    </div>
+                }
+            </div>
+
+            @if (AllowPayments && DistributorWebsite.MVC.WebUI.Helpers.Common.CanUserAccessSecurityItem(eSecurityItem.opMakeCustomerWorkflowPayments))
+            {                
+                <!-- PAYMENTS -->
+                <h1>{{ HCE.CCPayments.LoadedHistory }}</h1>
+                <div role="tabpanel" class="tab-pane" id="ccpayments" style="padding-top: 10px;" ng-hide="@(ViewBag.APPLYPAYMENTSNGHIDE.ToString())">
+                    <div>
+                        @Html.Partial("~/Views/Shared/_CCPaymentEntry.cshtml", (CreditCardPaymentDTO)ViewBag.CCPaymentEntry)
+                    </div>
+                </div>
+            }
+
+        </div>
+
+    </div>
+
+    <div class="panel-footer text-right"><a href="#" class="btn btn-default" onclick="HCE.Page.CloseDetailWindow(this)">@HCResources.Close <span class="fa fa-close"></span></a></div>
+</div>

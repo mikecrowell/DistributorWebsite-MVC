@@ -1,0 +1,55 @@
+﻿@model System.Collections.Generic.List<DistributorWebsite.MVC.WebUI.Helpers.IMenuItem>
+@using DistributorWebsite.MVC.WebUI.Models
+
+<div id="menu" class="hidden-print">
+    <div class="panel list-group">
+        <a id="HIDESIDENAV" href="#" class="list-group-item HC-side-nav" data-cancollapse="true">&nbsp;<span class="fa fa-lg fa-close pull-right"></span></a>
+        <a id="MENUHOMEPAGE" href="@Url.Action("Index","Home")" class="list-group-item HC-side-nav">@HCResources.HomePage <span class="fa fa-home pull-right"></span></a>
+        @foreach (DistributorWebsite.MVC.WebUI.Helpers.IMenuItem tab in Model)
+        {
+            if (tab.ItemName.ToUpper() == "TABINCITE")
+            {
+                <a href="#" id="MENU@(tab.ItemName)" class="list-group-item HC-side-nav@(!String.IsNullOrWhiteSpace(tab.CSSSelectedClass) ? " " + tab.CSSSelectedClass : "")@(tab.IsSelected ? " active" : "")" data-toggle="collapse" data-target="#MENU@(tab.SecurityIndex)" data-parent="#menu">@(tab.ItemText) <div class="pull-right hc-fa-incite"></div></a>
+            }
+            else
+            {
+                if (tab.ItemName.Equals("tabSalesLeadAdministration") && ViewBag.HASLEADS)
+                {
+                    <a href="#" id="MENU@(tab.ItemName)" style="background-color:gold;border-bottom-color:yellow;border-bottom-width:thick" class="list-group-item HC-side-nav@(!String.IsNullOrWhiteSpace(tab.CSSSelectedClass) ? " " + tab.CSSSelectedClass : "")@(tab.IsSelected ? " active" : "")" data-toggle="collapse" data-target="#MENU@(tab.SecurityIndex)" data-parent="#menu"><span style="color:black">@(tab.ItemText) <span class="@(!String.IsNullOrWhiteSpace(tab.CSSIcon) ? tab.CSSIcon + " " : "")pull-right"></span></span></a>
+                }
+                else
+                {
+                    <a href="#" id="MENU@(tab.ItemName)" class="list-group-item HC-side-nav@(!String.IsNullOrWhiteSpace(tab.CSSSelectedClass) ? " " + tab.CSSSelectedClass : "")@(tab.IsSelected ? " active" : "")" data-toggle="collapse" data-target="#MENU@(tab.SecurityIndex)" data-parent="#menu">@(tab.ItemText)<span class="@(!String.IsNullOrWhiteSpace(tab.CSSIcon) ? tab.CSSIcon + " " : "")pull-right"></span></a>
+                }
+            }
+
+            if (tab.Children.Count > 0)
+            {
+                <div id="MENU@(tab.SecurityIndex)" class="sublinks collapse@(tab.IsSelected ? " in default" : "")">
+                    @foreach (DistributorWebsite.MVC.WebUI.Helpers.IMenuItem menuItem in tab.Children)
+                    {
+                        string display = "";
+
+                        if (menuItem.ItemName == "mnu0to30" && DistributorWebsite.MVC.WebUI.Helpers.CookieHelper.Total0to30Accounts <= 0)
+                        {
+                            display = "display: none;";
+                        }
+                        else if (menuItem.ItemName == "mnuRepoLetters" && DistributorWebsite.MVC.WebUI.Helpers.CookieHelper.TotalRepurchaseLetterAccounts <= 0)
+                        {
+                            display = "display: none;";
+                        }
+
+                        if (menuItem.ItemName.Equals("mnuPossibleLeads") && ViewBag.HASLEADS)
+                        {
+                            <a id="lnk@(menuItem.ItemName)" style="@(display);background-color:gold;border-bottom-color:yellow;border-bottom-width:thick" class="list-group-item small@(menuItem.IsSelected ? " active" : "")" href="@(menuItem.StaticLink)" target="@(menuItem.ShowInNewWindow ? "_blank" : "")"><span style="color:black">@Html.Raw(menuItem.ItemText)</span></a>
+                        }
+                        else
+                        {
+                            <a id="lnk@(menuItem.ItemName)" style="@(display)" class="list-group-item small@(menuItem.IsSelected ? " active" : "")" href="@(menuItem.StaticLink)" target="@(menuItem.ShowInNewWindow ? "_blank" : "")">@Html.Raw(menuItem.ItemText)</a>
+                        }
+                    }
+                </div>
+            }
+        }
+    </div>
+</div>

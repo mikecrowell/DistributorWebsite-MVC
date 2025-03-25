@@ -1,0 +1,26 @@
+﻿@using DistributorWebsite.MVC.WebUI.Models
+@{ 
+    string gridName = this.ViewData.ContainsKey("SOURCEGRIDID") ? this.ViewData["SOURCEGRIDID"].ToString() : "HCDYNAMICGRID_Customers";
+}
+<div class="modal modal-styled fade in" id="OrderDetailPopup" role="dialog" aria-hidden="false" aria-labelledby="myModalLabel" data-detail-url="" data-type="HCDYNAMICDET" data-container="@gridName">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header modal-header-info">
+                <button class="close" aria-hidden="true" type="button" data-dismiss="modal"><i class="fa fa-times fa-lg"></i></button>
+                <h1 style="margin-top: 0; margin-bottom: 0;">@HCResources.OrderNo: {{ OrderDetails.OrderNo }}</h1>
+                <div>
+                    <span class="hc-hidden-xs">@HCResources.Client: </span><strong>{{ entity.Client }}</strong> / <span class="hc-hidden-ss">@HCResources.Distributor: </span><strong>{{ entity.DistributorNo }}</strong> <span ng-hide="entity.SalespersonCode === null || entity.SalespersonCode === ''"> / <span class="hc-hidden-ss">@HCResources.Salesperson: </span><strong>{{ entity.SalespersonCode }}</strong></span>
+                </div>
+            </div>
+
+            <!-- ORDER HISTORY -->
+            <div class="modal-body" id="CustomerOrders" style="display: block;">
+                @Html.Partial("~/Views/Shared/_OrderDetails.cshtml", null, new ViewDataDictionary { { "AngularEntity", "OrderDetails" } })
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-default" type="button" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+

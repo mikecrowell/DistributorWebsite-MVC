@@ -1,0 +1,142 @@
+﻿<!--------------------->
+<!-- SCAN FILE MODAL -->
+<!--------------------->
+<div class="modal modal-styled fade" id="scandocmodal" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="ScanUpload" aria-hidden="true" data-type="HCDYNAMICSUB" data-container="HCDYNAMICGRID_MobileOrders" data-handler="@(Url.Content("~/API/ProcessScannerRequest"))" data-text-scanningpage="Scanning page " data-text-uploading="Uploading image " data-text-reading="Reading image " data-key="@(Guid.NewGuid().ToString())">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header modal-header-primary">
+                <button class="close" aria-hidden="true" type="button" onclick="HCE.Scanner.CloseScannerModal();"><i class="fa fa-times fa-lg"></i></button>
+                <h1 style="margin-top: 0; margin-bottom: 0;"><span class="fa fa-file-o fa-lg"></span> &nbsp;@HCResources.ScanDocument</h1>
+            </div>
+            <div class="modal-body">
+
+                <!-- SCANNER INITIALIZING -->
+                <div id="scanINITIALIZING" class="well well-lg">
+                    <div class="text-center">
+                        <span style="font-size: 3rem;"><span class="fa fa-spinner fa-lg fa-spin"></span></span><br /><br />
+                        <span id="scanInitializingText">Initializing Scanner Interface...</span>
+                        <span id="scanInitializingRefreshText" style="display: none;">Searching for scanners...</span>
+                    </div>
+                </div>
+
+                <!-- UTILITY DOWNLOAD LINK -->
+                <div id="scanDOWNLOADUTILITY" style="display: none;">
+                    <div class="well well-lg" style="margin-bottom: 2px;">
+                        <div class="text-center"><h2>Please complete one-time setup</h2></div>
+                        <p id="scanOLDCLIENT" style="display: none;">Your scanning client is outdated and needs to be upgraded to work with this website. Please click on the Download button below to install the latest version.</p>
+                        <p id="scanNOCLIENT" style="display: none;">You will need to install a small utility program onto your computer in order to scan directly to the website. Please click on the Download link below to install it.</p>
+                        <br />
+                        <div class="line-divided" style="margin: 8px;">
+                            <div><span class="fa fa-download"></span><br />Download</div>
+                            <div class="divider"></div>
+                            <div><span class="fa fa-laptop"></span><br />Install</div>
+                            <div class="divider"></div>
+                            <div><span class="fa fa-file-o"></span><br />Scan</div>
+                        </div>
+                        <div class="text-center" style="padding-top: 5px">
+                            <a id="scanDOWNLOADLINK" data-root-url="@Url.Content("~/WingScan/")" href="" class="btn btn-success" style="font-size: 14pt;">@HCResources.Download &nbsp;<span class="fa fa-download fa-lg"></span></a>
+                        </div>
+                    </div>
+                    <div class="smallgraytext">
+                        <span class="fa fa-info-circle"></span> Please refresh your browser after the utility has been installed on your computer.
+                    </div>
+                </div>
+
+                <!-- SCAN INTERFACE -->
+                <div id="scanINTERFACE" style="display: none;">
+                    <div class="form-group row">
+                        <div class="col-xs-12">
+                            <label>Select a scanner:</label>
+                            <div id="scannerSelectNoScanners" style="display: none;">
+                                <span class="smallgrantext"><span class="fa fa-info-circle"></span> No scanners available</span><br /><br />
+                                <button type="button" data-type="REFRESHSCANNERS" class="btn btn-success">Refresh &nbsp;<span class="fa fa-refresh fa-lg"></span></button>
+                            </div>
+                            <div id="scannerSelectScanner" class="input-group" style="display: none;">
+                                <select class="form-control nomax" disabled="disabled" id="scannerList" name="scannerList" data-select-text="Please select a scanner"></select>
+                                <span class="input-group-btn"><button class="btn btn-default" data-type="REFRESHSCANNERS"><span class="fa fa-refresh text-success"></span></button></span>
+                            </div>
+                        </div>
+                        <div class="col-xs-12" id="scannerListStatus" data-text-settings="Loading settings..." data-text-refreshing="Refreshing scanners..."><span class="fa fa-spinner fa-spin"></span> <span id="scannerListStatusText" class="smallgraytext"></span></div>
+                    </div>
+                    <div id="scanPROPERTIES" style="display: none;">
+
+                        <!-- Nav tabs -->
+                        <ul id="scansettingtabs" class="nav nav-tabs bordered" role="tablist">
+                            <li role="presentation" class="active" data-tab="btnSCANSCETTINGS"><a id="btnSCANSETTINGS" href="#scansettings" aria-controls="scansettings" role="tab" data-toggle="tab" data-type="SCANSETTINGSTAB">@HCResources.Settings</a></li>
+                        </ul>
+
+                        <div class="tab-content">
+
+                            <!-- MOBILE ORDERS -->
+                            <div role="tabpanel" class="tab-pane bordered active" id="scansettings">
+
+                                <div class="form-group row">
+                                    <div class="col-xs-12 padbottom">
+                                        <label>Document source:</label>
+                                        <select class="form-control nomax" id="scanSettingSource">
+                                            <option value="0">Scanner glass</option>
+                                            <option value="1">ADF - Single Sided (Automatic Document Feeder)</option>
+                                            <option value="2">ADF - Double Sides (Automatic Document Feeder)</option>
+                                            <option value="3">Auto Detect</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-xs-12 padbottom" id="scanSettingShowAdvanced">
+                                        <label>Show advanced scanner settings:</label>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" value="" id="chkSHOWADVANCEDSETTINGS">
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-12 padbottom" id="scanSettingVRS">
+                                        <label>Apply VRS (Virtual ReScan Software):</label>
+                                        <div class="form-check">
+                                            <span class="text-danger" style="font-size: 14pt; font-weight:bold;"><span class="fa fa-ban fa-lg"></span></span>
+                                            <input class="form-check-input" type="checkbox" value="" id="chkScanSettingsVRS" style="display: none;">
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                            </div>
+                        </div>
+
+                        <div class="form-group row" style="padding-top: 5px;">
+                            <div class="col-xs-12">
+                                <button type="button" id="btnSCANNOW" class="btn btn-success">Scan Document(s) Now &nbsp;<span class="fa fa-file-o fa-lg atala-scan-button atala-ui-button"></span></button>
+                                <button type="button" id="btnABORTSCAN" class="btn btn-danger">Abort Scan &nbsp;<span class="fa fa-times fa-lg"></span></button>
+                            </div>
+                            <div class="col-xs-12" style="padding-top: 5px; display: none;" id="scanStatus">
+                                <span class="fa fa-spinner fa-spin"></span> &nbsp;<span id="scanStatusText" data-text-scanning="Scanning page " data-text-initialize="Initializing..." data-text-starting="Starting..." data-text-uploading="Uploading image " data-text-reading="Reading image " data-text-finishing="Completing..."></span> <span id="scanStatusPageNumber"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SCANNER ERROR  -->
+                <div id="scanERROR" style="display: none;">
+                    <div class="alert alert-danger">
+                        <h2 style="margin-top: 0">
+                            <span class="fa fa-exclamation-circle"></span>&nbsp;
+                            <span data-display="INVALIDBROWSER" style="display: none;">BROWSER NOT SUPPORTED</span>
+                            <span data-display="NOTWAIN" style="display: none;">SCANNING NOT SUPPORTED</span>
+                            <span data-display="NOVRSLICENSE" style="display: none;">VRS NOT SUPPORTED</span>
+                            <span data-display="NOLICENSE" style="display: none;">SCANNING NOT SUPPORTED</span>
+                            <span data-display="SCANNERLIST" style="display: none;">ERROR GETTING SCANNERS</span>
+                            <span data-display="ERROR" style="display: none;">@HCResources.Error.ToUpper()</span>
+                        </h2>
+                        <span data-display="INVALIDBROWSER" style="display: none;">We're sorry - your browser isn't currently supported by the scan to web utility this page uses. Please try again with a different browser.</span>
+                        <span data-display="NOTWAIN" style="display: none;">TWAIN is not currently installed on this computer and is required in order to use the scanning functionality.</span>
+                        <span data-display="NOVRSLICENSE" style="display: none;">VRS (Virtual ReScan Software) is not currently supported on this device. VRS has been disabled - please try again.</span>
+                        <span data-display="NOLICENSE" style="display: none;">Web scanning is not currently licensed to run on this website. <span class="fa fa-lock"></span></span>
+                        <span data-display="SCANNERLIST" style="display: none;">An error occured while trying to get the list of available scanners on your computer. Please reload the page or click on the refresh button to try again.</span>
+                        <span data-display="ERROR" style="display: none;" id="scanERRORMESSAGE"></span>
+                        <div id="scanERRORDETAILS" class="smallgraytext" style="padding: 5px; margin-top: 5px; border: 1px solid #999; background-color: #fff; display: none; border-radius: 5px;"></div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="HCE.Scanner.CloseScannerModal();">@HCResources.Close</button>
+            </div>
+        </div>
+    </div>
+</div>

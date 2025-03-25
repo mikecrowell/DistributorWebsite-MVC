@@ -1,0 +1,34 @@
+﻿<div id="errorDialogModal" class="modal modal-styled fade" style="z-index: 999999">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header modal-header-error">
+                <h3 class="modal-title"><i class="fa fa-exclamation-circle"></i>&nbsp; <span id="errorDialogModalHeader"></span></h3>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-sm-12 col-md-12">
+                        <h2 id="edm_ErrorTitle"></h2>
+                        <p id="edm_ErrorDesc"></p>
+                        <p id="edm_TryAgain">@(HCResources.PleaseTryAgain).</p>
+                        <br />
+                        <a id="edm_LogoutButton" href="@Url.Action("Signout","Home")" class="btn btn-danger">@HCResources.Logout <span class="fa fa-sign-out"></span></a>
+                    </div>
+                </div>
+                @if (DistributorWebsite.MVC.WebUI.Helpers.Application.Instance.ShowErrorDetails) 
+                {
+                    <div id="edm_Details">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h3>@HCResources.Details:</h3>
+                                <p id="edm_ErrorDetails"></p>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">@HCResources.Close</button>
+            </div>
+        </div>
+    </div>
+</div>

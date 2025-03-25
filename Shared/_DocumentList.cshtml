@@ -1,0 +1,24 @@
+﻿<div class="dynamic-search-table ng-cloak" data-defaultsort="DateFrom desc" style="padding-top: 5px; padding-bottom: 15px;">
+    <div class="row-group-a" ng-cloak>
+        <div class="row row-hoverlink row-doc-link" ng-repeat="entity in entities">
+            <a ng-show="entity.Type === 'DOCUMENT'" href="@Url.Content("~/Company/Memo/"){{entity.DocumentID}}" id="{{entity.DocumentCategory}}{{entity.DocumentID}}" target="@(ViewBag.UseInlineFiles == true ? "_blank" : "_self")">
+                <div class="col-md-12">
+                    <div ng-bind-html="entity.DocumentType | hcfiletypeicon"></div>
+                    <div><p><span ng-bind-html="entity.DocumentTitle | to_trusted"></span></p><p class="smalltext">{{entity.DateFrom | hcdate}} &nbsp;<span class="smallgraytext">({{entity.DocumentSize}})</span></p></div>
+                </div>
+            </a>
+            <a ng-show="entity.Type === 'LINK'" href="{{ entity.DocumentDescription }}" target="_blank">
+                <div class="col-md-12">
+                    <div><span class="fa fa-link fa-lg" style="color: #336699"></span></div>
+                    <div><p><span ng-bind-html="entity.DocumentTitle | to_trusted"></span></p><p class="smalltext">{{entity.DateFrom | hcdate}}</p></div>
+                </div>
+            </a>
+            <a ng-show="entity.Type === 'HTML'" class="actionbutton" data-action="DOCUMENTPOPUP" data-actionid="0" data-actionname="" data-Title="{{ entity.DocumentTitle }}" data-Html="{{ entity.DocumentDescription }}" data-Priority="{{ entity.Priority}}">
+                <div class="col-md-12" data-type="DOCUMENTPOPUP">
+                    <div><span class="fa fa-window-restore fa-lg" style="color: #666"></span></div>
+                    <div><p><span ng-bind-html="entity.DocumentTitle | to_trusted"></span></p><p class="smalltext">{{entity.DateFrom | hcdate}}</p></div>
+                </div>
+            </a>
+        </div>
+    </div>
+</div>

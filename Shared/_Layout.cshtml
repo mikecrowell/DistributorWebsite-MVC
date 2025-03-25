@@ -1,0 +1,377 @@
+﻿<!DOCTYPE html>
+@{ 
+    DistributorWebsite.MVC.WebUI.Models.LayoutModel layoutModel;
+
+    //-- INITIALIZE THE LAYOUT MODEL --
+    layoutModel = new DistributorWebsite.MVC.WebUI.Models.LayoutModel(ViewBag);
+
+    string culture = System.Threading.Thread.CurrentThread.CurrentCulture.ToString();
+    string UICulture = System.Threading.Thread.CurrentThread.CurrentUICulture.ToString();
+    string time = DateTime.Now.ToString("HH:mm:ss tt");
+
+    bool forceAlertRefresh = false;
+
+    if (ViewBag.REFRESHALERTS == null || !bool.TryParse(ViewBag.REFRESHALERTS.ToString(), out forceAlertRefresh))
+    {
+        forceAlertRefresh = false;
+    }
+}
+<html>
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta data-details="@(culture)-@(UICulture)-@(time)" />
+    <title>@ViewBag.Title</title>
+    <link href="@Url.Content("~/Content/font-awesome.min.css")" type="text/css" rel="stylesheet" />
+
+    @RenderSection("headerlinks", false)
+
+    @Styles.Render("~/Content/HCCSS")
+
+    @if (layoutModel.IsInternal)
+    {
+        @Styles.Render("~/Content/HCCSSINTERNAL")
+    }
+    @RenderSection("csslinks", false)
+    <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+    @Scripts.Render("~/Javascript/LTIE9")
+    <![endif]-->
+
+    <script type='text/javascript'>
+        var appInsights=window.appInsights||function(config)
+        {
+            function r(config){ t[config] = function(){ var i = arguments; t.queue.push(function(){ t[config].apply(t, i)})} }
+            var t = { config:config},u=document,e=window,o='script',s=u.createElement(o),i,f;for(s.src=config.url||'//az416426.vo.msecnd.net/scripts/a/ai.0.js',u.getElementsByTagName(o)[0].parentNode.appendChild(s),t.cookie=u.cookie,t.queue=[],i=['Event','Exception','Metric','PageView','Trace','Ajax'];i.length;)r('track'+i.pop());return r('setAuthenticatedUserContext'),r('clearAuthenticatedUserContext'),config.disableExceptionTracking||(i='onerror',r('_'+i),f=e[i],e[i]=function(config, r, u, e, o) { var s = f && f(config, r, u, e, o); return s !== !0 && t['_' + i](config, r, u, e, o),s}),t
+        }({
+            instrumentationKey:'@(layoutModel.AppInsightsKey)'
+        });
+
+        window.appInsights=appInsights;
+        appInsights.trackPageView();
+    </script>
+</head>
+<body data-api-url="@DistributorWebsite.MVC.WebUI.Helpers.Application.Instance.APIS.DistributorWebAPI">
+    <div class="print-user-header visible-print">
+        @User.Identity.Name<span><br />@(ViewBag.DisplayName)</span>
+    </div>
+
+    <div id="HCLG" class="HC-visible-lg"></div>
+    <div id="HCMD" class="HC-visible-md"></div>
+    <div id="HCSM" class="HC-visible-sm"></div>
+    <div id="HCXS" class="HC-visible-xs"></div>
+
+    @Html.Partial("~/Views/Shared/_ErrorDialog.cshtml")
+
+    @RenderSection("dialogs", false)
+
+    <div class="modal modal-styled alert-modal fade" id="UserMessagePopup" role="dialog" aria-hidden="false" aria-labelledby="myModalLabel">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header" style="border-bottom: 0;">
+                    <button class="close" aria-hidden="true" type="button" data-dismiss="modal"><i class="fa fa-times fa-lg"></i></button>
+                    <h1 style="margin-top: 0; margin-bottom: 0;"><span class="fa fa-bell"></span> &nbsp;@HCResources.Alerts</h1>
+                    @if (layoutModel.CanViewPrivateMessages)
+                    {
+                        <div class="text-right header-link">
+                            <a href="@Url.Action("Messages","Profile")" type="button" class="btn btn-default" style="color: black;"><span class="fa fa-envelope"></span> @HCResources.PrivateMessages <span class="badge" id="NewMessageCount">0</span></a>
+                        </div>
+                    }
+                </div>
+                <div class="modal-body" data-root-url="@Url.Content("~")" id="UserAlerts">
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-default" type="button" data-dismiss="modal">@HCResources.Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if ((Boolean)ViewBag.ShowSelectEntities == true && ((Dictionary<String, String>)ViewBag.UserEntities).Keys.Count > 2)
+    {
+        <div class="modal modal-styled alert-modal fade" id="EntitySelectModal" role="dialog" aria-hidden="false" aria-labelledby="myModalLabel">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header" style="border-bottom: 0;">
+                        <button class="close" aria-hidden="true" type="button" data-dismiss="modal"><i class="fa fa-times fa-lg"></i></button>
+                        <h1 style="margin-top: 0; margin-bottom: 0;"><span class="fa fa-user"></span> &nbsp;@HCResources.SelectDifferentEntity</h1>
+                    </div>
+                    <div class="modal-body" style="background-color: white;">
+                        @if (((Dictionary<String, String>)ViewBag.UserEntities).Keys.Any(o => o.Length == 8))
+                        {
+                            <h2>@HCResources.Salespeople:</h2>
+                            <table class="table table-bordered table-striped table-hover">
+                                @foreach (String key in ((Dictionary<String, String>)ViewBag.UserEntities).Keys.Where(o => o.Length == 8))
+                                {
+                                    <tr class="@(key == (String)ViewBag.CurrentEntity ? "highlight" : "")" data-type="SWITCHENTITY" data-url="@Url.Action("SwitchEntity", "Home", new { entitycode = key })">
+                                        <td>
+                                            <div>
+                                                <strong>@(key)</strong><br /><span>@(((Dictionary<String, String>)ViewBag.UserEntities)[key])</span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </table>
+                        }
+
+                        @if (((Dictionary<String, String>)ViewBag.UserEntities).Any(o => o.Key.Length == 5 && !o.Value.Contains("(XDISTR)")))
+                        {
+                            <h2>@HCResources.Distributors:</h2>
+                            <table class="table table-bordered table-striped table-hover">
+                                @foreach (var item in ((Dictionary<String, String>)ViewBag.UserEntities).Where(o => o.Key.Length == 5 && !o.Value.Contains("(XDISTR)")))
+                                {
+                                    <tr class="@(item.Key == (String)ViewBag.CurrentEntity ? "highlight" : "")" data-type="SWITCHENTITY" data-url="@Url.Action("SwitchEntity", "Home", new { entitycode = item.Key })">
+                                        <td>
+                                            <div>
+                                                <strong>@(item.Key)</strong><br /><span>@(item.Value)</span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </table>
+                        }
+
+                        @if (((Dictionary<String, String>)ViewBag.UserEntities).Any(o => o.Key.Length == 5 && o.Value.Contains("(XDISTR)")))
+                        {
+                            <h2>X @HCResources.Distributor:</h2>
+                            <table class="table table-bordered table-striped table-hover">
+                                @foreach (var item in ((Dictionary<String, String>)ViewBag.UserEntities).Where(o => o.Key.Length == 5 && o.Value.Contains("(XDISTR)")))
+                                {
+                                    <tr class="@(item.Key == (String)ViewBag.CurrentEntity ? "highlight" : "")" data-type="SWITCHENTITY" data-url="@Url.Action("SwitchEntity", "Home", new { entitycode = item.Key })">
+                                        <td>
+                                            <div>
+                                                <strong>@(item.Key)</strong><br /><span>@Html.Raw(item.Value.Replace(" (XDISTR)"," <span class='smallgraytext'>(XDISTR)</span>"))</span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </table>
+                        }
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-default" type="button" data-dismiss="modal">@HCResources.Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    <div class="HC-nav-top @(ViewBag.CurrentBrand) hidden-print">
+        @if (!layoutModel.UseEmptyContainer)
+        {
+            <div class="section-username">
+                <div class="alert-notify" data-type="SHOWUSERMESSAGES">
+                    <div class="alert-indicator">
+                        <div class="alert-counter" style="@(layoutModel.TotalAlerts <= 0 ? "display: none;" : "")" id="UserMessageCount">@(layoutModel.TotalAlerts.ToString())</div>
+                        <div class="alert-icon @(layoutModel.TotalAlerts > 0 ? "blink" : "disabled")" id="UserMessageIndicator"><span class="fa fa-bell"></span></div>
+                    </div>
+                </div>
+
+                <div class="user-info">
+                    <div class="text-right">
+                        @if (layoutModel.CanViewProfile)
+                        {
+                            @:<a href="@Url.Action("UserProfile", "Profile")">
+                                @:  <span class="fa fa-gear"></span>
+                            }
+                        @Html.Raw(ViewBag.UserNameHTML)
+                        @if (layoutModel.CanViewProfile)
+                        {
+                        @: </a>
+                    }
+                    </div>
+                    <div class="text-right">@Html.Raw(ViewBag.DisplayNameHTML)</div>
+                </div>
+
+            </div>
+
+            <div class="section-entityinfo">
+                <div>@ViewBag.CurrentEntity</div>
+                <div><span class="fa fa-circle"></span></div>
+                <div>@Html.Raw(ViewBag.CurrentEntityNameHTML)</div>
+            </div>
+        }
+        <div>
+            @*<a href="@Url.Action("Index","Home")">
+                <div id="HOMELINK">
+                </div>
+                </a>*@
+            @if (!layoutModel.UseEmptyContainer)
+            {
+                <h1 style="color: white; font-size: 24pt; font-weight: bold">@ViewBag.Title</h1>
+            }
+
+            @if (!layoutModel.HideMenu)
+            {
+                <div class="pull-left HC-hidden-lg HC-hidden-md HC-hidden-sm section-menu">
+                    <button id="btnSHOWMENU" class="btn btn-hcnav HC-side-nav" data-source="menu" data-cancollapse="true"><span class="fa fa-bars"></span> @HCResources.Menu</button>
+                </div>
+            }
+
+            <div class="pull-right">
+                <div class="btn-group btn-logout section-logout">
+                    @if (!layoutModel.HideLanguageLinks)
+                    {
+                        <div class="btn-group" role="group">
+                            <button type="button" class="btn btn-hcnav dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <span class="hidden-xs"><span class="fa fa-language"></span> </span>@Html.Raw(ViewBag.CurrentLanguageHTML)
+                                <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-right">
+                                <li class="@(layoutModel.Language == "en" ? " active" : "")"><a href="@ViewBag.LINKEN" data-action="changelanga" data-lang="en">English</a></li>
+                                <li class="@(layoutModel.Language == "es" ? " active" : "")"><a href="@ViewBag.LINKES" data-action="changelanga" data-lang="es">Español</a></li>
+                                <li class="@(layoutModel.Language == "pt" ? " active" : "")"><a href="@ViewBag.LINKPT" data-action="changelanga" data-lang="pt">Português</a></li>
+                            </ul>
+                        </div>
+                    }
+                    @*<div class="btn-group" role="group">
+                            <button type="button" class="btn btn-hcnav dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="">
+                                <span class="fa fa-gear fa-lg"></span> <span class="HC-hidden-md HC-hidden-sm HC-hidden-xs HC-hidden-ss">&nbsp;@HCResources.Settings</span>
+                                <span class="sr-only">Toggle Dropdown</span>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-right">
+                                <li><a href="@Url.Action("Settings","Home")"><span class="fa fa-gears"></span> &nbsp;@HCResources.Settings</a></li>
+                            </ul>
+                        </div>*@
+                        <div class="btn-group" role="group">
+                            @if (!layoutModel.UseEmptyContainer)
+                            {
+                                if ((Boolean)ViewBag.ShowSelectEntities == true && ((Dictionary<String, String>)ViewBag.UserEntities).Keys.Count > 2)
+                                {
+                                    <button type="button" class="btn btn-hcnav" data-toggle="modal" data-target="#EntitySelectModal">
+                                        <span class="fa fa-user"></span> <strong>@ViewBag.CurrentEntity</strong>
+                                        <span class="caret"></span>
+                                    </button>
+                                }
+                                else
+                                {
+                                    <button type="button" class="btn btn-hcnav dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <span class="fa fa-user"></span> <strong>@ViewBag.CurrentEntity</strong>
+                                        <span class="caret"></span>
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-right">
+                                        <li class="dropdown-header h1">@Html.Raw(ViewBag.CurrentEntityNameHTML)</li>
+
+                                        @if ((Boolean)ViewBag.ShowSwitchEntity == true)
+                                        {
+                                            <li><a href="@ViewBag.LogoutURL"><span class="fa fa-exchange fa-lg"></span> &nbsp;@(HCResources.SelectDifferentEntity)</a></li>
+                                        }
+
+                                        @if ((Boolean)ViewBag.ShowSelectEntities == true)
+                                        {
+                                            <li role="separator" class="divider"></li>
+                                            <li class="dropdown-header h2">@(HCResources.SelectDifferentEntity):</li>
+                                            foreach (String key in ((Dictionary<String, String>)ViewBag.UserEntities).Keys)
+                                            {
+                                                <li class="select-entity@(key == (String)ViewBag.CurrentEntity ? " active" : "")"><a href="@Url.Action("SwitchEntity", "Home", new { entitycode = key })"><span>@(key)</span><br /><span>@(((Dictionary<String, String>)ViewBag.UserEntities)[key])</span></a></li>
+                                            }
+                                        }
+                                    </ul>
+                                }
+                            }
+                        </div>
+
+                    @if ((!layoutModel.UseEmptyContainer))
+                    {
+                        <button id="logoutButtonID" type="button" class="btn btn-hcnav" onclick="window.location='@ViewBag.LogoutURL'"><span class="hidden-xs">@HCResources.Logout</span><span class="hidden-sm hidden-md hidden-lg">@HCResources.LogoutAbbr</span> &nbsp;<span class="fa fa-sign-out"></span></button>
+                    }
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div class="HC-container">
+        @if (!layoutModel.HideMenu)
+        {
+            <div class="HC-container-left hidden-print">
+                @Html.Partial("~/Views/Shared/_SideNavigationMenu.cshtml", (List<DistributorWebsite.MVC.WebUI.Helpers.IMenuItem>)ViewBag.SideMenu)
+            </div>
+        }
+        <div class="HC-container-middle @(layoutModel.UseEmptyContainer ? "empty" : "")">
+            <div class="container-fluid body-content">
+                @RenderBody()
+
+                @if (!layoutModel.UseEmptyContainer)
+                {
+                    <hr />
+                    <footer>
+                        <p>&copy; @DateTime.Now.Year - Hy Cite Enterprises, LLC | <a href="/Home/TermsOfUse">@HCResources.TermsOfUse</a> | <a href="/Home/PrivacyPolicy">@HCResources.PrivacyPolicy</a></p>  
+                    </footer>
+                }
+            </div>
+        </div>
+        @RenderSection("RightColumn", false)
+
+    </div>
+
+    <div id="MODALSPINNER" data-type="modalspinner" style="z-index: 999999"></div>
+
+    @Scripts.Render(String.Format(@"~/bundles/HCEDDS{0}", layoutModel.Language.ToUpper()))
+
+    <script type="text/javascript">
+    <!--
+        HCE.Entity = "@ViewBag.CurrentEntity";
+        HCE.EntitySPC = "@ViewBag.CurrentSalespersonCode";
+        HCE.EntityCL = "@ViewBag.DefaultClient";
+        HCE.TokenAccCk = "@ViewBag.CurrentAccessTokenRef";
+        HCE.TokenRefCk = "@ViewBag.CurrentRefreshTokenRef";
+        HCE.TokenRefreshURL = "@Url.Action("CheckTokens", "API")";
+        HCE.TokenSwitchURL = "@Url.Action("SwitchEntity", "API")";
+        HCE.ErrorTextURL = "@Url.Action("GetErrorObject", "API")";
+        HCE.AntiForgery = "@Html.AntiForgeryTokenForAjaxPost()";
+        HCE.Language = '@layoutModel.Language';
+        HCE.TimeZone = 'CDT';
+        HCE.AngularFormats = {};
+        HCE.AngularFormats.Date = '@DistributorWebsite.MVC.WebUI.Helpers.CookieHelper.DateFormat';
+        HCE.AngularFormats.DateTime = HCE.AngularFormats.Date + ' hh:mm:ss a';
+        HCE.AngularFormats.Time = 'hh:mm:ss a';
+        HCE.AlertRefreshMinutes = @DistributorWebsite.MVC.WebUI.Helpers.Application.Instance.UserAlertRefreshMinutes;
+
+        HCE.Resources.RemindMeLater = "@HCResources.RemindMeLater";
+        HCE.Resources.DontShowMeAgain = "@HCResources.DontShowAgain";
+        HCE.Resources.IHaveRead = "@HCResources.IHaveReadThisMessage";
+        HCE.Resources.IAgree = "@HCResources.IAgree";
+        HCE.Resources.Close = "@HCResources.Close";
+        HCE.ForceRefreshAlerts = @forceAlertRefresh.ToString().ToLower();
+    //-->
+    </script>
+
+    @Scripts.Render(layoutModel.JSBundle)
+
+    <script type="text/javascript">
+	 <!--
+
+        $(function () {
+
+            //-- RESIZE THE CONTENT TO FILL THE WHOLE PAGE WHEN THE WINDOW RESIZES --
+            $(window).resize(function () {
+
+                var windowHeight;
+                var contentHeight;
+                var footerHeight;
+                var minContentHeight;
+                var headerHeight;
+
+                contentHeight = $('.HC-container').height();
+                windowHeight = $(window).height();
+                headerHeight = $('.HC-nav-top').height();
+                footerHeight = 30;
+
+                minContentHeight = windowHeight - headerHeight - footerHeight;
+
+                if (contentHeight < minContentHeight) {
+                    $('.HC-container').css('height', minContentHeight + 'px');
+                }
+            });
+
+            $(window).trigger('resize');
+        });
+
+
+             //-->
+    </script>
+
+    @RenderSection("scripts", required: false)
+</body>
+</html>

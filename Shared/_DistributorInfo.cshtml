@@ -1,0 +1,377 @@
+﻿@using DistributorWebsite.MVC.WebUI.Models
+@{
+    string gridName = this.ViewData["SOURCEGRIDID"].ToString();
+}
+<div class="modal modal-styled fade in" id="DistDetailPopup" role="dialog" aria-hidden="false" aria-labelledby="DistDetailPopup" data-detail-url="Distributors('[DISTRIBUTORNO]')?$expand=DistributorClients($expand=DistributorAddresses)" data-type="HCDYNAMICDET" data-container="@gridName">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header modal-header-info">
+                <button class="close" aria-hidden="true" type="button" data-dismiss="modal"><i class="fa fa-times fa-lg"></i></button>
+                <h1 style="margin-top: 0; margin-bottom: 0;">@HCResources.Distributor: {{ DistInfoPopup.DistributorNo }}</h1>
+                <div>
+                    <strong>{{ DistInfoPopup.DistributorName}}</strong>
+                </div>
+            </div>
+
+            <!-- ORDER HISTORY -->
+            <div class="modal-body" style="display: block;">
+                <ul id="profile" class="nav nav-tabs bordered hidden-print" role="tablist">
+                   <li role="presentation" ng-show="DistInfoPopup.Clients !== null && DistInfoPopup.Clients.length > 0"><a data-type="DistributorTAB" id="btnClients" data-target="#tabclients" aria-controls="tabclients" role="tab" data-toggle="tab">@HCResources.Contact</a></li>
+                   <li role="presentation"><a id="btnDistDetailTab" data-type="DistributorTAB" id="btnDetails" data-target="#tabdetails" aria-controls="tabdetails" role="tab" data-toggle="tab">@HCResources.Details</a></li>
+                   <li role="presentation" ng-show="DistInfoPopup.Users !== null && DistInfoPopup.Users.length > 0"><a data-type="DistributorTAB" id="btnUsers" data-target="#tabusers" aria-controls="tabusers" role="tab" data-toggle="tab">@HCResources.Users</a></li>
+                </ul>
+                <div class="tab-content ng-cloak">
+
+                    <div role="tabpanel" class="tab-pane bordered always-print detailsection" id="tabclients" style="padding-top: 10px;" ng-show="DistInfoPopup.Clients !== null && DistInfoPopup.Clients.length > 0">
+                        <div class="visible-print">
+                            <h2>@HCResources.ContactInformation</h2>
+                        </div>
+
+                        <div class="detailsection even">
+
+                            <div class="row">
+                                <div class="col-xs-12">
+                                    <div class="row">
+                                        <div class="col-md-12 itemheader">@HCResources.EmailAddress</div>
+                                        <div class="col-md-12 itemdetail"><a ng-href="mailto:{{DistInfoPopup.EmailAddress}}"><span class="fa fa-envelope-square fa-lg"></span>&nbsp;&nbsp;{{DistInfoPopup.EmailAddress}}</a></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row padbottom">
+
+                                <div class="col-xs-12">
+                                    <ul id="clienttabs" class="nav nav-tabs hidden-print ng-class:{'bordered':DistInfoPopup.Clients.length > 1}" role="tablist" ng-hide="DistInfoPopup.Clients === null || DistInfoPopup.Clients.length == 1">
+                                        <li ng-repeat="client in DistInfoPopup.Clients" role="presentation" class="ng-class:{'active':client.Client === DistInfoPopup.Client}"><a data-type="CLIENTTAB" id="btnClient{{ client.Client }}" data-target="#tabclient{{ client.Client}}" aria-controls="tabclient{{ client.Client }}" role="tab" data-toggle="tab">{{ client.Client }}</a></li>
+                                    </ul>
+                                    <div class="tab-content ng-cloak">
+                                        <div ng-repeat="client in DistInfoPopup.Clients" role="tabpanel" class="tab-pane always-print detailsection ng-class:{'active bordered':client.Client === DistInfoPopup.Client && DistInfoPopup.Clients.length > 1,'active':client.Client === DistInfoPopup.Client,'bordered':DistInfoPopup.Clients.length > 1}" id="tabclient{{ client.Client }}" style="padding-top: 10px;">
+                                            <div class="visible-print">
+                                                <h2>{{ client.Client }} - {{ client.ClientName }}</h2>
+                                            </div>
+                                            <div class="detailsection even">
+                                                @*<div class="row padbottom hidden-print" ng-hide="DistInfoPopup.Clients === null || DistInfoPopup.Clients.length > 1">
+                                                    <div class="col-xs-12">
+                                                        <div class="row">
+                                                            <div class="col-md-12 itemheader">@HCResources.Client:</div>
+                                                            <div class="col-md-12 itemdetail">{{ client.Client }} - {{ client.ClientName }}</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="row">
+                                                    <div class="col-sm-12 padbottom" ng-hide="DistInfoPopup.Clients === null || DistInfoPopup.Clients.length > 1">
+                                                        <div class="row">
+                                                            <div class="col-md-12 itemheader">@HCResources.Active:</div>
+                                                            <div class="col-md-12 itemdetail">{{ client.Active | hcboolean }}</div>
+                                                        </div>
+                                                    </div>
+                                                </div>*@
+
+                                                <div class="row">
+                                                    <div class="col-sm-4 col-md-4 col-lg-3 padbottom">
+                                                        <div class="row">
+                                                            <div class="col-md-12 itemheader">@HCResources.HomePhone:</div>
+                                                            <div class="col-md-12 itemdetail" ng-bind-html="client.HomePhone | hcphone:'':'':true"></div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-4 col-md-4 col-lg-3 padbottom">
+                                                        <div class="row">
+                                                            <div class="col-md-12 itemheader">@HCResources.WorkPhone:</div>
+                                                            <div class="col-md-12 itemdetail" ng-bind-html="client.WorkPhone | hcphone:'':'':true"></div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-4 col-md-4 col-lg-3 padbottom">
+                                                        <div class="row">
+                                                            <div class="col-md-12 itemheader">@HCResources.CellPhone:</div>
+                                                            <div class="col-md-12 itemdetail" ng-bind-html="client.MobilePhone | hcphone:'cell':'':true"></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="row" ng-hide="client.MainAddress === null || client.MainAddress === ''">
+                                                    <div class="col-xs-12 padbottom">
+                                                        <div class="row">
+                                                            <div class="col-md-12 itemheader">@HCResources.MainAddress:</div>
+                                                            <div class="col-md-12 itemdetail" ng-bind-html="client.MainAddress | to_trusted "></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="row" ng-hide="client.MailAddress === null || client.MailAddress === ''">
+                                                    <div class="col-xs-12 padbottom">
+                                                        <div class="row">
+                                                            <div class="col-md-12 itemheader">@HCResources.MailAddress:</div>
+                                                            <div class="col-md-12 itemdetail" ng-bind-html="client.MailAddress | to_trusted "></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="row" ng-hide="client.HomeAddress === null || client.HomeAddress === ''">
+                                                    <div class="col-xs-12 padbottom">
+                                                        <div class="row">
+                                                            <div class="col-md-12 itemheader">@HCResources.HomeAddress:</div>
+                                                            <div class="col-md-12 itemdetail" ng-bind-html="client.HomeAddress | to_trusted "></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div role="tabpanel" class="tab-pane bordered always-print detailsection" id="tabdetails" style="padding-top: 10px;">
+                        <div class="visible-print">
+                            <h2>@HCResources.Details</h2>
+                        </div>
+
+                        <div class="detailsection even">
+
+                            <div class="row">
+                                <div class="col-sm-4 col-md-4 col-lg-3 padbottom">
+                                    <div class="row">
+                                        <div class="col-md-12 itemheader">@HCResources.Active:</div>
+                                        <div class="col-md-12 itemdetail">{{ DistInfoPopup.Active | hcboolean }}</div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-4 col-md-4 col-lg-3 padbottom">
+                                    <div class="row">
+                                        <div class="col-md-12 itemheader">@HCResources.Type:</div>
+                                        <div class="col-md-12 itemdetail">
+                                            <span ng-show="DistInfoPopup.Type === 'TD'">@HCResources.TerritoryDirector</span>
+                                            <span ng-show="DistInfoPopup.Type === 'JV'">@HCResources.JointVenture</span>
+                                            <span ng-show="DistInfoPopup.Type === 'MASTER'">@HCResources.TerritoryMaster</span>
+                                            <span ng-show="DistInfoPopup.Type === 'DIST'">@HCResources.Distributor</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-4 col-md-4 col-lg-3 padbottom">
+                                    <div class="row">
+                                        <div class="col-md-12 itemheader">@HCResources.SalespersonCode:</div>
+                                        <div class="col-md-12 itemdetail">{{ DistInfoPopup.SalespersonCode }}</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-sm-4 col-md-4 col-lg-3 padbottom">
+                                    <div class="row">
+                                        <div class="col-md-12 itemheader">@HCResources.League:</div>
+                                        <div class="col-md-12 itemdetail">{{ DistInfoPopup.League }}</div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-4 col-md-4 col-lg-3 padbottom">
+                                    <div class="row">
+                                        <div class="col-md-12 itemheader">@HCResources.Level:</div>
+                                        <div class="col-md-12 itemdetail">{{ DistInfoPopup.Level }}</div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-4 col-md-4 col-lg-3 padbottom">
+                                    <div class="row">
+                                        <div class="col-md-12 itemheader">@HCResources.FCRLevel:</div>
+                                        <div class="col-md-12 itemdetail"><span class="hc-entity-type {{ DistInfoPopup.FCRLevel }}">{{ DistInfoPopup.FCRLevel }}</span></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-xs-12 col-md-6 padbottom">
+                                    <div class="row">
+                                        <div class="col-md-12 itemheader">@HCResources.CompanyName:</div>
+                                        <div class="col-md-12 itemdetail">{{ DistInfoPopup.CompanyName }}</div>
+                                    </div>
+                                </div>
+                                <div class="col-xs-12 col-md-6 padbottom">
+                                    <div class="row">
+                                        <div class="col-md-12 itemheader">@HCResources.EmailAddress:</div>
+                                        <div class="col-md-12 itemdetail">{{ DistInfoPopup.EmailAddress }}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="detailsection even">
+                            <div class="row">
+                                <div class="col-xs-12 col-md-6 padbottom" ng-show="DistInfoPopup.Sponsor !== null && DistInfoPopup.Sponsor !== ''">
+                                    <div class="row">
+                                        <div class="col-md-12 itemheader">@HCResources.Sponsor:</div>
+                                        <div class="col-md-12 itemdetail">{{ DistInfoPopup.Sponsor }} - {{ DistInfoPopup.SponsorName }}</div>
+                                    </div>
+                                </div>
+                                <div class="col-xs-12 col-md-6 padbottom" ng-show="DistInfoPopup.Recruiter !== null && DistInfoPopup.Recruiter !== ''">
+                                    <div class="row">
+                                        <div class="col-md-12 itemheader">@HCResources.Recruiter:</div>
+                                        <div class="col-md-12 itemdetail">{{ DistInfoPopup.Recruiter }} - {{ DistInfoPopup.RecruiterName }}</div>
+                                    </div>
+                                </div>
+                                <div class="col-xs-12 col-md-6 padbottom" ng-show="DistInfoPopup.TerritoryDirector !== null && DistInfoPopup.TerritoryDirector !== ''">
+                                    <div class="row">
+                                        <div class="col-md-12 itemheader">@HCResources.TerritoryDirector:</div>
+                                        <div class="col-md-12 itemdetail">{{ DistInfoPopup.TerritoryDirector }} - {{ DistInfoPopup.TerritoryDirectorName }}</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="detailsection even" ng-hide="DistInfoPopup.Uplines === null || DistInfoPopup.Uplines.length <= 0">
+                            @*<div class="row" ng-show="DistInfoPopup.HasAdminUpline">
+                        <div class="col-md-12 itemheader">@HCResources.AdminUpline:</div>
+                        <div class="col-md-12 itemdetail striped">
+                            <div ng-repeat="dist in DistInfoPopup.Uplines | filter: {TreeType: 'ADMIN'}" class="pad-level pad-level-{{ dist.TreeLevel + 1 }}">
+                                {{ dist.DistributorNo }} - {{ dist.DistributorName }}
+                                <span ng-hide="dist.DistributorType === ''" class="hc-entity-type {{ dist.DistributorType }}">{{ dist.DistributorType }}</span>
+                                <span ng-hide="dist.FCRLevel !== 'ROYAL' && dist.FCRLevel !== 'BLUE'" class="hc-entity-type {{ dist.FCRLevel }}">{{ dist.FCRLevel }}</span><br />
+                                <span class="smallgraytext">{{ dist.CompanyName }}</span>
+                            </div>
+                        </div>
+                    </div>*@
+                            <div class="row" ng-show="DistInfoPopup.HasTerrUpline">
+                                <div class="col-md-12 itemheader">@HCResources.TerritoryUpline:</div>
+                                <div class="col-md-12 itemdetail striped">
+                                    <div ng-repeat="dist in DistInfoPopup.Uplines | filter: {TreeType: 'TERR'}" class="pad-level pad-level-{{ dist.TreeLevel + 1 }}">
+                                        {{ dist.DistributorNo }} - {{ dist.DistributorName }}
+                                        <span ng-hide="dist.DistributorType === ''" class="hc-entity-type {{ dist.DistributorType }}">{{ dist.DistributorType }}</span>
+                                        <span ng-hide="dist.FCRLevel !== 'ROYAL' && dist.FCRLevel !== 'BLUE'" class="hc-entity-type {{ dist.FCRLevel }}">{{ dist.FCRLevel }}</span><br />
+                                        <span class="smallgraytext">{{ dist.CompanyName }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row" ng-show="DistInfoPopup.HasCompUpline">
+                                <div class="col-md-12 itemheader">@HCResources.CompanyUpline:</div>
+                                <div class="col-md-12 itemdetail striped">
+                                    <div ng-repeat="dist in DistInfoPopup.Uplines | filter: {TreeType: 'COMP'}" class="pad-level pad-level-{{ dist.TreeLevel + 1 }}">
+                                        {{ dist.DistributorNo }} - {{ dist.DistributorName }}
+                                        <span ng-hide="dist.DistributorType === ''" class="hc-entity-type {{ dist.DistributorType }}">{{ dist.DistributorType }}</span>
+                                        <span ng-hide="dist.FCRLevel !== 'ROYAL' && dist.FCRLevel !== 'BLUE'" class="hc-entity-type {{ dist.FCRLevel }}">{{ dist.FCRLevel }}</span><br />
+                                        <span class="smallgraytext">{{ dist.CompanyName }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row" ng-show="DistInfoPopup.HasJVUpline">
+                                <div class="col-md-12 itemheader">@HCResources.JVUpline:</div>
+                                <div class="col-md-12 itemdetail striped">
+                                    <div ng-repeat="dist in DistInfoPopup.Uplines | filter: {TreeType: 'JV'}" class="pad-level pad-level-{{ dist.TreeLevel + 1 }}">
+                                        {{ dist.DistributorNo }} - {{ dist.DistributorName }}
+                                        <span ng-hide="dist.DistributorType === ''" class="hc-entity-type {{ dist.DistributorType }}">{{ dist.DistributorType }}</span>
+                                        <span ng-hide="dist.FCRLevel !== 'ROYAL' && dist.FCRLevel !== 'BLUE'" class="hc-entity-type {{ dist.FCRLevel }}">{{ dist.FCRLevel }}</span><br />
+                                        <span class="smallgraytext">{{ dist.CompanyName }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="detailsection even padbottom">
+                            <div class="row">
+                                <div class="col-xs-12">
+                                    <div class="row">
+                                        <div class="col-xs-12 itemheader">@HCResources.Brand:</div>
+                                        <div class="col-xs-12 itemdetail">
+                                            <img ng-hide="DistInfoPopup.Brand !== 'NE'" src="@Url.Content("~/Content/images/HEADERNutraEase.png")" alt="NutraEase" />
+                                            <img ng-hide="DistInfoPopup.Brand !== 'HC'" src="@Url.Content("~/Content/images/LOGOHycite.png")" alt="HyCite" />
+                                            <img ng-hide="DistInfoPopup.Brand !== 'KC'" src="@Url.Content("~/Content/images/HEADERKitchenCharm.png")" alt="Kitchen Charm" />
+                                            <img ng-hide="DistInfoPopup.Brand !== 'RP'" src="@Url.Content("~/Content/images/HEADERRoyalPrestige.png")" alt="Royal Prestige" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+
+                    <div role="tabpanel" class="tab-pane bordered always-print detailsection" id="tabusers" style="padding-top: 10px;">
+                        <div class="visible-print">
+                            <hr />
+                            <h2>@HCResources.Users</h2>
+                        </div>
+
+                        <h3>@HCResources.UsersWithAccessToDistributor</h3>
+
+                        <div class="panel-group" data-type="hcaccordian">
+                            <div ng-repeat="user in DistInfoPopup.Users" class="panel panel-default">
+                                <div class="panel-heading" data-type="hcaccordianheader" data-state="collapsed">
+                                    <div class="pull-right">
+                                        <span class="fa fa-chevron-circle-down fa-lg"></span>
+                                    </div>
+                                    <h4 class="panel-title"><span class="fa fa-user"></span> {{ user.FullName }}<br /><span class="smallgraytext">{{ user.UserName }}</span></h4>
+                                </div>
+                                <div class="panel-body" style="display: none;">
+
+                                    <div class="detailsection even">
+                                        <div class="row">
+                                            <div class="col-xs-12">
+                                                <div class="row">
+                                                    <div class="col-md-12 itemheader">@HCResources.Username:</div>
+                                                    <div class="col-md-12 itemdetail">{{ user.UserName }}</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-xs-12">
+                                                <div class="row">
+                                                    <div class="col-md-12 itemheader">@HCResources.Enabled:</div>
+                                                    <div class="col-md-12 itemdetail">{{ user.Enabled | hcboolean }}</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-xs-12">
+                                                <div class="row">
+                                                    <div class="col-md-12 itemheader">@HCResources.Name:</div>
+                                                    <div class="col-md-12 itemdetail">{{ user.FullName }}</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-xs-12">
+                                                <div class="row">
+                                                    <div class="col-md-12 itemheader">@HCResources.EmailAddress:</div>
+                                                    <div class="col-md-12 itemdetail">{{ user.EmailAddress }}</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row" ng-show="user.SalespersonCode !== null && user.SalespersonCode !== ''">
+                                            <div class="col-xs-6 col-md-4">
+                                                <div class="row">
+                                                    <div class="col-md-12 itemheader">@HCResources.Salesperson:</div>
+                                                    <div class="col-md-12 itemdetail">{{ user.SalespersonCode }}</div>
+                                                </div>
+                                            </div>
+                                            <div class="col-xs-6 col-md-4" ng-show="user.DistributorNo !== null && user.DistributorNo !== ''">
+                                                <div class="row">
+                                                    <div class="col-md-12 itemheader">@HCResources.DistributorNo:</div>
+                                                    <div class="col-md-12 itemdetail">{{ user.DistributorNo }}</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row" ng-show="user.SecurityItems !== null && user.SecurityItems.length > 0">
+                                            <div class="col-xs-12">
+                                                <div class="row">
+                                                    <div class="col-xs-12 itemheader">@HCResources.UserAccess:</div>
+                                                    <div class="col-xs-12 itemdetail striped">
+                                                        <div ng-repeat="sec in user.SecurityItems" class="pad-level-{{ sec.SecurityItemLevel }}" style="padding-top: 5px; padding-bottom: 5px;">
+                                                            <span><span class="ng-class:{'fa fa-square-o' : !sec.HasAccess, 'fa fa-check-square-o' : sec.HasAccess}"></span> {{ sec.Description }}</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-default" type="button" data-dismiss="modal">@HCResources.Close</button>
+            </div>
+        </div>
+    </div>
+</div>

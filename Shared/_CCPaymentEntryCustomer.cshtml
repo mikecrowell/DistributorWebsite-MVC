@@ -1,0 +1,73 @@
+﻿@model DistributorWebsite.MVC.WebUI.Models.CreditCardPaymentCustomerDTO
+<div class="modal modal-styled fade" id="modCCPaymentEntry_AddCustomer" role="dialog" aria-hidden="false" aria-labelledby="myModalLabel" data-detail-url="" data-type="HCDYNAMICDET" data-container="HCDYNAMICGRID_CCPayments" style="z-index: 2000;">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header modal-header-primary">
+                <button class="close" aria-hidden="true" type="button" data-dismiss="modal"><i class="fa fa-times fa-lg"></i></button>
+                <h1 style="margin-top: 0; margin-bottom: 0;">@HCResources.AddCustomer</h1>
+            </div>
+
+            <!-- CUSTOMERS -->
+            <div class="modal-body" id="CustomerOrders">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <form method="post" id="frmCCPaymentEntry_AddCustomer">
+
+                            <div class="form-group padbottom">
+                                @Html.LabelFor(o => o.CustomerNo, new { @class = "col-sm-12" })
+                                <div class="col-xs-12 col-sm-8 col-md-6 col-lg-6 padbottom">
+                                    <div class="input-group">
+                                        @Html.TextBoxFor(o => o.CustomerNo, new { id = "CCPaymentEntry_NewCustomerNo", @class = "form-control nomax", ng_model = "CCEntity.AddCustomerNo", maxlength = "8" })
+                                        <span class="input-group-btn">
+                                            <button type="button" id="btnCCPaymentEntry_FindCustomer" class="btn btn-primary" ng-disabled="CCEntity.AddCustomerNo == null || CCEntity.AddCustomerNo.length != 8"><span class="fa fa-search"></span></button>
+                                        </span>
+                                    </div>                                    
+                                    @Html.HCValidationMessageFor(o => o.CustomerNo)
+                                </div>
+                            </div>
+                            <div class="form-group" ng-hide="CCAddCustomer.Name == null">
+                                @Html.LabelFor(o => o.CustomerName, new { @class = "col-sm-12", style = "margin-bottom: 0;" })
+                                <div class="col-sm-12 padbottom">{{ CCAddCustomer.Name }}</div>
+                            </div>
+                            <div class="form-group" ng-hide="CCAddCustomer.Name == null">
+                                <div class="col-xs-6">
+                                    <label style="margin-bottom: 0;">@HCResources.MonthlyPayment</label>                                    
+                                    <div class="padbottom" ng-bind-html="CCAddCustomer.MonthlyPaymentJSON | hccurrency:'both':DisplayCurrency:2:true:false"></div>
+                                </div>
+                                <div class="col-xs-6">
+                                    <label style="margin-bottom: 0;">@HCResources.CurrentBalance</label> 
+                                    <div class="padbottom" ng-bind-html="CCAddCustomer.CurrentBalanceJSON | hccurrency:'both':DisplayCurrency:2:true:false"></div>
+                                </div>
+                            </div>
+                            <div class="form-group padbottom" ng-hide="CCAddCustomer.Name == null">
+                                @Html.LabelFor(o => o.Amount, new { @class = "col-sm-12" })
+                                <div class="col-sm-12 col-md-6 col-lg-4">
+                                    <div data-type="HCCURRENCY">
+                                        <div class="input-group">
+                                            <span class="input-group-addon"><strong>{{ CCEntity.Symbol }}</strong></span>
+                                            @Html.TextBoxFor(o => o.Amount, new { ng_model = "CCAddCustomer.PaymentAmount", id = "CCNewCustomerPaymentAmount", type = "number", min = "0.01", max = "9999999", data_inputtype = "HCCURRENCY", data_currency = "{{ CCEntity.Currency}}", data_decimals = "{{ CCEntity.DecimalSeparator }}", @class = "form-control nomax", placeholder = HCResources.Format + ": ####.##" })
+                                        </div>
+                                        <div ng-hide="CCEntity.Amount === null">
+                                            <span data-type="FORMATTEDTEXT"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-12">@Html.HCValidationMessageFor(o => o.Amount)</div>
+                            </div>
+
+                            <div class="form-group">
+                                <br/>
+                                <div class="col-sm-12">
+                                    <button type="submit" id="CCBTNADDCUSTOMER" class="btn btn-primary" ng-disabled="CCAddCustomer.CustomerNo === null || CCAddCustomer.PaymentAmount == null || CCAddCustomer.PaymentAmount <= 0 || CCAddCustomer.Name == null">@HCResources.Add <span class="fa fa-plus"></span></button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>                
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-default" type="button" data-dismiss="modal">@HCResources.Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>

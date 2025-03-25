@@ -1,0 +1,500 @@
+﻿@model DistributorWebsite.MVC.WebUI.Models.SalespersonProfileDTO
+@{
+    string angularObjectName = this.ViewData.ContainsKey("AngularEntity") ? this.ViewData["AngularEntity"].ToString() : "SPSetup";
+    string container = this.ViewData.ContainsKey("SOURCEGRIDID") ? this.ViewData["SOURCEGRIDID"].ToString() : "HCDYNAMICGRID_SPProfile";
+    string cancelText = this.ViewData.ContainsKey("CANCELTEXT") ? this.ViewData["CANCELTEXT"].ToString() : HCResources.Cancel;
+    bool canEditProfile = this.ViewData.ContainsKey("CANEDITPROFILE") ? bool.Parse(this.ViewData["CANEDITPROFILE"].ToString()) : false;
+    bool onlyShowDCPopup = this.ViewData.ContainsKey("ONLYSHOWDCPOPUP") ? bool.Parse(this.ViewData["ONLYSHOWDCPOPUP"].ToString()) : false;
+    bool canEditName = this.ViewData.ContainsKey("CANEDITNAME") ? bool.Parse(this.ViewData["CANEDITNAME"].ToString()) : false;
+
+    if (ViewBag.YesNoList == null)
+    {
+        //-- YES/NO OPTIONS --
+        List<SelectListItem> yesNoList = new List<SelectListItem>();
+        yesNoList.Add(new SelectListItem() { Text = "", Value = "" });
+        yesNoList.Add(new SelectListItem() { Text = HCResources.Yes, Value = "Y" });
+        yesNoList.Add(new SelectListItem() { Text = HCResources.No, Value = "N" });
+        ViewBag.YesNoList = new SelectList(yesNoList, "Value", "Text");
+    }
+
+    if (ViewBag.EmptyList == null)
+    {
+        //-- EMPTY LIST --
+        List<SelectListItem> emptyList = new List<SelectListItem>();
+        emptyList.Add(new SelectListItem() { Text = "", Value = "" });
+        ViewBag.EmptyList = new SelectList(emptyList, "Value", "Text");
+    }
+
+    if (ViewBag.MonthSelectionList == null)
+    {
+        ViewBag.MonthSelectionList = DistributorWebsite.MVC.WebUI.Helpers.Common.GetMonthSelectList();
+    }
+
+    if (ViewBag.DaySelectionList == null)
+    {
+        ViewBag.DaySelectionList = DistributorWebsite.MVC.WebUI.Helpers.Common.GetNumericSelectList(1, 31, 2);
+    }
+
+    if (ViewBag.BirthYearSelectionList == null)
+    {
+        ViewBag.BirthYearSelectionList = DistributorWebsite.MVC.WebUI.Helpers.Common.GetNumericSelectList(DateTime.Now.AddYears(-100).Year, DateTime.Now.AddYears(-15).Year, reverseOrder: true);
+    }
+
+    bool isInternalLogin = DistributorWebsite.MVC.WebUI.Helpers.Application.Instance.AuthorizationType == eWebAuthType.WINDOWS;
+}
+<div class="modal modal-styled fade in" id="SPDataEntryForm" role="dialog" aria-hidden="false" aria-labelledby="myModalLabel" data-detail-url="" data-type="HCDYNAMICDET" data-container="@(container)" data-success-header="@HCResources.ProfileUpdatedSuccessfully" data-success-msg="@HCResources.ProfileUpdatedSuccessfullyMessage">
+    <div class="modal-dialog modal-lg">
+
+        <!-- MISSING SIGNED SALESPERSON AGREEMENT -->
+        <div class="modal-content" ng-show="(@(onlyShowDCPopup.ToString().ToLower()) === true) && (@(angularObjectName).Client === 'CO' && @(angularObjectName).DocusignDateSent !== null && @(angularObjectName).DocusignDateSigned === null)">
+            <div class="modal-header modal-header-error">
+                <button class="close" aria-hidden="true" type="button" data-dismiss="modal"><i class="fa fa-times fa-lg"></i></button>
+                <h1 style="margin-top: 0; margin-bottom: 0;"><span class="fa fa-exclamation-circle"></span> @HCResources.SignedSalespersonAgreementRequired</h1>
+            </div>
+            <div class="modal-body">
+                <p>@Html.Raw(HCResources.SalespersonAgreementSentA) {{ @(angularObjectName).DocusignDateSent | hcdatetime }} @Html.Raw(HCResources.SalespersonAgreementSentB)</p>
+                <p class="text-danger"><strong>@Html.Raw(HCResources.SalespersonAgreementSentC)</strong></p>
+                <p style="color: #999; font-style: italic;">@Html.Raw(HCResources.SalespersonAgreementSentD)</p>
+            </div>
+            <div class="modal-footer">
+                <div class="pull-right"><button class="btn btn-default" type="button" data-dismiss="modal">@HCResources.Close &nbsp;<span class="fa fa-times fa-lg"></span></button></div>
+            </div>
+        </div>
+
+        <!-- SALESPERSON PROFILE -->
+        <div class="modal-content" ng-show="(@(onlyShowDCPopup.ToString().ToLower()) === false) || (@(canEditProfile.ToString().ToLower()) === true || (@(angularObjectName).Client !== 'CO' || @(angularObjectName).DocusignDateSent === null || @(angularObjectName).DocusignDateSigned !== null))">
+            <div class="modal-header modal-header-primary">
+                <button class="close" aria-hidden="true" type="button" data-dismiss="modal"><i class="fa fa-times fa-lg"></i></button>
+                <h1 style="margin-top: 0; margin-bottom: 0;"><span class="fa fa-address-book"></span> @HCResources.SalespersonProfile</h1>
+                <div>
+                    <span class="hc-hidden-xs">@HCResources.SalespersonCode: </span><strong>{{ @(angularObjectName).SalespersonCode }}</strong>
+                </div>
+            </div>
+
+            <!-- DATA -->
+            <div class="modal-body">
+                <form id="SPSetupForm" method="post">
+
+                    <!-- MISSING INFO ALERT -->
+                    <div ng-hide="!@(angularObjectName).IsMissingInfo || (@(angularObjectName).EmailVerificationDate !== null && @(angularObjectName).DocusignRequired && @(angularObjectName).DocusignDateSigned === null)">
+                        <div class="alert alert-danger">
+                            <span ng-hide="@(angularObjectName).Client !== 'CO'">@Html.Raw(HCResources.COMissingSPInfoMessage)</span>
+                        </div>
+                    </div>
+
+                    <!-- DOCUSIGN REQUIRED -->
+                    <div class="row form-group" ng-hide="@(angularObjectName).EmailVerificationDate === null || !@(angularObjectName).DocusignRequired || @(angularObjectName).DocusignDateSigned !== null">
+                        <div class="col-xs-12">
+                            <div class="alert alert-danger">
+                                <h3 style="margin-top: 0; padding-top: 0;"><span class="fa fa-exclamation-circle"></span> @HCResources.SignedSalespersonAgreementRequired</h3>
+                                <div class="padbottom-sm">
+                                    <p style="font-style: italic;">@HCResources.SignedSalespersonAgreementMessage</p>
+                                    <p>@HCResources.SalespersonAgreementClickOn</p>
+                                    <button type="button" data-type="SPSETUPSENDDOCUSIGN" data-ver-type="SP" data-ver-id="{{ (@angularObjectName).SalespersonCode }}" class="btn btn-danger" ng-hide="(@angularObjectName).DocusignDateSent !== null">@HCResources.SendSalespersonAgreement &nbsp;<span class="fa fa-envelope"></span></button>
+                                    <div class="smallgraytext" style="color: #333;" ng-hide="@(angularObjectName).Client === 'CO' && @(angularObjectName).DocusignDateSent !== null">@HCResources.PoweredBy.ToLower() <img src="~/Content/images/Email_PowerByLogo.png" /></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div ng-hide="@(angularObjectName).Client === 'CO' && @(angularObjectName).DocusignDateSent !== null && @(canEditProfile.ToString().ToLower()) === false">
+
+                        <!-- NEW SALESPERSON NAME -->
+                        <div class="row form-group">
+                            <div class="col-xs-12" style="padding-bottom: 0;"><label for="FirstName" style="margin-bottom: 0;">@HCResources.FullName:</label></div>
+                            <div class="col-xs-12 smallgraytext hidden-sm hidden-md hidden-lg" style="padding-bottom: 0;">@HCResources.NewSalespersonsNameNote</div>
+                            <div class="inline-text-group inline-text-group-xs">
+                                <div class="col-sm-3">
+                                    @Html.LabelFor(o => o.FirstName, new { @class = "sub-label" })
+                                    @Html.TextBoxFor(o => o.FirstName, new { @class = "form-control nomax alphaonly", id = "txtFIRSTNAME", maxlength = 25, ng_model = angularObjectName + ".FirstName", ng_disabled = angularObjectName + ".DisableEditName && (" + canEditName.ToString().ToLower() + " === false)" })
+                                    @Html.ValidationMessageFor(o => o.FirstName)
+                                </div>
+                                <div class="col-sm-2">
+                                    @Html.LabelFor(o => o.MiddleName, new { @class = "sub-label" })
+                                    @Html.TextBoxFor(o => o.MiddleName, new { @class = "form-control nomax alphaonly", maxlength = 25, ng_model = angularObjectName + ".MiddleName", ng_disabled = angularObjectName + ".DisableEditName && (" + canEditName.ToString().ToLower() + " === false)" })
+                                    @Html.ValidationMessageFor(o => o.MiddleName)
+                                </div>
+                                <div class="col-sm-3" id="divPATERNALLASTNAME">
+                                    @Html.LabelFor(o => o.PaternalLastName, new { @class = "sub-label" })
+                                    @Html.TextBoxFor(o => o.PaternalLastName, new { @class = "form-control nomax alphaonly", maxlength = 25, ng_model = angularObjectName + ".PaternalLastName", ng_disabled = angularObjectName + ".DisableEditName && (" + canEditName.ToString().ToLower() + " === false)" })
+                                    @Html.ValidationMessageFor(o => o.PaternalLastName)
+                                </div>
+                                <div class="col-sm-3" id="divMATERNALLASTNAME">
+                                    @Html.LabelFor(o => o.MaternalLastName, new { @class = "sub-label" })
+                                    @Html.TextBoxFor(o => o.MaternalLastName, new { @class = "form-control nomax alphaonly", maxlength = 25, ng_model = angularObjectName + ".MaternalLastName", ng_disabled = angularObjectName + ".DisableEditName && (" + canEditName.ToString().ToLower() + " === false)" })
+                                    @Html.ValidationMessageFor(o => o.MaternalLastName)
+                                </div>
+                                <div class="col-sm-1 padbottom">
+                                    @Html.LabelFor(o => o.Suffix, new { @class = "sub-label" })
+                                    @Html.TextBoxFor(o => o.Suffix, new { @class = "form-control nomax alphaonly", maxlength = 20, ng_model = angularObjectName + ".Suffix", ng_disabled = angularObjectName + ".DisableEditName && (" + canEditName.ToString().ToLower() + " === false)" })
+                                    @Html.ValidationMessageFor(o => o.Suffix)
+                                </div>
+                            </div>
+                            <div class="col-xs-12 smallgraytext hidden-xs">@HCResources.NewSalespersonsNameNote</div>
+                        </div>
+
+                        <!-- VERIFIED EMAIL ADDRESS -->
+                        <div class="row form-group" ng-hide="@(angularObjectName).VerifiedEmailAddress === ''">
+                            <div class="col-xs-12">
+                                <label>Verified Email Address:</label>
+                                <div>{{ @(angularObjectName).VerifiedEmailAddress }}</div>
+                                <div class="label label-success"><span class="fa fa-check-circle-o"></span> @HCResources.VerifiedOn {{ @(angularObjectName).EmailVerificationDate | hcdatetime }}</div>
+                            </div>
+                        </div>
+
+
+                        <!-- NEW SALESPERSON EMAIL ADDRESS (REQUIRED) -->
+                        <div class="row form-group" ng-hide="!@(angularObjectName).Settings.RequireEmail">
+                            <div class="col-sm-12 col-md-10 col-lg-8">
+                                @Html.LabelFor(o => o.EmailAddressRequired)
+                                @Html.TextBoxFor(o => o.EmailAddressRequired, new { @class = "form-control nomax", maxlength = 500, ng_model = angularObjectName + ".EmailAddress", ng_disabled = angularObjectName + ".FixedEmailAddress" })
+                                @Html.HCValidationMessageFor(o => o.EmailAddressRequired)
+                                <div ng-hide="@(angularObjectName).IsPending === false">
+                                    <div class="padbottom-sm" ng-show="@(angularObjectName).EmailVerificationStatus === 'SENT'"><span class="label label-warning"><span class="fa fa-warning"></span> @HCResources.NotVerifiedSentOn {{ @(angularObjectName).EmailVerificationDateSent | hcdatetime }}</span></div>
+                                    <div class="padbottom-sm" ng-show="@(angularObjectName).EmailVerificationStatus === 'NOTSENT'"><span class="label label-danger"><span class="fa fa-exclamation-circle"></span> @HCResources.NotVerifiedNotSent</span></div>
+                                </div>
+                                <div class="smallgraytext text-danger">@HCResources.NoSharedEmail</div>
+                            </div>
+                        </div>
+
+                        <!-- NEW SALESPERSON EMAIL ADDRESS (OPTIONAL) -->
+                        <div class="row form-group" ng-hide="@(angularObjectName).Settings.RequireEmail">
+                            <div class="col-sm-12 col-md-10 col-lg-8">
+                                @Html.LabelFor(o => o.EmailAddress)
+                                @Html.TextBoxFor(o => o.EmailAddress, new { @class = "form-control nomax", id = "txtEMAILADDRESS", maxlength = 500, ng_model = angularObjectName + ".EmailAddress", ng_disabled = angularObjectName + ".FixedEmailAddress" })
+                                @Html.HCValidationMessageFor(o => o.EmailAddress)
+                                <div ng-hide="@(angularObjectName).IsPending === false">
+                                    <div class="padbottom-sm" ng-show="@(angularObjectName).EmailVerificationStatus === 'SENT'"><span class="label label-warning"><span class="fa fa-warning"></span> @HCResources.NotVerifiedSentOn {{ @(angularObjectName).EmailVerificationDateSent | hcdatetime }}</span></div>
+                                    <div class="padbottom-sm" ng-show="@(angularObjectName).EmailVerificationStatus === 'NOTSENT'"><span class="label label-danger"><span class="fa fa-exclamation-circle"></span> @HCResources.NotVerifiedNotSent</span></div>
+                                </div>
+                                <div class="smallgraytext text-danger">@HCResources.NoSharedEmail</div>
+                            </div>
+                        </div>
+
+                        <!-- DOCUSIGN SIGNED -->
+                        <div class="row form-group" ng-hide="@(angularObjectName).DocusignDateSigned === null">
+                            <div class="col-xs-12">
+                                <label>@HCResources.DocuSignDocument:</label><br />
+                                <div class="label label-success"><span class="fa fa-check-circle-o"></span> @HCResources.DocusignSignedOn {{ @(angularObjectName).DocusignDateSigned | hcdatetime }}</div>
+                            </div>
+                        </div>
+
+                        <!-- NEW SALESPERSON ADDRESS -->
+                        <div ng-hide="!@(angularObjectName).Settings.ShowAddress" class="panel panel-default">
+                            <div class="panel-body">
+                                <label>@HCResources.Address</label>
+                                @Html.Partial("~/Views/Shared/_AddressControl.cshtml",
+                                              null,
+                                              new ViewDataDictionary
+                                              {
+                                                  { "SCOPEVARSETTINGS", angularObjectName + ".CountryAddressSettings" },
+                                                  { "SCOPEVARADDRESS", angularObjectName + ".Address" }
+                                              })
+
+                                <!-- COUNTRY -->
+                                <div class="row">
+                                    <div class="inline-text-group inline-text-group-xs">
+                                        <div class="col-xs-12">
+                                            <label class="sub-label">@HCResources.Country</label>
+                                            <div><strong>{{ @(angularObjectName).CountryCode }}-{{ @(angularObjectName).CountryName }}</strong></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- MOBILE PHONE NUMBER (REQUIRED) -->
+                        <div class="row form-group" ng-hide="!@(angularObjectName).Settings.RequireMobilePhone">
+                            <div class="col-xs-12">
+                                @Html.LabelFor(o => o.CellPhoneRequired)
+                                @Html.TextBoxFor(o => o.CellPhoneRequired, new { data_type = "CLIENTPHONEFIELD", @class = "form-control", ng_model = angularObjectName + ".MobilePhone", placeholder = "{{" + angularObjectName + ".CountryAddressSettings.PhonePattern}}" })
+                                @Html.ValidationMessageFor(o => o.CellPhoneRequired)
+                            </div>
+                        </div>
+
+                        <!-- MOBILE PHONE NUMBER (OPTIONAL) -->
+                        <div class="row form-group" ng-hide="@(angularObjectName).Settings.RequireMobilePhone">
+                            <div class="col-xs-12">
+                                @Html.LabelFor(o => o.CellPhone)
+                                @Html.TextBoxFor(o => o.CellPhone, new { data_type = "CLIENTPHONEFIELD", @class = "form-control", ng_model = angularObjectName + ".MobilePhone", placeholder = "{{" + angularObjectName + ".CountryAddressSettings.PhonePattern}}" })
+                                @Html.ValidationMessageFor(o => o.CellPhone)
+                            </div>
+                        </div>
+
+                        <!-- SALESPERSON'S BIRTH DAY -->
+                        <div class="row form-group">
+                            <label class="col-xs-12">@HCResources.Birthday:</label>
+                            <div class="inline-text-group">
+                                <div class="col-xs-6 col-sm-5 col-md-4">
+                                    @Html.LabelFor(o => o.BirthMonth, new { @class = "sub-label" })
+                                    @Html.DropDownListFor(o => o.BirthMonth, (SelectList)ViewBag.MonthSelectionList, new { @class = "form-control nomax", id = "selBIRTHMONTH", ng_model = angularObjectName + ".BirthMonth" })
+                                    @Html.ValidationMessageFor(o => o.BirthMonth)
+                                </div>
+                                <div class="col-xs-3 col-sm-3 col-md-2">
+                                    @Html.LabelFor(o => o.BirthDay, new { @class = "sub-label" })
+                                    @Html.DropDownListFor(o => o.BirthDay, (SelectList)ViewBag.DaySelectionList, new { @class = "form-control nomax", id = "selBIRTHDAY", ng_model = angularObjectName + ".BirthDay" })
+                                    @Html.ValidationMessageFor(o => o.BirthDay)
+                                </div>
+                                <div class="col-xs-3 col-sm-3 col-md-2" ng-hide="!(@angularObjectName).Settings.RequireBirthYear">
+                                    @Html.LabelFor(o => o.BirthYear, new { @class = "sub-label" })
+                                    @Html.DropDownListFor(o => o.BirthYear, (SelectList)ViewBag.BirthYearSelectionList, new { @class = "form-control nomax", id = "selBIRTHYEAR", ng_model = angularObjectName + ".BirthYear" })
+                                    @Html.ValidationMessageFor(o => o.BirthYear)
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- COLOMBIA SPECIFIC INFORMATION -->
+                        <div class="panel panel-primary" ng-hide="!@(angularObjectName).Settings.RequireCOSetupInfo">
+                            <div class="panel-heading"><div class="country-header-co">Colombia</div></div>
+                            <div class="panel-body">
+
+                                <!-- TAX ID -->
+                                <div ng-hide="!@(angularObjectName).Settings.ShowTaxID">
+
+                                    <div ng-show="@(angularObjectName).Settings.TaxIDType === 'CEDULA'">
+
+                                        <!-- CITIZEN TYPE -->
+                                        <div class="row form-group">
+                                            <div class="col-sm-12">
+                                                <label>@HCResources.CitizenType:</label>
+                                                @Html.DropDownListFor(o => o.NationalCitizen, new SelectList(new SelectListItem[] { new SelectListItem() { Text = "", Value = "" }, new SelectListItem() { Text = HCResources.ColombianCitizen, Value = "CEDULA" }, new SelectListItem() { Text = HCResources.VenezuelanCitizen, Value = "CEDULAVENEZ" }, new SelectListItem() { Text = HCResources.ColombiaForeignCedula, Value = "CEDULAFOREIGN" } }, "Value", "Text"), new { ng_model = angularObjectName + ".TaxIDType", @class = "form-control nomax" })
+                                                @Html.ValidationMessageFor(o => o.NationalCitizen)
+                                            </div>
+                                        </div>
+
+                                        <!-- NEW SALESPERSON CEDULA -->
+                                        <div class="row form-group" ng-show="@(angularObjectName).TaxIDType === 'CEDULA'">
+                                            <div class="col-sm-12 col-md-10 col-lg-8">
+                                                @Html.LabelFor(o => o.TaxIDCC)
+                                                @Html.TextBoxFor(o => o.TaxIDCC, new { @class = "form-control integeronly", maxlength = 16, ng_model = angularObjectName + ".TaxID" })
+                                                @Html.HCValidationMessageFor(o => o.TaxIDCC)
+                                            </div>
+                                        </div>
+
+                                        <!-- FOREIGN CITIZEN CEDULA -->
+                                        <div class="row form-group" ng-show="@(angularObjectName).TaxIDType === 'CEDULAFOREIGN'">
+                                            <div class="col-sm-12 col-md-10 col-lg-8">
+                                                @Html.LabelFor(o => o.TaxIDCCForeign)
+                                                @Html.TextBoxFor(o => o.TaxIDCCForeign, new { @class = "form-control integeronly", maxlength = 16, ng_model = angularObjectName + ".TaxID" })
+                                                @Html.HCValidationMessageFor(o => o.TaxIDCCForeign)
+                                            </div>
+                                        </div>
+
+                                        <!-- SPECIAL STAY PERMIT -->
+                                        <div class="row form-group" ng-show="@(angularObjectName).TaxIDType === 'COLOMBIAPEP'">
+                                            <div class="col-sm-12 col-md-10 col-lg-8">
+                                                @Html.LabelFor(o => o.TaxIDPEP)
+                                                @Html.TextBoxFor(o => o.TaxIDPEP, new { @class = "form-control integeronly", maxlength = 16, ng_model = angularObjectName + ".TaxID" })
+                                                @Html.HCValidationMessageFor(o => o.TaxIDPEP)
+                                            </div>
+                                        </div>
+
+                                        <!-- VENEZUELAN NATIONAL -->
+                                        <div ng-show=" @(angularObjectName).TaxIDType === 'CEDULAVENEZ'">
+                                            <div class="row form-group">
+                                                <div class="col-sm-12 col-md-10 col-lg-8">
+                                                    @Html.LabelFor(o => o.TaxIDCCVEN)
+                                                    @Html.TextBoxFor(o => o.TaxIDCCVEN, new { @class = "form-control integeronly", maxlength = 16, ng_model = angularObjectName + ".TaxID" })
+                                                    @Html.HCValidationMessageFor(o => o.TaxIDCCVEN)
+                                                </div>
+                                            </div>
+
+                                            <div class="row form-group">
+                                                <div class="col-sm-12 col-md-10 col-lg-8">
+                                                    @Html.LabelFor(o => o.TaxIDPEP)
+                                                    @Html.TextBoxFor(o => o.TaxIDPEP, new { @class = "form-control integeronly", maxlength = 16, ng_model = angularObjectName + ".TaxID2" })
+                                                    @Html.HCValidationMessageFor(o => o.TaxIDPEP)
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                                <!-- PREFERRED PAYMENT TYPE -->
+                                <div class="row form-group">
+                                    <div class="col-sm-12">
+                                        <label>@HCResources.PreferredPaymentType:</label>
+                                        @Html.DropDownListFor(o => o.PaymentType, DistributorWebsite.MVC.WebUI.Helpers.Common.GetColombiaPaymentAccountSelections(), new { ng_model = angularObjectName + ".PaymentType", @class = "form-control" })
+                                        @Html.ValidationMessageFor(o => o.PaymentType)
+                                    </div>
+                                </div>
+
+                                <!-- EFECTY NUMBER -->
+                                <div class="row form-group" ng-hide="@(angularObjectName).PaymentType !== 'Efecty'">
+                                    <div class="col-sm-12">
+                                        <label>@HCResources.EfectyNumber:</label>
+                                        @Html.TextBoxFor(o => o.EfectyNumber, new { @class = "form-control integeronly", maxlength = 50, ng_model = angularObjectName + ".TaxID", disabled = "disabled" })
+                                        @Html.ValidationMessageFor(o => o.EfectyNumber)
+                                    </div>
+                                </div>
+
+                                <!-- BANK ACCOUNT NUMBER -->
+                                <div class="row form-group" ng-hide="@(angularObjectName).PaymentType !== 'ACHS' && @(angularObjectName).PaymentType !== 'ACHC'">
+                                    <div class="col-sm-12 padbottom">
+                                        @Html.LabelFor(o => o.BankAccountNumber)
+                                        @Html.TextBoxFor(o => o.BankAccountNumber, new { @class = "form-control integeronly", maxlength = 50, ng_model = angularObjectName + ".BankAccountNumber" })
+                                        @Html.ValidationMessageFor(o => o.BankAccountNumber)
+                                    </div>
+
+                                    <div class="col-sm-12 padbottom">
+                                        @Html.LabelFor(o => o.RoutingNumber)
+                                        @Html.DropDownListFor(o => o.RoutingNumber, (SelectList)ViewBag.EmptyList, new { @class = "form-control nomax", id = "selROUTINGNUMBER", ng_model = angularObjectName + ".RoutingNumber", ng_options = "rec.RoutingNumber as rec.BankName + ' (' + rec.RoutingNumber + ')' for rec in " + angularObjectName + ".Banks" })
+                                        @Html.ValidationMessageFor(o => o.RoutingNumber)
+                                    </div>
+                                </div>
+
+                                <!-- EFECTY NUMBER -->
+                                <div class="row form-group">
+                                    <div class="col-sm-12">
+                                        <label>@HCResources.COResponsibleForIVA:</label>
+                                        @Html.DropDownListFor(o => o.ResponsibleForIVA, (SelectList)ViewBag.YesNoList, new { @class = "form-control", ng_model = angularObjectName + ".ResponsibleForIVA" })
+                                        @Html.ValidationMessageFor(o => o.ResponsibleForIVA)
+                                    </div>
+                                </div>
+
+                                <!-- COLOMBIA TAX CERTIFICATION -->
+                                <div class="row form-group">
+                                    <div class="col-xs-12">
+                                        <label>@HCResources.ColombiaTaxInformation</label>
+                                        <label class="sub-label">@Html.Raw(HCResources.ColombiaTaxDescriptionIB)</label>
+                                        <div>
+                                            <table class="table table-bordered table-striped" style="margin-bottom: 0;">
+                                                <tbody>
+                                                    <tr>
+                                                        <td><div>@HCResources.ColombiaTaxQ1</div>@Html.ValidationMessageFor(o => o.TaxDeclarant)</td>
+                                                        <td>
+                                                            @Html.DropDownListFor(o => o.TaxDeclarant, (SelectList)ViewBag.YesNoList, new { @class = "form-control input-sm", ng_model = angularObjectName + ".TaxDeclarant", style = "min-width: 100px;" })
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><div>@HCResources.ColombiaTaxQ2</div>@Html.ValidationMessageFor(o => o.ContractExceedsLimit)</td>
+                                                        <td>@Html.DropDownListFor(o => o.ContractExceedsLimit, (SelectList)ViewBag.YesNoList, new { @class = "form-control", ng_model = angularObjectName + ".ContractExceedsLimit" })</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><div>@HCResources.ColombiaTaxQ3</div>@Html.ValidationMessageFor(o => o.PriorYearContractsExceedLimit)</td>
+                                                        <td>@Html.DropDownListFor(o => o.PriorYearContractsExceedLimit, (SelectList)ViewBag.YesNoList, new { @class = "form-control", ng_model = angularObjectName + ".PriorYearContractsExceedLimit" })</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <div class="smallgraytext">@HCResources.ColombiaTaxSubnote</div>
+                                    </div>
+                                </div>
+
+                                <!-- COLOMBIA BANK CERTIFICATION -->
+                                <div class="row form-group" ng-hide="@(angularObjectName).PaymentType !== 'ACHS' && @(angularObjectName).PaymentType !== 'ACHC'">
+                                    <div class="col-xs-12">
+                                        <label>@HCResources.ColombiaBANKCERT:</label>
+                                        <div class="well" ng-hide="@(angularObjectName).DOCBANKCERT === null" style="margin-bottom: 0">
+                                            <div class="padbottom">
+                                                <strong>{{ @(angularObjectName).DOCBANKCERT.DocumentFileName }}</strong><br />
+                                                <span class="smallgraytext"><span ng-bind-html="@(angularObjectName).DOCBANKCERT.DocumentFileType | hcfiletypeicon"></span> {{ @(angularObjectName).DOCBANKCERT.DocumentFileType }} - {{ @(angularObjectName).DOCBANKCERT.DocumentSize }}</span>
+                                            </div>
+                                            <div>
+                                                <button class="btn btn-primary" type="button" ng-click="@(angularObjectName).UploadColombiaBANKCERT = true">@HCResources.UploadNew &nbsp;<span class="fa fa-upload"></span></button>
+                                            </div>
+                                            <div ng-hide="!@(angularObjectName).UploadColombiaBANKCERT" class="panel panel-default" style="margin-top: 10px;">
+                                                <div class="panel-body">
+                                                    <div class="padbottom">
+                                                        <p>@HCResources.ColombiaBANKCERTNote</p>
+                                                        @Html.TextBoxFor(o => o.ColombiaBANKCERT, new { type = "file", name = "COLOMBIABANKCERT", id = "COLOMBIABANKCERT", data_type = "DOCUMENT", @class = "form-control", accept = "image/*,application/pdf" })
+                                                        @Html.ValidationMessageFor(o => o.ColombiaBANKCERT)
+                                                    </div>
+                                                    <button class="btn btn-default" type="button" ng-click="@(angularObjectName).UploadColombiaBANKCERT = false">@HCResources.Cancel &nbsp;<span class="fa fa-times"></span></button>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div ng-show="@(angularObjectName).DOCBANKCERT === null">
+                                            <p>@HCResources.ColombiaBANKCERTNote</p>
+                                            @Html.TextBoxFor(o => o.ColombiaBANKCERT, new { type = "file", name = "COLOMBIABANKCERT", id = "COLOMBIABANKCERT", data_type = "DOCUMENT", @class = "form-control", accept = "image/*,application/pdf" })
+                                            @Html.ValidationMessageFor(o => o.ColombiaBANKCERT)
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- COLOMBIA RUT -->
+                                <div class="row form-group">
+                                    <div class="col-xs-12">
+                                        <label>@HCResources.ColombiaRUT:</label>
+                                        <div class="well" ng-hide="@(angularObjectName).DOCRUT === null" style="margin-bottom: 0">
+                                            <div class="padbottom">
+                                                <strong>{{ @(angularObjectName).DOCRUT.DocumentFileName }}</strong><br />
+                                                <span class="smallgraytext"><span ng-bind-html="@(angularObjectName).DOCRUT.DocumentFileType | hcfiletypeicon"></span> {{ @(angularObjectName).DOCRUT.DocumentFileType }} - {{ @(angularObjectName).DOCRUT.DocumentSize }}</span>
+                                            </div>
+                                            <div>
+                                                <button class="btn btn-primary" type="button" ng-click="@(angularObjectName).UploadColombiaRUT = true">@HCResources.UploadNew &nbsp;<span class="fa fa-upload"></span></button>
+                                            </div>
+                                            <div ng-hide="!@(angularObjectName).UploadColombiaRUT" class="panel panel-default" style="margin-top: 10px;">
+                                                <div class="panel-body">
+                                                    <div class="padbottom">
+                                                        <p>@HCResources.ColombiaRUTNote</p>
+                                                        @Html.TextBoxFor(o => o.ColombiaRUT, new { type = "file", name = "COLOMBIARUT", id = "COLOMBIARUT", data_type = "DOCUMENT", @class = "form-control", accept = "image/*,application/pdf" })
+                                                        @Html.ValidationMessageFor(o => o.ColombiaRUT)
+                                                    </div>
+                                                    <button class="btn btn-default" type="button" ng-click="@(angularObjectName).UploadColombiaRUT = false">@HCResources.Cancel &nbsp;<span class="fa fa-times"></span></button>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div ng-show="@(angularObjectName).DOCRUT === null">
+                                            <p>@HCResources.ColombiaRUTNote</p>
+                                            @Html.TextBoxFor(o => o.ColombiaRUT, new { type = "file", name = "COLOMBIARUT", id = "COLOMBIARUT", data_type = "DOCUMENT", @class = "form-control", accept = "image/*,application/pdf" })
+                                            @Html.ValidationMessageFor(o => o.ColombiaRUT)
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- IMMIGRATION PERMIT -->
+                                <div class="row form-group" ng-show="@(angularObjectName).TaxIDType === 'COLOMBIAPEP' || @(angularObjectName).TaxIDType === 'CEDULAVENEZ' || @(angularObjectName).TaxIDType === 'CEDULAFOREIGN'">
+                                    <div class="col-xs-12">
+                                        <label>@HCResources.ImmigrationPermit:</label>
+                                        <div class="well" ng-hide="@(angularObjectName).DOCIMG === null" style="margin-bottom: 0">
+                                            <div class="padbottom">
+                                                <strong>{{ @(angularObjectName).DOCIMG.DocumentFileName }}</strong><br />
+                                                <span class="smallgraytext"><span ng-bind-html="@(angularObjectName).DOCIMG.DocumentFileType | hcfiletypeicon"></span> {{ @(angularObjectName).DOCIMG.DocumentFileType }} - {{ @(angularObjectName).DOCIMG.DocumentSize }}</span>
+                                            </div>
+                                            <div>
+                                                <button class="btn btn-primary" type="button" ng-click="@(angularObjectName).UploadImmigrationPermit = true">@HCResources.UploadNew &nbsp;<span class="fa fa-upload"></span></button>
+                                            </div>
+                                            <div ng-hide="!@(angularObjectName).UploadImmigrationPermit" class="panel panel-default" style="margin-top: 10px;">
+                                                <div class="panel-body">
+                                                    <div class="padbottom">
+                                                        <p>@HCResources.ImmigrationPermitNote</p>
+                                                        @Html.TextBoxFor(o => o.ImmigrationPermit, new { type = "file", name = "IMMIGRATIONPERMIT", id = "IMMIGRATIONPERMIT", data_type = "DOCUMENT", @class = "form-control", accept = "image/*,application/pdf" })
+                                                        @Html.ValidationMessageFor(o => o.ImmigrationPermit)
+                                                    </div>
+                                                    <button class="btn btn-default" type="button" ng-click="@(angularObjectName).UploadImmigrationPermit = false">@HCResources.Cancel &nbsp;<span class="fa fa-times"></span></button>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div ng-show="@(angularObjectName).DOCIMG === null">
+                                            <p>@HCResources.ImmigrationPermitNote</p>
+                                            @Html.TextBoxFor(o => o.ImmigrationPermit, new { type = "file", name = "IMMIGRATIONPERMIT", id = "IMMIGRATIONPERMIT", data_type = "DOCUMENT", @class = "form-control", accept = "image/*,application/pdf" })
+                                            @Html.ValidationMessageFor(o => o.ImmigrationPermit)
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                    </div>
+                </form>
+            </div>
+
+            <!-- ACTIONS -->
+            <div class="modal-footer">
+                
+                <div class="pull-right"><button class="btn btn-default" type="button" data-dismiss="modal"><span ng-show="@(angularObjectName).Client === 'CO' && @(angularObjectName).DocusignDateSent !== null">@HCResources.Close</span><span ng-show="@(angularObjectName).Client !== 'CO' || @(angularObjectName).DocusignDateSent === null">@(cancelText)</span> &nbsp;<span class="fa fa-times fa-lg"></span></button></div>
+                <div class="text-left">
+                    <button class="btn btn-primary" id="btnSAVESPSETUP" ng-hide="@(angularObjectName).Client === 'CO' && @(angularObjectName).DocusignDateSent !== null && @(canEditProfile.ToString().ToLower()) === false">@HCResources.SaveProfile &nbsp;<span class="fa fa-save fa-lg"></span></button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,525 @@
+﻿@model DistributorWebsite.MVC.WebUI.Models.CreditCardPaymentDTO
+@using DistributorWebsite.MVC.WebUI.Models
+@{
+    Boolean freezeDistributorNo = (Boolean)ViewBag.CCPaymentEntry_FreezeDistributorNo;
+    Boolean freezeSalesperson = (Boolean)ViewBag.CCPaymentEntry_FreezeSalesperson;
+    Boolean freezeOrderNo = (Boolean)ViewBag.CCPaymentEntry_FreezeOrderNo;
+    Boolean freezeClient = (Boolean)ViewBag.CCPaymentEntry_FreezeClient;
+    Boolean freezeCustomerName = (Boolean)ViewBag.CCPaymentEntry_FreezeCustomerName;
+    Boolean allowEmailPayments = (Boolean)ViewBag.CCPaymentEntry_AllowEmailPayments;
+    Boolean showPaymentEntryHeader = (Boolean)ViewBag.CCPaymentEntry_ShowHeader;
+    Boolean showCardTypes = (Boolean)ViewBag.CCPaymentEntry_ShowCardTypes;
+    Boolean showExistingAccounts = (Boolean)ViewBag.CCPaymentEntry_ShowExistingAccounts;
+    Boolean showCustomerTable = (Boolean)ViewBag.CCPaymentEntry_ShowCustomerTable;
+    Boolean showInstallments = false;
+    Boolean showPaymentReceiptEmail = (Boolean)ViewBag.CCPaymentEntry_ShowPaymentReceipt;
+    Boolean showDebitOrCredit = (Boolean)ViewBag.CCPaymentEntry_ShowDebitCredit;
+    Boolean showCustomerSearch = (Boolean)ViewBag.CCPaymentEntry_ShowCustomerSearch;
+    Boolean canEnterPayments = Environment.UserDomainName == "DEV" || DistributorWebsite.MVC.WebUI.Helpers.Application.Instance.AuthorizationType == eWebAuthType.IDENTITYSERVER || DistributorWebsite.MVC.WebUI.Helpers.Application.Instance.IsRunningLocal;
+
+    String paymentSource = "DistributorWebsite";
+
+    if (!String.IsNullOrWhiteSpace(ViewBag.CCPaymentEntry_Source))
+    {
+        paymentSource = (String)ViewBag.CCPaymentEntry_Source;
+    }
+}
+
+@if ((showCustomerTable) || (showCustomerSearch))
+{
+    @Html.Partial("~/Views/Shared/_CCPaymentEntryCustomer.cshtml", new CreditCardPaymentCustomerDTO())
+}
+
+@if (canEnterPayments)
+{
+    <div class="modal modal-styled fade" id="hostedPaymentPageDialog" role="dialog" aria-hidden="false">
+        <div class="modal-dialog">
+            <div class="modal-header modal-header-info">
+                <button class="close" aria-hidden="true" type="button" data-dismiss="modal" id="btnCloseHostedPaymentPage"><i class="fa fa-times fa-lg"></i></button>
+                <h1 style="margin-top: 0; margin-bottom: 0;">@HCResources.ApplyPayment <span class="fa fa-credit-card fa-lg"></span></h1>
+            </div>
+
+            <div class="modal-content">
+
+                <div class="row">
+                    <div class="col-sm-12 text-left">
+                        <div id='HostedPaymentPage'></div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+}
+
+<div data-type="HCDYNAMICOPTIONS" data-container="HCDYNAMICGRID_CCPayments" ng-hide="AddNewPayment" style="padding-top: 5px; padding-bottom: 5px;">
+    @if (canEnterPayments)
+    {
+        <button class="btn btn-primary" type="button" id="btnCCNewPayment">@HCResources.NewPayment &nbsp;<span class="fa fa-credit-card"></span></button>
+    }
+    else
+    {
+        <button class="btn btn-primary" type="button" disabled="disabled">@HCResources.NewPayment &nbsp;<span class="fa fa-credit-card"></span></button>
+    }
+</div>
+
+<input type="hidden" id="CCPayment_Close" value="@HCResources.Close" />
+<input type="hidden" id="CCPayments_Status_cancelled_by_shopper" value="@(HCResources.HOSTEDPAYMENT_CANCEL_Title)|@(HCResources.HOSTEDPAYMENT_CANCEL_Text)|type-danger|" />
+<input type="hidden" id="CCPayments_Status_cancelled" value="@(HCResources.HOSTEDPAYMENT_CANCEL_Title)|@(HCResources.HOSTEDPAYMENT_CANCEL_Text)|type-danger|" />
+<input type="hidden" id="CCPayments_Status_success" value="@(HCResources.HOSTEDPAYMENT_SUCCESS_Title)|@(HCResources.HOSTEDPAYMENT_SUCCESS_Text)|type-success|@HCResources.PaymentID:" />
+<input type="hidden" id="CCPayments_Status_error" value="@(HCResources.HOSTEDPAYMENT_ERROR_Title)|@(HCResources.HOSTEDPAYMENT_ERROR_Text)|type-danger|" />
+<input type="hidden" id="CCPayments_Status_failure" value="@(HCResources.HOSTEDPAYMENT_FAIL_Title)|@(HCResources.HOSTEDPAYMENT_FAIL_Text)|type-danger|" />
+<input type="hidden" id="CCPayments_Status_unknown" value="@(HCResources.HOSTEDPAYMENT_PENDING_Title)|@(HCResources.HOSTEDPAYMENT_PENDING_Text)|type-info|@HCResources.PaymentID" />
+<input type="hidden" id="CCPayments_Status_email" value="@(HCResources.HOSTEDPAYMENT_SUCCESS_Title)|@(HCResources.HOSTEDPAYMENT_SUCCESS_EMAIL_Text)|type-success|" />
+
+<!------------------------>
+<!--PAYMENT HISTORY GRID-->
+<!------------------------>
+@using (Html.BeginCustomDynamicForm<PaymentDTO>(DistributorWebsite.MVC.WebUI.Helpers.Application.Instance.APIS.DistributorWebAPI, "CCPayments", Constants.DYNAMICTABLEWITHHEADERS, additionalTableClasses: "mobile-table", autoInit: (Boolean)ViewBag.CCPaymentEntry_AutoInitGrid))
+{
+    <tbody>
+        <tr ng-repeat="entity in entities" class="ng-cloak ng-class:{'highlight' : entity.Highlight}" data-keys='{"PaymentID":{{ entity.PaymentID | json}},"Client":{{ entity.Client | json}}}'>
+            <td class="hidden-xs hidden-sm" ng-hide="!ShowPrintedNo">{{ entity.PrintedNo }}</td>
+            <td class="hidden-xs hidden-sm">{{ entity.PaymentID }}</td>
+            <td class="hidden-xs hidden-sm">{{ entity.Client }}</td>
+            <td class="hidden-xs hidden-sm">{{ entity.PaymentDate | hcdate }}</td>
+            <td class="hidden-xs hidden-sm"><span ng-hide="entity.EntityType !== 'CUSTOMER'">{{ entity.EntityCode }}</span></td>
+            <td class="hidden-xs hidden-sm">{{ entity.CustomerName }}</td>
+            <td class="hidden-xs hidden-sm text-right" ng-bind-html="entity.AmountO | hccurrency:'both':DisplayCurrency:2:true:false"></td>
+            <td class="hidden-xs hidden-sm hidden-md">{{ entity.PaymentAccountLast4 }}</td>
+            <td class="hidden-xs hidden-sm hidden-md" ng-hide="!ShowSalesperson">{{ entity.SalespersonCode }}</td>
+            <td class="hidden-xs hidden-sm hidden-md">{{ entity.CreatedBy }}</td>
+            <td class="hidden-xs hidden-sm">{{ entity.AuthorizationID }}</td>
+            <td class="hidden-xs hidden-sm" ng-bind-html="entity.Status | hcpaymentstatus"></td>
+
+            <td class="hidden-md hidden-lg td-mobile" colspan="3">
+                <div>
+                    <div class="row padbottom-sm">
+                        <div class="col-xs-12">
+                            <table class="cell-table header40">
+                                <thead>
+                                    <tr>
+                                        <th colspan="2">{{entity.Client}} -<span ng-hide="entity.EntityType !== 'CUSTOMER'"> {{ entity.EntityCode }} -</span> {{ entity.CustomerName }}</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="header">@HCResources.PaymentID:</td>
+                                        <td>{{ entity.PaymentID }}</td>
+                                    </tr>
+                                    <tr ng-hide="!ShowPrintedNo">
+                                        <td class="header">@HCResources.PrintedNumber:</td>
+                                        <td>{{ entity.PrintedNo }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="header">@HCResources.Amount:</td>
+                                        <td ng-bind-html="entity.AmountO | hccurrency:'both':DisplayCurrency:2:true:false"></td>
+                                    </tr>
+                                    <tr ng-hide="entity.AuthorizationID === undefined || entity.AuthorizationID === null || entity.AuthorizationID === ''">
+                                        <td class="header">@HCResources.AuthorizationCode:</td>
+                                        <td>{{ entity.AuthorizationID }}</td>
+                                    </tr>
+                                    <tr ng-hide="entity.CardNumberObfuscated === undefined || entity.CardNumberObfuscated === null || entity.CardNumberObfuscated === ''">
+                                        <td class="header">@HCResources.CardNumberLast4:</td>
+                                        <td>{{ entity.CardNumberObfuscated }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="header">@HCResources.Status:</td>
+                                        <td ng-bind-html="entity.Status | hcpaymentstatus"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12 mobile-footer">{{ entity.PaymentDate | hcdatetime }}</div>
+                    </div>
+                </div>
+            </td>
+        </tr>
+    </tbody>
+}
+
+<!--------------------->
+<!--NEW PAYMENT FORM -->
+<!--------------------->
+<div data-type="HCDYNAMICDET" data-container="HCDYNAMICGRID_CCPayments" ng-show="PaymentsInitialized && AddNewPayment">
+
+    <div class="panel HC-panel-det primary box-max-medium ng-cloak">
+        <div class="panel-heading">
+            <div class="btn-group pull-right">
+                <a href="#" class="btn btn-default" onclick="HCE.CCPayments.CloseNewWindow(this)"><span class="fa fa-close fa-lg"></span></a>
+            </div>
+            <h1 style="margin-top: 0; margin-bottom: 0;"><span class="fa fa-credit-card fa-lg"></span> @HCResources.NewPayment</h1>
+        </div>
+        <div class="panel-body">
+
+            <!-- APPLY A NEW PAYMENT -->
+            <form class="form-horizontal" id="ccpaymentFORM" method="post" action="@(ViewBag.CCPaymentEntry_APIURL)" data-type="CCPAYMENTFORM" data-callback="HCE.CCPayments.HandleFormCallbacks" data-callback-source="SUBMITPAYMENT">
+                @Html.AntiForgeryToken()
+
+                <input type="hidden" id="CCPAYMENTTYPE" name="CCPAYMENTTYPE" value="@(ViewBag.CCPaymentEntry_Type)" />
+                <input type="hidden" data-type="HCFORMVALUE" data-model="Source" value="@(paymentSource)" />
+
+                @if (freezeDistributorNo)
+                {<input type="hidden" data-type="HCFORMVALUE" data-model="DistributorNo" value="{{ CCEntity.DistributorNo }}" />}
+                @if (freezeSalesperson)
+                {<input type="hidden" data-type="HCFORMVALUE" data-model="SalespersonCode" value="{{ CCEntity.SalespersonCode }}" />}
+                @if (freezeOrderNo)
+                {<input type="hidden" data-type="HCFORMVALUE" data-model="OrderNo" value="{{ CCEntity.OrderNo }}" />}
+                @if (freezeClient)
+                {<input type="hidden" data-type="HCFORMVALUE" data-model="Client" value="{{ CCEntity.Client }}" />}
+                @if (freezeCustomerName)
+                {<input type="hidden" data-type="HCFORMVALUE" data-model="CustomerName" id="CCCustomerName" value="@DistributorWebsite.MVC.WebUI.Helpers.CookieHelper.CurrentEntityName" />}
+
+                <input type="hidden" data-type="HCFORMVALUE" data-model="CustomerNo" value="{{ CCEntity.CustomerNo }}" />
+                @*<input type="hidden" id="CCDebitOrCredit" data-type="HCFORMVALUE" data-model="DebitOrCredit" value="" />*@
+                <input type="hidden" id="CCEmailPaymentLink" data-type="HCFORMVALUE" data-model="EmailPaymentLink" value="{{ CCEntity.EmailPaymentLink }}" />
+
+                @if (showPaymentEntryHeader)
+                {
+                    <div class="row detailsection even">
+                        @if (freezeDistributorNo)
+                        {
+                            <div class="col-sm-3 col-md-3">
+                                @Html.LabelFor(o => o.DistributorNo)
+                                <label class="form-control" disabled>{{ CCEntity.DistributorNo }}</label>
+                            </div>
+                        }
+                        @if (freezeSalesperson)
+                        {
+                            <div class="col-sm-3 col-md-3">
+                                @Html.LabelFor(o => o.SalespersonCode)
+                                <label class="form-control" disabled>{{ CCEntity.SalespersonCode }}</label>
+                            </div>
+                        }
+                        @if (freezeOrderNo)
+                        {
+                            <div class="col-sm-3 col-md-3">
+                                @Html.LabelFor(o => o.OrderNo)
+                                <label class="form-control" disabled>{{ CCEntity.OrderNo }}</label>
+                            </div>
+                        }
+                        @if (freezeClient)
+                        {
+                            <div class="col-sm-3 col-md-3">
+                                @Html.LabelFor(o => o.Client)
+                                <label class="form-control" disabled>{{ CCEntity.Client }}</label>
+                            </div>
+                        }
+                    </div>
+
+                    if (freezeClient || freezeDistributorNo || freezeOrderNo || freezeSalesperson)
+                    {
+                        <hr />
+                    }
+                }
+
+                @if (!freezeClient)
+                {
+                    <div class="form-group">
+                        @Html.LabelFor(o => o.Client, new { @class = "col-sm-12" })
+                        <div class="col-sm-12">
+                            @Html.DropDownListFor(o => o.Client, DistributorWebsite.MVC.WebUI.Helpers.Common.GetSecurityItemClients((eSecurityItem)ViewBag.CCPaymentEntry_SecurityItem), new { data_type = "HCFORMVALUE", id = "CCClient", data_model = "Client", ng_model = "CCEntity.Client", @class = "form-control nomax", ng_disabled = "CCEntity.ShowWPHostedPaymentPage" })
+                        </div>
+                        <div class="col-sm-12">@Html.HCValidationMessageFor(o => o.Client)</div>
+                    </div>
+                }
+
+                <div ng-show="CCEntity.Client != null">
+
+                    @if (!freezeOrderNo)
+                    {
+                        <div class="form-group">
+                            @Html.LabelFor(o => o.PrintedNumber, new { @class = "col-sm-12" })
+                            <div class="col-sm-12">
+                                @Html.TextBoxFor(o => o.PrintedNumber, new { id = "CCPrintedNumber", ng_model = "CCEntity.PrintedNumber", data_type = "HCFORMVALUE", data_model = "PrintedNumber", data_model_type = "string", type = "number", min = "1", max = "9999999999", @class = "form-control nomax", ng_disabled = "CCEntity.ShowWPHostedPaymentPage" })
+                            </div>
+                            <div class="col-sm-12 help-block" ng-hide="CCEntity.ShowWPHostedPaymentPage">@HCResources.PrintedNumberNote</div>
+                            <div class="col-sm-12">@Html.HCValidationMessageFor(o => o.PrintedNumber)</div>
+                        </div>
+                    }
+
+                    @if (!freezeDistributorNo)
+                    {
+                        <div class="form-group">
+                            @Html.LabelFor(o => o.DistributorNo, new { @class = "col-sm-12" })
+                            <div class="col-sm-12">
+                                @Html.DropDownListFor(o => o.DistributorNo, new List<SelectListItem>(), new { data_type = "HCFORMVALUE", id = "CCDistributorNo", data_model = "DistributorNo", ng_model = "CCEntity.DistributorNo", @class = "form-control nomax", ng_disabled = "CCEntity.ShowWPHostedPaymentPage" })
+                            </div>
+                            <div class="col-sm-12">@Html.HCValidationMessageFor(o => o.DistributorNo)</div>
+                        </div>
+                    }
+
+                    @if (!freezeSalesperson)
+                    {
+                        <div class="form-group">
+                            @Html.LabelFor(o => o.SalespersonCode, new { @class = "col-sm-12" })
+                            <div class="col-sm-12">
+                                @Html.DropDownListFor(o => o.SalespersonCode, new List<SelectListItem>(), new { data_type = "HCFORMVALUE", id = "CCSalespersonCode", data_model = "SalespersonCode", ng_model = "CCEntity.SalespersonCode", @class = "form-control nomax", ng_disabled = "CCEntity.ShowWPHostedPaymentPage" })
+                            </div>
+                            <div class="col-sm-12">@Html.HCValidationMessageFor(o => o.SalespersonCode)</div>
+                        </div>
+                    }
+
+                    @if (!freezeCustomerName)
+                    {
+                        <div class="form-group">
+                            @Html.LabelFor(o => o.CustomerName, new { @class = "col-sm-12" })
+                            <div class="col-sm-12">
+                                @Html.TextBoxFor(o => o.CustomerName, new { data_type = "HCFORMVALUE", id = "CCCustomerName", data_model = "CustomerName", ng_model = "CCEntity.CustomerName", @class = "form-control nomax", ng_disabled = "CCEntity.ShowWPHostedPaymentPage" })
+                                @Html.HCValidationMessageFor(o => o.CustomerName)
+                            </div>
+                        </div>
+                    }
+
+                    @if (showCardTypes)
+                    {
+                        <div class="form-group">
+                            @Html.LabelFor(o => o.CardType, new { @class = "col-sm-12" })
+                            <div class="col-sm-12">
+                                <div class="input-group">
+                                    @Html.DropDownListFor(o => o.CardType, new List<SelectListItem>(), new { data_type = "HCFORMVALUE", id = "CCCardTypes", data_model = "CardType", ng_model = "CCEntity.CardType", @class = "form-control nomax", ng_disabled = "CCEntity.ShowWPHostedPaymentPage" })
+                                    <span class="input-group-addon fa fa-3x fa-credit-card-alt text-info"></span>
+                                </div>
+                            </div>
+                            <div class="col-sm-12">@Html.HCValidationMessageFor(o => o.CardType)</div>
+                        </div>
+                    }
+                    else if (showExistingAccounts)
+                    {
+                        <div class="form-group">
+                            @Html.LabelFor(o => o.PaymentAccountID, new { @class = "col-sm-12" })
+                            <div class="col-sm-12 col-md-8 col-lg-5">
+                                <div class="input-group">
+                                    @Html.DropDownListFor(o => o.PaymentAccountID, new List<SelectListItem>(), new { data_type = "HCFORMVALUE", id = "CCPaymentAccounts", data_model = "PaymentAccountID", @class = "form-control nomax", ng_disabled = "CCEntity.ShowWPHostedPaymentPage" })
+                                    <span class="input-group-addon fa fa-3x fa-credit-card-alt text-info"></span>
+                                </div>
+                            </div>
+                            <div class="col-sm-12">@Html.HCValidationMessageFor(o => o.PaymentAccountID)</div>
+                            <div class="col-sm-12" style="padding-top: 5px;" ng-show="CCEntity.PaymentMethod === 'DC'">
+                                <div class="alert alert-danger" style="margin-bottom: 0;"><span class="fa fa-info-circle fa-lg"></span> @ViewBag.ACHCUTOFFNOTE</div>
+                            </div>
+                        </div>
+                    }
+
+                    @if (showDebitOrCredit)
+                    {
+                        <div class="form-group" ng-hide="CCEntity.Client !== 'BZ'">
+                            <div class="col-xs-12">
+                                @Html.LabelFor(o => o.DebitOrCredit)
+                                @Html.DropDownListFor(o => o.DebitOrCredit, (SelectList)ViewBag.CCPaymentEntry_DCSelectList, new { data_type = "HCFORMVALUE", id = "CCDebitOrCredit", data_model = "DebitOrCredit", ng_model = "CCEntity.DebitOrCredit", @class = "form-control", ng_disabled = "CCEntity.ShowWPHostedPaymentPage" })
+                                @Html.HCValidationMessageFor(o => o.DebitOrCredit)
+                            </div>
+                        </div>
+                    }
+
+                    @if (showInstallments)
+                    {
+                        <div class="form-group" ng-hide="!CCEntity.ShowInstallments">
+                            @Html.LabelFor(o => o.Installments, new { @class = "col-sm-12" })
+                            <div class="col-sm-12 col-md-2 col-lg-2">
+
+                                @Html.DropDownListFor(o => o.Installments,
+                                        new List<SelectListItem>()
+                                        {
+                                            new SelectListItem() { Text = "1", Value = "1"},
+                                            new SelectListItem() { Text = "2", Value = "2"},
+                                            new SelectListItem() { Text = "3", Value = "3"},
+                                            new SelectListItem() { Text = "4", Value = "4"},
+                                            new SelectListItem() { Text = "5", Value = "5"},
+                                            new SelectListItem() { Text = "6", Value = "6"},
+                                            new SelectListItem() { Text = "7", Value = "7"},
+                                            new SelectListItem() { Text = "8", Value = "8"},
+                                            new SelectListItem() { Text = "9", Value = "9"},
+                                            new SelectListItem() { Text = "10", Value = "10"},
+                                            new SelectListItem() { Text = "11", Value = "11"},
+                                            new SelectListItem() { Text = "12", Value = "12"}
+                                        }, new { data_type = "HCFORMVALUE", id = "CCInstallments", data_model = "Installments", ng_model = "CCEntity.Installments", @class = "form-control nomax", ng_disabled = "CCEntity.ShowWPHostedPaymentPage" })
+                            </div>
+                            <div class="col-sm-12">@Html.HCValidationMessageFor(o => o.Installments)</div>
+                        </div>
+                    }
+
+                    @if ((!showCustomerTable) && (!showCustomerSearch))
+                    {
+                        <div class="form-group">
+                            @Html.LabelFor(o => o.Amount, new { @class = "col-sm-12" })
+                            <div class="col-sm-12">
+                                <div data-type="HCCURRENCY">
+                                    <div class="input-group">
+                                        <span class="input-group-addon"><strong>{{ CCEntity.Symbol }}</strong></span>
+                                        @Html.TextBoxFor(o => o.Amount, new { id = "CCPaymentAmount", ng_model = "CCEntity.Amount", data_type = "HCFORMVALUE", data_model = "Amount", type = "number", min = "0.01", max = "15000000", data_inputtype = "HCCURRENCY", data_currency = "{{ CCEntity.Currency}}", data_decimals = "{{ CCEntity.DecimalSeparator }}", @class = "form-control nomax", placeholder = HCResources.Format + ": ####.##", ng_disabled = "CCEntity.ShowWPHostedPaymentPage" })
+                                    </div>
+                                    <div ng-hide="CCEntity.Amount === null">
+                                        <span data-type="FORMATTEDTEXT"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-12">@Html.HCValidationMessageFor(o => o.Amount)</div>
+                        </div>
+                    }
+                    else if (showCustomerSearch)
+                    {
+                        <div class="form-group" ng-hide="@(showExistingAccounts ? "CCEntity.PaymentAccountID === undefined || CCEntity.PaymentAccountID === null || CCEntity.PaymentAccountID === ''" : "false")">
+                            <label class="col-sm-12">@HCResources.Customer:</label>
+                            <div class="col-xs-12" ng-hide="CCEntity.Customers == null || CCEntity.Customers.length <= 0">
+                                <table class="table table-striped table-bordered ng-cloak" id="CCTABLISTCUSTOMERS">
+                                    <thead>
+                                        <tr class="column-header-row">
+                                            <th>@HCResources.CustomerNo</th>
+                                            <th>@HCResources.CustomerName</th>
+                                            <th class="text-right">@HCResources.Amount</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr ng-repeat="customer in CCEntity.Customers">
+                                            <td>{{ customer.CustomerNo }}</td>
+                                            <td>{{ customer.Name }}</td>
+                                            <td class="text-right" ng-bind-html="customer.PaymentAmountJSON | hccurrency:'both':DisplayCurrency:2:true:false"></td>
+                                            <td class="text-center"><a href="#" data-type="CCLISTCUSTOMERDELETE" data-row-number="{{ $index }}" class="text-danger"><span class="fa fa-times fa-lg"></span></a></td>
+                                        </tr>
+                                        <tr class="table-footer-row hc-print-total-row" ng-hide="CCEntity.Customers == null || CCEntity.Customers.length <= 0">
+                                            <td colspan="2">@HCResources.Total:</td>
+                                            <td class="text-right" ng-bind-html="CCEntity.OrderTotalJSON | hccurrency:'both':DisplayCurrency:2:true:false"></td>
+                                            <td></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="col-xs-12" ng-hide="CCEntity.Customers !== null && CCEntity.Customers.length > 0">
+                                <button type="button" class="btn btn-primary" id="btnCCPaymentEntryAddCustomer">@HCResources.Search <span class="fa fa-search"></span></button>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="form-group" ng-hide="@(showExistingAccounts ? "CCEntity.PaymentAccountID === undefined || CCEntity.PaymentAccountID === null || CCEntity.PaymentAccountID === ''" : "false")">
+                            <label class="col-sm-12">@HCResources.Customers:</label>
+                            <div class="col-xs-12" ng-hide="CCEntity.Customers == null || CCEntity.Customers.length <= 0">
+                                <table class="table table-striped table-bordered ng-cloak" id="CCTABLISTCUSTOMERS">
+                                    <thead>
+                                        <tr class="column-header-row">
+                                            <th>@HCResources.CustomerNo</th>
+                                            <th>@HCResources.CustomerName</th>
+                                            <th class="text-right">@HCResources.Amount</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr ng-repeat="customer in CCEntity.Customers">
+                                            <td>{{ customer.CustomerNo }}</td>
+                                            <td>{{ customer.Name }}</td>
+                                            <td class="text-right" ng-bind-html="customer.PaymentAmountJSON | hccurrency:'both':DisplayCurrency:2:true:false"></td>
+                                            <td class="text-center"><a href="#" data-type="CCLISTCUSTOMERDELETE" data-row-number="{{ $index }}" class="text-danger"><span class="fa fa-times fa-lg"></span></a></td>
+                                        </tr>
+                                        <tr class="table-footer-row hc-print-total-row" ng-hide="CCEntity.Customers == null || CCEntity.Customers.length <= 0">
+                                            <td colspan="2">@HCResources.Total:</td>
+                                            <td class="text-right" ng-bind-html="CCEntity.OrderTotalJSON | hccurrency:'both':DisplayCurrency:2:true:false"></td>
+                                            <td></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="col-xs-12">
+                                <button type="button" class="btn btn-primary" id="btnCCPaymentEntryAddCustomer">@HCResources.AddCustomer <span class="fa fa-plus"></span></button>
+                            </div>
+                        </div>
+                    }
+
+                    @if ((showCustomerTable) || (showCustomerSearch))
+                    {
+                        @Html.Raw("<div ng-show='CCEntity.Customers !== null && CCEntity.Customers.length > 0'>");
+                    }
+
+                    @if (allowEmailPayments)
+                    {
+                        <div class="form-group" ng-hide="CCEntity.ShowWPHostedPaymentPage || CCEntity.HidePaymentOptions">
+                            @Html.LabelFor(o => o.PaymentOption, new { @class = "col-sm-12" })
+                            <div class="col-sm-12">
+                                @Html.DropDownListFor(o => o.PaymentOption,
+                                        new List<SelectListItem>()
+                                        {
+                                            new SelectListItem() { Text = "", Value = "" },
+                                            new SelectListItem() { Text = HCResources.PayOptionEnterCardNow, Value = "INLINE"},
+                                            new SelectListItem() { Text = HCResources.PayOptionEmail, Value = "EMAIL"}
+                                        }, new { id = "CCSELPaymentOption", @class = "form-control nomax", ng_disabled = "CCEntity.ShowWPHostedPaymentPage" })
+                            </div>
+                            <div class="col-sm-12">@Html.HCValidationMessageFor(o => o.PaymentOption)</div>
+                        </div>
+                    }
+
+                    @if (showPaymentReceiptEmail)
+                    {
+                        <div class="form-group" ng-hide="CCEntity.ShowWPHostedPaymentPage || CCEntity.HidePaymentOptions">
+                            <label class="col-sm-12">@HCResources.SendReceipt</label>
+                            <div class="col-xs-12">
+                                <div class="checkbox" style="margin-top: 0; margin-bottom: 0;">
+                                    <label>
+                                        <input type="checkbox" id="chkSENDPAYMENTRECEIPT" name="chkSENDPAYMENTRECEIPT" ng-checked="CCEntity.SendPaymentReceipt == true" ng-model="CCEntity.SendPaymentReceipt" /> {{CCEntity.SendPaymentReceipt | hcboolean}}
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+                    @if (allowEmailPayments || showPaymentReceiptEmail)
+                    {
+                        <div class="form-group" ng-show="(CCEntity.EmailPaymentLink || CCEntity.SendPaymentReceipt) && !CCEntity.HidePaymentOptions" ng-disabled="!CCEntity.ShowReceiptConfirmation">
+
+                            @Html.LabelFor(o => o.EmailAddress, new { @class = "col-sm-12" })
+                            <div class="col-sm-12">
+                                @Html.TextBoxFor(o => o.EmailAddress, new { data_type = "HCFORMVALUE", id = "CCEmailAddress", data_model = "EmailAddress", ng_model = "CCEntity.EmailAddress", @class = "form-control nomax", ng_disabled = "CCEntity.ShowWPHostedPaymentPage" })
+                                @Html.HCValidationMessageFor(o => o.EmailAddress)
+                            </div>
+
+                        </div>
+
+                        <div id="divEMAILRECEIPTCONFIRM" name="divEMAILRECEIPTCONFIRM" class="form-group" ng-show="(CCEntity.EmailPaymentLink || CCEntity.SendPaymentReceipt) && !CCEntity.HidePaymentOptions">
+
+                            @Html.LabelFor(o => o.EmailAddressConfirm, new { @class = "col-sm-12" })
+                            <div class="col-sm-12">
+                                @Html.TextBoxFor(o => o.EmailAddressConfirm, new { id = "CCEmailAddressConfirm", @class = "form-control nomax", ng_disabled = "CCEntity.ShowWPHostedPaymentPage" })
+                                @Html.HCValidationMessageFor(o => o.EmailAddressConfirm)
+                            </div>
+                        </div>
+                    }
+
+                    <div class="row" ng-hide="CCEntity.ShowWPHostedPaymentPage">
+                        <div class="col-sm-12">
+                            @if (showCustomerTable)
+                            {
+                                <button type="submit" id="CCBTNSUBMITPAYMENT" data-type="SINGLESUBMITBUTTON" data-is-submitting="false" data-last-submit-time="" class="btn btn-primary" ng-disabled="CCEntity.Customers === null || CCEntity.Customers.length <= 0">@HCResources.SubmitPayment <span class="fa fa-arrow-circle-right fa-lg"></span></button>
+                            }
+                            else
+                            {
+                                <button type="submit" id="CCBTNSUBMITPAYMENT" data-type="SINGLESUBMITBUTTON" data-is-submitting="false" data-last-submit-time="" class="btn btn-primary">@HCResources.Continue <span class="fa fa-arrow-circle-o-right fa-lg"></span></button>
+                            }
+                        </div>
+                    </div>
+
+                    @if ((showCustomerTable) || (showCustomerSearch))
+                    {
+                        @Html.Raw("</div>")
+                    }
+
+                </div>
+            </form>
+
+            @*<div class="row" ng-show="CCEntity.ShowWPHostedPaymentPage == true">
+                <div class="col-sm-12 text-left">
+                    <div class="hosted-payment-page">
+                        <div id='HostedPaymentPage'></div>
+                    </div>
+                </div>
+            </div>*@
+
+        </div>
+
+        <div class="panel-footer text-right hidden-print" ng-hide="CCEntity.ShowWPHostedPaymentPage === true">
+            <a href="#" class="btn btn-default" onclick="HCE.CCPayments.CloseNewWindow(this)">@HCResources.Cancel <span class="fa fa-close fa-lg"></span></a>
+        </div>
+    </div>
+
+</div>

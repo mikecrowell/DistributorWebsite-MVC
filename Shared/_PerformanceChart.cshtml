@@ -1,0 +1,72 @@
+﻿@model DistributorWebsite.MVC.WebUI.Models.PerformanceChartDTO
+    <div class="hc-perf-chart" data-type="PERFCHART">
+        @if (Model.Tab == "PRICELEVEL")
+        {
+            <div class="row">
+                <div class="col-xs-12 hidden-xs padbottom"><h2>@Html.Raw(Model.TitleMain)</h2></div>
+                <div class="col-xs-12 padbottom">
+                    <div style="background-color: @Model.TitleSubBGColor; color: @Model.TitleSubFGColor; padding: 10px;">@Html.Raw(Model.TitleSub)</div>
+                </div>
+                <div class="col-xs-4 col-sm-3 hidden-xs">
+                    <div class="row">
+                        <div class="col-xs-12 header-label">@HCResources.Level 3:</div>
+                        <div class="col-xs-12 header-value">@Html.Raw(DistributorWebsite.MVC.WebUI.Helpers.Common.FormatCurrency(Model.TotalLastPeriod, "HC", true, false).Replace(".00", ""))</div>
+                    </div>
+                </div>
+                <div class="col-xs-4 col-sm-3 hidden-xs">
+                    <div class="row">
+                        <div class="col-xs-12 header-label">@HCResources.Level 2:</div>
+                        <div class="col-xs-12 header-value">@Html.Raw(DistributorWebsite.MVC.WebUI.Helpers.Common.FormatCurrency(Model.TotalTarget, "HC", true, false).Replace(".00", ""))</div>
+                    </div>
+                </div>
+                <div class="col-xs-4 col-sm-3 hidden-xs">
+                    <div class="row">
+                        <div class="col-xs-12 header-label">@HCResources.Level 1:</div>
+                        <div class="col-xs-12 header-value">@Html.Raw(DistributorWebsite.MVC.WebUI.Helpers.Common.FormatCurrency(Model.TotalCurrentPeriod, "HC", true, false).Replace(".00", ""))</div>
+                    </div>
+                </div>
+                <div class="col-xs-2 col-sm-3 hidden-xs">
+                    <div class="row">
+                        <div class="col-xs-12 header-label">@HCResources.CompanyPurchases:</div>
+                        <div class="col-xs-12 header-value">@Html.Raw(DistributorWebsite.MVC.WebUI.Helpers.Common.FormatCurrency(Model.PercentOfGoal, "HC", true, false))</div>
+                    </div>
+                </div>
+            </div>
+
+        }
+        else
+        {
+            <div class="row">
+                <div class="col-xs-12 padbottom"><h2>@Model.TitleMain</h2></div>
+                <div class="col-md-3 hidden-xs hidden-sm">
+                    <div class="row">
+                        <div class="col-xs-12 header-label">@Model.TitlePreviousPeriod:</div>
+                        <div class="col-xs-12 header-value">@Html.Raw(Model.AmountDisplayType == "INTEGER" ? Model.TotalLastPeriod.ToString("N0") : DistributorWebsite.MVC.WebUI.Helpers.Common.FormatCurrency(Model.TotalLastPeriod, "HC", true, false))</div>
+                    </div>
+                </div>
+                <div class="col-xs-5 col-sm-5 col-md-3">
+                    <div class="row">
+                        <div class="col-xs-12 header-label">@Model.TitleTarget:</div>
+                        <div class="col-xs-12 header-value">@Html.Raw(Model.AmountDisplayType == "INTEGER" ? Model.TotalTarget.ToString("N0") : DistributorWebsite.MVC.WebUI.Helpers.Common.FormatCurrency(Model.TotalTarget, "HC", true, false))</div>
+                    </div>
+                </div>
+                <div class="col-xs-5 col-sm-5 col-md-3">
+                    <div class="row">
+                        <div class="col-xs-12 header-label">@Model.TitleCurrentPeriod:</div>
+                        <div class="col-xs-12 header-value">@Html.Raw(Model.AmountDisplayType == "INTEGER" ? Model.TotalCurrentPeriod.ToString("N0") : DistributorWebsite.MVC.WebUI.Helpers.Common.FormatCurrency(Model.TotalCurrentPeriod, "HC", true, false))</div>
+                    </div>
+                </div>
+                <div class="col-xs-2 col-sm-2 col-md-3">
+                    <div class="row">
+                        <div class="col-xs-12 header-label"><span class="hidden-xs">@Model.TitlePercentOfGoal</span><span class="hidden-sm hidden-md hidden-lg">%</span>:</div>
+                        <div class="col-xs-12 header-value"><span class="hidden-xs">@String.Format("{0:P1}", Model.PercentOfGoal)</span><span class="hidden-sm hidden-md hidden-lg">@String.Format("{0:N0}", Model.PercentOfGoal * 100)</span></div>
+                    </div>
+                </div>
+            </div>
+        }
+        <div class="row">
+            <div class="col-xs-12 sizeable col-sm-11 col-md-10 col-lg-8">
+                <canvas data-type="PERFCHART" id="CHART@(Model.PerformanceChartType + Model.TotalType)" width="200" height="@(Model.ChartHeight)"></canvas>
+            </div>
+        </div>
+    </div>

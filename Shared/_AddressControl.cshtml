@@ -1,0 +1,182 @@
+﻿@using DistributorWebsite.MVC.WebUI.Models
+@model AddressControlDTO
+@{
+    if (!this.ViewData.ContainsKey("SCOPEVARSETTINGS"))
+    {
+        throw new System.Exception("Please pass in the SCOPEVARSETTINGS parameter to the _AddressControl.html partial view");
+    }
+
+    if (!this.ViewData.ContainsKey("SCOPEVARADDRESS"))
+    {
+        throw new System.Exception("Please pass in the SCOPEVARADDRESS parameter to the _AddressControl.html partial view");
+    }
+
+    string scopevarsettings = this.ViewData["SCOPEVARSETTINGS"].ToString();
+    string scopevaraddress = this.ViewData["SCOPEVARADDRESS"].ToString();
+    string addresscontrolid = "AddressControl";
+
+    if (this.ViewData.ContainsKey("ADDRESSCONTROLID"))
+    {
+        addresscontrolid = this.ViewData["ADDRESSCONTROLID"].ToString();
+    }
+}
+<div id="@(addresscontrolid)" data-type="HCADDRESSCONTROL">
+
+    <div id="@(addresscontrolid)_divFORMALADDRESSROWS" ng-show="@(scopevarsettings).UseFormalAddress === true">
+
+        <!-- STREET INFORMATION -->
+        <div class="row">
+            <div class="inline-text-group inline-text-group-xs" id="@(addresscontrolid)_ADDRFORMALROW1">
+                <div class="col-sm-2" id="@(addresscontrolid)_divADDRSTREETNUMBER" data-type="ADDRESSCONTROLFIELD">
+                    @Html.LabelFor(o => o.StreetNumber, new { @class = "sub-label" })
+                    @Html.TextBoxFor(o => o.StreetNumber, new { id = addresscontrolid + "_AddressControl_StreetNumber", @class = "form-control nomax", ng_model = scopevaraddress + ".StreetNumber", maxlength = AddressControlDTOConstants.MaxStreetNoLength })
+                    @Html.ValidationMessageFor(o => o.StreetNumber)
+                </div>
+                <div class="col-sm-2" id="@(addresscontrolid)_divADDRPREDIR" ng-hide="!@(scopevarsettings).UseStreetDirections" data-type="ADDRESSCONTROLFIELD">
+                    @Html.LabelFor(o => o.PreDirectional, new { @class = "sub-label" })
+                    <select name="PreDir" id="@(addresscontrolid)_PreDir" class="form-control nomax" ng-model="@(scopevaraddress).PreDirectional">
+                        <option value=""></option>
+                        <option ng-repeat="opt in @(scopevarsettings).StreetDirectionals" value="{{ opt.Value }}">{{ opt.Text }}</option>
+                    </select>
+                    @Html.ValidationMessageFor(o => o.PreDirectional)
+                </div>
+                <div class="col-sm-4" id="@(addresscontrolid)_divADDRSTREETNAME" data-type="ADDRESSCONTROLFIELD">
+                    @Html.LabelFor(o => o.StreetName, new { @class = "sub-label" })
+                    @Html.TextBoxFor(o => o.StreetName, new { @class = "form-control nomax", ng_model = scopevaraddress + ".StreetName", maxlength = AddressControlDTOConstants.MaxStreetNameLength })
+                    @Html.ValidationMessageFor(o => o.StreetName)
+                </div>
+                <div class="col-sm-2" id="@(addresscontrolid)_divADDRPOSTDIR" ng-hide="!@(scopevarsettings).UseStreetDirections" data-type="ADDRESSCONTROLFIELD">
+                    @Html.LabelFor(o => o.PostDirectional, new { @class = "sub-label" })
+                    <select name="PostDir" id="@(addresscontrolid)_PostDir" class="form-control nomax" ng-model="@(scopevaraddress).PostDirectional">
+                        <option value=""></option>
+                        <option ng-repeat="opt in @(scopevarsettings).StreetDirectionals" value="{{ opt.Value }}">{{ opt.Text }}</option>
+                    </select>
+                    @Html.ValidationMessageFor(o => o.PostDirectional)
+                </div>
+                <div class="col-sm-2" id="@(addresscontrolid)_divADDRSTREETTYPE" data-type="ADDRESSCONTROLFIELD">
+                    @Html.LabelFor(o => o.StreetType, new { @class = "sub-label" })
+                    <select name="StreetType" id="@(addresscontrolid)_StreetType" class="form-control nomax" ng-model="@(scopevaraddress).StreetType">
+                        <option value=""></option>
+                        <option ng-repeat="opt in @(scopevarsettings).StreetTypes" value="{{ opt.Value }}">{{ opt.Text }}</option>
+                    </select>
+                    @Html.ValidationMessageFor(o => o.StreetType)
+                </div>
+            </div>
+        </div>
+
+        <!-- CROSS STREET -->
+        <div class="row" ng-hide="!@(scopevarsettings).UseCrossStreet">
+            <div class="inline-text-group inline-text-group-xs" id="@(addresscontrolid)_ADDRFORMALROW2">
+                <div class="col-sm-12" id="@(addresscontrolid)_divADDRCROSSSTREET" data-type="ADDRESSCONTROLFIELD">
+                    <label for="CrossStreetName" class="sub-label">{{ @(scopevarsettings).CrossStreetLabel }}</label>
+                    @Html.TextBoxFor(o => o.CrossStreetName, new { @class = "form-control nomax", ng_model = scopevaraddress + ".CrossStreetName", maxlength = AddressControlDTOConstants.MaxCrossStreetLength })
+                    @Html.ValidationMessageFor(o => o.CrossStreetName)
+                </div>
+            </div>
+        </div>
+
+        <!-- APARTMENT INFORMATION -->
+        <div class="row">
+            <div class="inline-text-group inline-text-group-xs" id="@(addresscontrolid)_ADDRFORMALROW3">
+                <div class="col-xs-6 col-sm-4" id="@(addresscontrolid)_divADDRUNITTYPE" data-type="ADDRESSCONTROLFIELD">
+                    @Html.LabelFor(o => o.UnitType, new { @class = "sub-label" })
+                    <select name="UnitType" id="@(addresscontrolid)_UnitType" class="form-control nomax" ng-model="@(scopevaraddress).UnitType">
+                        <option value=""></option>
+                        <option ng-repeat="opt in @(scopevarsettings).UnitTypes" value="{{ opt.Value }}">{{ opt.Text }}</option>
+                    </select>
+                </div>
+                <div class="col-xs-6 col-sm-4" id="@(addresscontrolid)_divADDRUNITNUMBER" data-type="ADDRESSCONTROLFIELD">
+                    @Html.LabelFor(o => o.UnitNumber, new { @class = "sub-label" })
+                    @Html.TextBoxFor(o => o.UnitNumber, new { @class = "form-control nomax", ng_disabled = scopevaraddress + ".UnitType === null || " + scopevaraddress + ".UnitType === ''", ng_model = scopevaraddress + ".UnitNumber", maxlength = AddressControlDTOConstants.MaxUnitNumberLength })
+                    @Html.ValidationMessageFor(o => o.UnitNumber)
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div ng-show="@(scopevarsettings).UseFormalAddress === false">
+
+        <!-- ADDRESS LINE 1 -->
+        <div class="row">
+            <div class="inline-text-group inline-text-group-xs">
+                <div class="col-xs-12">
+                    @Html.LabelFor(o => o.Address1, new { @class = "sub-label" })
+                    @Html.TextBoxFor(o => o.Address1, new { id = addresscontrolid + "_AddressControl_Address1", @class = "form-control nomax", ng_model = scopevaraddress + ".Address1", maxlength = AddressControlDTOConstants.MaxAddressLine1Length })
+                    @Html.ValidationMessageFor(o => o.Address1)
+                </div>
+            </div>
+        </div>
+
+        <!-- ADDRESS LINE 2 -->
+        <div class="row">
+            <div class="inline-text-group inline-text-group-xs">
+                <div class="col-xs-12">
+                    @Html.LabelFor(o => o.Address2, new { @class = "sub-label" })
+                    @Html.TextBoxFor(o => o.Address2, new { id = addresscontrolid + "_AddressControl_Address2", @class = "form-control nomax", ng_model = scopevaraddress + ".Address2", maxlength = AddressControlDTOConstants.MaxAddressLine2Length })
+                    @Html.ValidationMessageFor(o => o.Address2)
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div id="@(addresscontrolid)_divCOMMONADDRESSROWS">
+
+        <!-- COLONY -->
+        <div class="row" ng-hide="!@(scopevarsettings).UseColony">
+            <div class="inline-text-group inline-text-group-xs" id="@(addresscontrolid)_ADDRCOMMONROW1">
+                <div class="col-xs-12" id="@(addresscontrolid)_divADDRCOLONY" data-type="ADDRESSCONTROLFIELD">
+                    <label for="Colony" class="sub-label">{{ @(scopevarsettings).ColonyLabel }}</label>
+                    @Html.TextBoxFor(o => o.Colony, new { id = addresscontrolid + "_AddressControlColony", data_type = "AddressControlColony", @class = "form-control medium", ng_model = scopevaraddress + ".Colony", maxlength = AddressControlDTOConstants.MaxColonyLength })
+                    @Html.ValidationMessageFor(o => o.Colony)
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="inline-text-group inline-text-group-xs" id="@(addresscontrolid)_ADDRCOMMONROW2">
+
+                <!-- STATE OR STATE LIST -->
+                <div class="col-sm-4">
+
+                    <!-- FREE ENTRY STATE -->
+                    <div ng-hide="@(scopevarsettings).UseStateList">
+                        <label for="AddressControlState" class="sub-label">{{ @(scopevarsettings).StateLabel }}</label>
+                        @Html.TextBoxFor(o => o.State, new { id = addresscontrolid + "_AddressControlState", data_type = "AddressControlState", @class = "form-control nomax", ng_model = scopevaraddress + ".State", maxlength = AddressControlDTOConstants.MaxStateLength })
+                        @Html.ValidationMessageFor(o => o.State)
+                    </div>
+
+                    <!-- STATE LIST -->
+                    <div ng-hide="!@(scopevarsettings).UseStateList">
+                        <label for="AddressControlStateList" class="sub-label">{{ @(scopevarsettings).StateLabel }}</label>
+                        @Html.DropDownListFor(o => o.StateList, new List<SelectListItem>(), new { id = addresscontrolid + "_AddressControlStateList", name = addresscontrolid + "_AddressControlStateList", data_type = "AddressControlStateList", @class = "form-control nomax", data_scope_variable = scopevaraddress + ".State", data_scope_city = "CityList" + addresscontrolid })
+                        @Html.ValidationMessageFor(o => o.StateList)
+                    </div>
+                </div>
+
+                <!-- CITY LIST -->
+                <div class="col-sm-4" ng-hide="@(scopevarsettings).UseCityList">
+                    <label for="AddressControlCity" class="sub-label">{{ @(scopevarsettings).CityLabel }}</label>
+                    @Html.TextBoxFor(o => o.City, new { id = addresscontrolid + "_AddressControlCity", data_type = "AddressControlCity", @class = "form-control nomax", ng_model = scopevaraddress + ".City", maxlength = AddressControlDTOConstants.MaxCityLength })
+                    @Html.ValidationMessageFor(o => o.City)
+                </div>
+
+                <!-- FREE ENTRY CITY -->
+                <div class="col-sm-4" ng-hide="!@(scopevarsettings).UseCityList">
+                    <label for="AddressControlCityList" class="sub-label">{{ @(scopevarsettings).CityLabel }}</label>
+                    @Html.DropDownListFor(o => o.CityList, new List<SelectListItem>(), new { id = addresscontrolid + "_AddressControlCityList", data_type = "AddressControlCityList", @class = "form-control nomax", ng_disabled = "CityList" + addresscontrolid + " === undefined || CityList" + addresscontrolid + " === null || CityList" + addresscontrolid + ".length <= 0", data_scope_variable = scopevaraddress + ".City" })
+                    @Html.ValidationMessageFor(o => o.CityList)
+                </div>
+
+                <!-- POSTAL CODE -->
+                <div class="col-sm-4" id="@(addresscontrolid)_ShipToZip">
+                    <label for="ZipCodeRequired" class="sub-label">{{ @(scopevarsettings).ZipLabel }}</label>
+                    @Html.TextBoxFor(o => o.ZipCode, new { id = addresscontrolid + "_AddressControlZip", data_type = "AddressControlZip", @class = "form-control nomax", ng_model = scopevaraddress + ".PostalCode", maxlength = 10, placeholder = "{{ " + scopevarsettings + ".ZipPlaceholder }}" })
+                    @Html.ValidationMessageFor(o => o.ZipCode)
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>

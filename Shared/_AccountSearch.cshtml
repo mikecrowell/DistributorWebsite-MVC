@@ -1,0 +1,213 @@
+﻿@using DistributorWebsite.MVC.WebUI.Models
+@{
+    string statementLink = ViewBag.ACCOUNTTYPE ?? "";
+}
+
+<div id="divCUSTOMEREXPORT" class="modal modal-styled fade" data-type="HCDYNAMICSUB" data-container="HCDYNAMICGRID_Customers" role="dialog" aria-hidden="false" aria-labelledby="myModalLabel">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header" style="border-bottom: 0;">
+                <button class="close" aria-hidden="true" type="button" data-dismiss="modal"><i class="fa fa-times fa-lg"></i></button>
+                <h1 style="margin-top: 0; margin-bottom: 0;"><span class="fa fa-download"></span> &nbsp;@HCResources.Export</h1>
+            </div>
+            <div class="modal-body">
+                <form id="frmEXPORTCUSTOMERS" data-rooturl="@Url.Action("Customer","Reports")" action="" target="_blank" method="post">
+                    <input type="hidden" id="listtype" name="listtype" value="" />
+                    <input type="hidden" id="lastorderdatefrom" name="lastorderdatefrom" value="" />
+                    <input type="hidden" id="lastorderdateto" name="lastorderdateto" value="" />
+                    <input type="hidden" id="includemerch" name="includemerch" value="" />
+                    <input type="hidden" id="exportformat" name="exportformat" value="pdf" />
+                    <input type="hidden" id="title" name="title" value="Test Title In Hidden Field" />
+
+                    <div id="reportparm" class="form-group row">
+                        <div class="col-xs-12">
+                            <label>@HCResources.Title:</label>
+                            <input id="titletext" name="titletext" type="text" class="form-control nomax" value="" disabled />
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <div class="col-xs-12">
+                            <label>@HCResources.Type:</label>
+                            <select class="form-control nomax" id="reportType">
+                                <option value="SUM">@HCResources.CustomerSummary</option>
+                                <option value="DET">@HCResources.CustomerDetails</option>
+                                <option value="DETORD">@HCResources.CustomerDetailsWithOrder</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <div class="col-xs-12">
+                            <label>@HCResources.Client:</label>
+                            @Html.DropDownList("client", DistributorWebsite.MVC.WebUI.Helpers.Common.GetCurrentEntityClients(true, "*", true), new { id = "client", name = "client", @class = "form-control" })
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <div class="col-xs-12">
+                            <label>@HCResources.LastOrderDate:</label>
+                            <select class="form-control nomax" id="reportparmDATES">
+                                <option value="" data-datefrom="1900-01-01" data-dateto="2099-12-31">@HCResources.All</option>
+                                <optgroup label="@HyCite.MVC.DynamicDisplay.CoreResources.HyCiteDynamicDisplay.Daily">
+                                    <option value="D-0" data-datefrom="@DateTime.Now.ToString("yyyy-MM-dd")" data-dateto="@DateTime.Now.ToString("yyyy-MM-dd")">@HyCite.MVC.DynamicDisplay.CoreResources.HyCiteDynamicDisplay.Today</option>
+                                    <option value="D-2" data-datefrom="@DateTime.Now.AddDays(-2).ToString("yyyy-MM-dd")" data-dateto="@DateTime.Now.ToString("yyyy-MM-dd")">@HyCite.MVC.DynamicDisplay.CoreResources.HyCiteDynamicDisplay.WithinLastNDays.Replace("[#]", "2")</option>
+                                    <option value="D-7" data-datefrom="@DateTime.Now.AddDays(-7).ToString("yyyy-MM-dd")" data-dateto="@DateTime.Now.ToString("yyyy-MM-dd")">@HyCite.MVC.DynamicDisplay.CoreResources.HyCiteDynamicDisplay.WithinLastNDays.Replace("[#]", "7")</option>
+                                    <option value="D-14" data-datefrom="@DateTime.Now.AddDays(-14).ToString("yyyy-MM-dd")" data-dateto="@DateTime.Now.ToString("yyyy-MM-dd")">@HyCite.MVC.DynamicDisplay.CoreResources.HyCiteDynamicDisplay.WithinLastNDays.Replace("[#]", "14")</option>
+                                    <option value="D-30" data-datefrom="@DateTime.Now.AddDays(-30).ToString("yyyy-MM-dd")" data-dateto="@DateTime.Now.ToString("yyyy-MM-dd")">@HyCite.MVC.DynamicDisplay.CoreResources.HyCiteDynamicDisplay.WithinLastNDays.Replace("[#]", "30")</option>
+                                    <option value="D-60" data-datefrom="@DateTime.Now.AddDays(-60).ToString("yyyy-MM-dd")" data-dateto="@DateTime.Now.ToString("yyyy-MM-dd")">@HyCite.MVC.DynamicDisplay.CoreResources.HyCiteDynamicDisplay.WithinLastNDays.Replace("[#]", "60")</option>
+                                </optgroup>
+                                <optgroup label="@HyCite.MVC.DynamicDisplay.CoreResources.HyCiteDynamicDisplay.Monthly">
+                                    <option value="M-0" data-datefrom="@(DateTime.Now.ToString("yyyy-MM-"))01" data-dateto="@DateTime.Now.ToString("yyyy-MM-dd")">@HyCite.MVC.DynamicDisplay.CoreResources.HyCiteDynamicDisplay.MonthToDate</option>
+                                    <option value="M-2" data-datefrom="@(DateTime.Now.AddMonths(-1).ToString("yyyy-MM-"))01" data-dateto="@DateTime.Now.ToString("yyyy-MM-dd")">@HyCite.MVC.DynamicDisplay.CoreResources.HyCiteDynamicDisplay.WithinLastNMonths.Replace("[#]", "2")</option>
+                                    <option value="M-3" data-datefrom="@(DateTime.Now.AddMonths(-2).ToString("yyyy-MM-"))01" data-dateto="@DateTime.Now.ToString("yyyy-MM-dd")">@HyCite.MVC.DynamicDisplay.CoreResources.HyCiteDynamicDisplay.WithinLastNMonths.Replace("[#]", "3")</option>
+                                    <option value="M-6" data-datefrom="@(DateTime.Now.AddMonths(-5).ToString("yyyy-MM-"))01" data-dateto="@DateTime.Now.ToString("yyyy-MM-dd")">@HyCite.MVC.DynamicDisplay.CoreResources.HyCiteDynamicDisplay.WithinLastNMonths.Replace("[#]", "6")</option>
+                                    <option value="M-9" data-datefrom="@(DateTime.Now.AddMonths(-8).ToString("yyyy-MM-"))01" data-dateto="@DateTime.Now.ToString("yyyy-MM-dd")">@HyCite.MVC.DynamicDisplay.CoreResources.HyCiteDynamicDisplay.WithinLastNMonths.Replace("[#]", "9")</option>
+                                </optgroup>
+                                <optgroup label="@HyCite.MVC.DynamicDisplay.CoreResources.HyCiteDynamicDisplay.Yearly">
+                                    <option value="Y-0" data-datefrom="@(DateTime.Now.ToString("yyyy-"))01-01" data-dateto="@DateTime.Now.ToString("yyyy-MM-dd")">@HyCite.MVC.DynamicDisplay.CoreResources.HyCiteDynamicDisplay.YearToDate</option>
+                                    <option value="Y-1" data-datefrom="@(DateTime.Now.AddYears(-1).ToString("yyyy-"))01-01" data-dateto="@DateTime.Now.ToString("yyyy-MM-dd")">@HyCite.MVC.DynamicDisplay.CoreResources.HyCiteDynamicDisplay.WithinLastNYears.Replace("[#]", "1")</option>
+                                    <option value="Y-2" data-datefrom="@(DateTime.Now.AddYears(-2).ToString("yyyy-"))01-01" data-dateto="@DateTime.Now.ToString("yyyy-MM-dd")">@HyCite.MVC.DynamicDisplay.CoreResources.HyCiteDynamicDisplay.WithinLastNYears.Replace("[#]", "2")</option>
+                                    <option value="Y-3" data-datefrom="@(DateTime.Now.AddYears(-3).ToString("yyyy-"))01-01" data-dateto="@DateTime.Now.ToString("yyyy-MM-dd")">@HyCite.MVC.DynamicDisplay.CoreResources.HyCiteDynamicDisplay.WithinLastNYears.Replace("[#]", "3")</option>
+                                    <option value="Y-4" data-datefrom="@(DateTime.Now.AddYears(-4).ToString("yyyy-"))01-01" data-dateto="@DateTime.Now.ToString("yyyy-MM-dd")">@HyCite.MVC.DynamicDisplay.CoreResources.HyCiteDynamicDisplay.WithinLastNYears.Replace("[#]", "4")</option>
+                                    <option value="Y-5" data-datefrom="@(DateTime.Now.AddYears(-5).ToString("yyyy-"))01-01" data-dateto="@DateTime.Now.ToString("yyyy-MM-dd")">@HyCite.MVC.DynamicDisplay.CoreResources.HyCiteDynamicDisplay.WithinLastNYears.Replace("[#]", "5")</option>
+                                    <option value="Y-6" data-datefrom="@(DateTime.Now.AddYears(-6).ToString("yyyy-"))01-01" data-dateto="@DateTime.Now.ToString("yyyy-MM-dd")">@HyCite.MVC.DynamicDisplay.CoreResources.HyCiteDynamicDisplay.WithinLastNYears.Replace("[#]", "6")</option>
+                                </optgroup>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <div class="col-xs-12">
+                            <label>@HyCite.MVC.DynamicDisplay.CoreResources.HyCiteDynamicDisplay.OrderBy:</label>
+                            <select id="orderby" name="orderby" class="form-control">
+                                <option value="CustomerNo">@HCResources.CustomerNo</option>
+                                <option value="Name">@HCResources.FirstName</option>
+                                <option value="LastName">@HCResources.LastName</option>
+                                <option value="City">@HCResources.City</option>
+                                <option value="State">@HCResources.State</option>
+                                <option value="Zip">@HCResources.ZipCode</option>
+                                <option value="LastOrderDate desc">@HCResources.LastOrderDate (desc)</option>
+                                <option value="LastOrderDate">@HCResources.LastOrderDate</option>
+                                <option value="CurrentBalance">@HCResources.CurrentBalance</option>
+                                <option value="CurrentBalance desc">@HCResources.CurrentBalance (desc)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-xs-12">
+                            <button type="button" class="btn btn-primary" data-type="EXPORTCUSTOMERS" data-fmt="pdf"><span class="fa fa-file-pdf-o"></span> @HCResources.Export (PDF)</button>
+                            <button type="button" class="btn btn-primary" data-type="EXPORTCUSTOMERS" data-fmt="excel"><span class="fa fa-file-excel-o"></span> @HCResources.Export (EXCEL)</button>
+                        </div>
+                    </div>
+
+                </form>
+
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-default" type="button" data-dismiss="modal">@HCResources.Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@using (Html.BeginCustomDynamicForm<CustomersDTO>(DistributorWebsite.MVC.WebUI.Helpers.Application.Instance.APIS.DistributorWebAPI, "Customers", Constants.DYNAMICTABLEWITHHEADERSANDBODYHEADER, entityPath: "/" + (String)ViewBag.DEFAULTSEARCHTYPE, detailUrl: "Customers/Default.AllAccounts", reportURL: "testreporturl", autoInit: true, additionalTableClasses: "mobile-table", additionalItems: new Dictionary<string, string>() { { "data-customer-cat", (String)ViewBag.DEFAULTSEARCHCAT }, { "data-norecords-entity", HCResources.Customers } }))
+{
+    <tr id="trAccountSearchOptions" class="table-header-row hidden-print">
+        <th colspan="13">
+            <div class="row ng-cloak">
+                <div class="col-xs-12 col-sm-8 col-md-8 col-lg-6 padbottom">
+                    <label class="small-header-label" for="ACCOUNTSEARCHTYPE">@HCResources.AccountType:</label>
+                    <div class="input-group">
+                        @Html.DropDownList("ACCOUNTSEARCHTYPE", (SelectList)ViewBag.ACCOUNTSEARCHTYPES, new { id = "ACCOUNTSEARCHTYPE", data_type = "ACCOUNTSEARCHTYPE", @class = "form-control nomax" })
+                        <span class="input-group-btn">
+                            <button id="btnEXPORTCUSTOMERS" data-type="button" class="btn btn-success"><span class="hidden-xs">@HCResources.Export &nbsp;</span><span class="fa fa-download"></span></button>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </th>
+    </tr>
+
+    <tbody>
+        <tr ng-repeat="entity in entities" class="ng-cloak" data-keys='{"CustomerNo":{{ entity.CustomerNo | json}},"Client":{{ entity.Client | json}}}'>
+            <td class="hidden-xs hidden-sm">{{ entity.CustomerNo }}<span ng-hide="entity.StatementID === null">&nbsp;<a href="@Url.Action(statementLink + "CustomerStatement","Reports")/{{entity.StatementID}}" target="_blank" class="text-danger"><span class="fa fa-file-pdf-o"></span></a></span><span class="hidden-lg smallgraytext"><br />{{ entity.Client }}</span></td>
+            <td class="hidden-xs hidden-sm hidden-md">{{ entity.Client }}</td>
+            <td class="hidden-xs hidden-sm">{{ entity.FirstName }}<span ng-hide="1 === 1 || entity.EmailAddress === null || entity.EmailAddress === ''"><br /><a href="mailto:{{ entity.EmailAddress }}"><span class="fa fa-envelope"></span>&nbsp;{{ entity.EmailAddress }}</a></span></td>
+            <td class="hidden-xs hidden-sm">{{ entity.PaternalLastName }}</td>
+            <td class="hidden-xs hidden-sm">
+                <span ng-hide="entity.EmailAddress === null || entity.EmailAddress === ''" title="{{ entity.EmailAddress }}">
+                    <a href="mailto:{{ entity.EmailAddress }}">
+                        <span class="fa fa-envelope"></span><span class="hc-hidden-ML"> &nbsp;{{ entity.EmailAddress }}</span>
+                    </a>
+                </span>
+            </td>
+            <td class="hidden-xs hidden-sm">
+                <span ng-bind-html="entity.HomePhone | hcphone"></span>
+                <span class="hc-visible-M" ng-hide="entity.MobilePhone === null || entity.MobilePhone === ''">
+                    <span ng-bind-html="entity.MobilePhone | hcphone:'cell'"></span>
+                </span>
+            </td>
+            <td class="hidden-xs hidden-sm hidden-md hc-hidden-M text-nowrap" ng-bind-html="entity.MobilePhone | hcphone:'cell'"></td>
+            <td class="hidden-xs hidden-sm hc-hidden-XL">{{ entity.LastPurchaseDate | hcdate }}</td>
+            <td class="hidden-xs hidden-sm hidden-md text-right" ng-bind-html="entity.CurrentBalanceJSON | hccurrency:'both':DisplayCurrency:2:true:false"></td>
+            <td class="hidden-xs hidden-sm hidden-md text-right" ng-bind-html="entity.DelinquentTotalJSON | hccurrency:'both':DisplayCurrency:2:true:false"></td>
+            <td class="hidden-xs hidden-sm hidden-md text-center hc-hidden-L">{{ entity.FinanceLevel }}</td>
+            <td class="hidden-xs hidden-sm">{{ entity.SalespersonCode }}</td>
+            <td class="hidden-xs hidden-sm" ng-bind-html="entity.Status | hccustomerstatus"></td>
+
+            <td class="hidden-md hidden-lg td-mobile" colspan="3">
+                <div>
+                    <div class="row padbottom-sm">
+                        <div class="col-xs-12">
+                            <table class="cell-table header40">
+                                <thead>
+                                    <tr>
+                                        <th colspan="2">{{entity.Client}} - {{ entity.Name }}</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="header">@HCResources.CustomerNo:</td>
+                                        <td>{{ entity.CustomerNo }}<span ng-hide="entity.StatementID === null">&nbsp;<a href="@Url.Action(statementLink + "CustomerStatement","Reports")/{{entity.StatementID}}" target="_blank" class="text-danger"><span class="fa fa-file-pdf-o"></span></a></span></td>
+                                    </tr>
+                                    <tr ng-hide="entity.EmailAddress === null || entity.EmailAddress === ''">
+                                        <td class="header">@HCResources.EmailAddress:</td>
+                                        <td><a href="mailto:{{ entity.EmailAddress }}"><span class="fa fa-envelope"></span>&nbsp;{{ entity.EmailAddress }}</a></td>
+                                    </tr>
+                                    <tr ng-hide="entity.HomePhone === null || entity.HomePhone === ''">
+                                        <td class="header">@HCResources.HomePhone:</td>
+                                        <td ng-bind-html="entity.HomePhone | hcphone"></td>
+                                    </tr>
+                                    <tr ng-hide="entity.MobilePhone === null || entity.MobilePhone === ''">
+                                        <td class="header">@HCResources.CellPhone:</td>
+                                        <td ng-bind-html="entity.MobilePhone | hcphone"></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="header">@HCResources.CurrentBalance:</td>
+                                        <td ng-bind-html="entity.CurrentBalanceJSON | hccurrency:'both':DisplayCurrency:2:true:false"></td>
+                                    </tr>
+                                    <tr ng-hide="entity.DelinquentTotal <= 0">
+                                        <td class="header">@HCResources.Delinquent:</td>
+                                        <td ng-bind-html="entity.DelinquentTotalJSON | hccurrency:'both':DisplayCurrency:2:true:false"></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="header">@HCResources.Salesperson:</td>
+                                        <td>{{ entity.SalespersonCode }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="header">@HCResources.Status:</td>
+                                        <td ng-bind-html="entity.Status | hccustomerstatus"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12 mobile-footer">@HCResources.LastOrderDate: {{ entity.LastPurchaseDate | hcdate }}</div>
+                    </div>
+                </div>
+            </td>
+        </tr>
+    </tbody>
+}
