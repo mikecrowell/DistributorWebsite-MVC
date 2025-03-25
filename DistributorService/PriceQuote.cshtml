@@ -1,0 +1,406 @@
+﻿@using DistributorWebsite.MVC.WebUI.Models
+@model DistributorWebsite.MVC.WebUI.Models.PriceQuoteEntryDTO
+@{
+                /**/
+
+                /**/
+
+                Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1 class="HC-page-header">@ViewBag.Title</h1>
+
+<div ng-hide="showdetails" data-type="HCDYNAMICOPTIONS" data-container="HCDYNAMICGRID_PriceQuotes">
+    <button class="btn btn-primary" id="btnNEWQUOTE">@HCResources.NewQuote &nbsp;<span class="fa fa-plus fa-lg"></span></button>
+</div>
+
+<!-- PRICE QUOTE REPORT GENERATION FORM -->
+@using (Html.BeginForm("PriceQuote", "Reports", FormMethod.Post, new { target = "_blank", id = "QUOTEEXPORTFORM", data_action = Url.Action("PriceQuote", "Reports") }))
+{
+    <input type="hidden" name="quoteid" id="quoteid" value="" />
+}
+
+<!-- QUOTE DETAILS WINDOW -->
+<div class="panel HC-panel-det ng-cloak box-max-medium" data-type="HCDYNAMICDET" data-container="HCDYNAMICGRID_PriceQuotes" ng-show="showdetails && !shownew">
+    <div class="panel-heading">
+        <div class="btn-group pull-right">
+            <a href="#" class="btn btn-default" onclick="HCE.PriceQuotes.CloseWindow(this)"><span class="fa fa-close fa-lg"></span></a>
+        </div>
+        <h1>@HCResources.ID: {{ entity.QuoteID }}</h1>
+        <div>
+            <span>@HCResources.Client: </span><strong>{{ entity.Client }}</strong> / <span>@HCResources.Date: </span><strong>{{ entity.QuoteDate | hcdate }}</strong></span>
+        </div>
+    </div>
+    <div class="panel-body">
+
+        <div class="form-group row">
+            <div class="col-xs-12">
+                <label>@HCResources.ShipToName:</label><br />
+                <span>{{ entity.ShipName }}</span>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <div class="col-xs-12">
+                <label>@HCResources.Total:</label><br />
+                <span ng-bind-html="entity.GrandTotalJSON | hccurrency:'both':DisplayCurrency:2:true:false"></span>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-xs-12">
+                <table class="table table-striped table-hover table-bordered ng-cloak">
+                    <thead>
+                        <tr class="column-header-row">
+                            <th>@HCResources.Article</th>
+                            <th>@HCResources.Description</th>
+                            <th class="text-right">@HCResources.Quantity</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="itm in entity.Items">
+                            <td>{{ itm.ProductCode }}</td>
+                            <td>{{ itm.Description }}</td>
+                            <td class="text-right">{{ itm.Quantity }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <button class="btn btn-default" data-type="VIEWQUOTE" data-id="{{ entity.QuoteID }}">@HCResources.View &nbsp;<span class="fa fa-file-pdf-o text-danger"></span></button>
+        <button class="btn btn-default" data-type="IMPORTQUOTE" data-id="{{ entity.QuoteID }}" data-name="{{ entity.ShipName }}"><span class="hidden-xs">@HCResources.ImportToNewQuote</span><span class="hidden-sm hidden-md hidden-lg">@HCResources.Import</span> &nbsp;<span class="fa fa-copy"></span></button>
+        <button class="btn btn-default" data-type="DELETEQUOTE" data-id="{{ entity.QuoteID }}" data-name="{{ entity.ShipName }}">@HCResources.Delete  &nbsp;<span class="fa fa-times text-danger"></span></button>
+
+    </div>
+
+    <div class="panel-footer text-right"><a href="#" class="btn btn-default" onclick="HCE.PriceQuotes.CloseWindow(this)">@HCResources.Close <span class="fa fa-close"></span></a></div>
+</div>
+
+<!-- NEW QUOTE WINDOW -->
+<div id="divNEWQUOTE" data-type="HCDYNAMICDET" data-container="HCDYNAMICGRID_PriceQuotes" ng-show="showdetails && shownew" class="ng-cloak">
+    <form id="frmNEWQUOTE" method="post">
+        <div class="panel HC-panel-det ng-cloak box-max-medium">
+
+            <div class="panel-heading">
+                <div class="btn-group pull-right">
+                    <a href="#" class="btn btn-default" onclick="HCE.PriceQuotes.CloseWindow(this)"><span class="fa fa-close fa-lg"></span></a>
+                </div>
+                <h1 style="margin-top: 5px;">@HCResources.NewQuote</h1>
+            </div>
+            <div class="panel-body">
+
+                <!-- CLIENT -->
+                <div class="row form-group">
+                    <div class="col-xs-12">
+                        @Html.LabelFor(o => o.Client, new { @class = "control-label colon" })
+                        @Html.DropDownListFor(o => o.Client, DistributorWebsite.MVC.WebUI.Helpers.Common.GetSecurityItemClients(eSecurityItem.mnuPriceQuote), new { data_type = "HCFORMVALUE", id = "PQClient", data_model = "Client", ng_model = "Quote.Client", @class = "form-control nomax", disabled = "disabled" })
+                        @Html.HCValidationMessageFor(o => o.Client)
+                    </div>
+                </div>
+
+                <!-- ORDER INFORMATION -->
+                <div class="row form-group">
+
+                    <div class="col-xs-12 col-md-6 padbottom">
+
+                        <!-- ORDER TYPE -->
+                        @Html.LabelFor(o => o.OrderType, new { @class = "control-label colon" })
+                        @Html.DropDownListFor(o => o.OrderType, (SelectList)ViewBag.ORDERTYPES, new { id = "PQOrderType", ng_model = "Quote.OrderType", @class = "form-control nomax" })
+                        @Html.HCValidationMessageFor(o => o.OrderType)
+
+                        <!-- VOLUME ONLY -->
+                        <div ng-show="Quote.OrderType === 'F' || Quote.OrderType === 'C'" style="padding-top: 5px;">
+                            <label style="font-style: italic;">@HCResources.VolumeOnly:</label>
+                            <div class="checkbox" style="margin-top: 0; margin-bottom: 0;">
+                                <label>
+                                    <input type="checkbox" ng-checked="Quote.VolumeOnly == true" ng-model="Quote.VolumeOnly" /> {{Quote.VolumeOnly | hcboolean}}
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xs-12 col-md-6 padbottom" ng-hide="Quote.VolumeOnly">
+
+                        <!-- DELIVERY METHOD -->
+                        @Html.LabelFor(o => o.DeliveryMethod, new { @class = "control-label colon" })
+                        @Html.DropDownListFor(o => o.DeliveryMethod, (SelectList)ViewBag.DELIVERYMETHODS, new { ng_model = "Quote.DeliveryMethod", @class = "form-control nomax" })
+                        @Html.HCValidationMessageFor(o => o.DeliveryMethod)
+
+                        <!-- INSURED -->
+                        <div ng-hide="Quote.DeliveryMethod !== 'DG'" style="padding-top: 5px;">
+                            <label style="font-style: italic;">@HCResources.AddShippingInsurance:</label>
+                            <div class="checkbox" style="margin-top: 0; margin-bottom: 0;">
+                                <label>
+                                    <input type="checkbox" ng-checked="Quote.Insured == true" ng-model="Quote.Insured" /> {{Quote.Insured | hcboolean}}
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- SALES PRICE -->
+                <div class="form-group row" ng-hide="Quote.OrderType !== 'C' && Quote.OrderType !== 'F'">
+                    <div class="col-xs-12">@Html.LabelFor(o => o.SalesPrice)</div>
+                    <div class="col-sm-12 col-md-6 col-lg-4">
+                        <div data-type="HCCURRENCY">
+                            <div class="input-group">
+                                <span class="input-group-addon"><strong>{{ CCEntity.Symbol }}</strong></span>
+                                @Html.TextBoxFor(o => o.SalesPrice, new { ng_model = "CCEntity.Amount", type = "number", min = "0.01", max = "9999999", data_inputtype = "HCCURRENCY", data_currency = "{{ CCEntity.Currency}}", data_decimals = "{{ CCEntity.DecimalSeparator }}", @class = "form-control nomax", placeholder = HCResources.Format + ": ####.##", id = "txtSALESPRICE" })
+                            </div>
+                            <div ng-hide="CCEntity.Amount === null">
+                                <span data-type="FORMATTEDTEXT"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-12">@Html.HCValidationMessageFor(o => o.SalesPrice)</div>
+                </div>
+
+                <!-- SHIP TO INFORMATION -->
+                <div class="well well-lg" ng-hide="Quote.VolumeOnly">
+
+                    <!-- NAME -->
+                    <div class="row form-group">
+                        <div class="col-xs-12" style="padding-bottom: 0;"><label for="FirstName" style="margin-bottom: 0;">@HCResources.ShipToName:</label></div>
+                        <div class="col-xs-12" ng-hide="Quote.OrderType !== 'D'">
+                            @Html.TextBoxFor(o => o.FirstName, new { @class = "form-control nomax alphaonly edititem", ng_model = "Quote.FirstName", ng_disabled = "Quote.OrderType === 'D'" })
+                        </div>
+                        <div class="inline-text-group inline-text-group-xs" ng-hide="Quote.OrderType === 'D'">
+                            <div class="col-sm-3">
+                                @Html.LabelFor(o => o.FirstName, new { @class = "sub-label" })
+                                @Html.TextBoxFor(o => o.FirstName, new { @class = "form-control nomax alphaonly edititem", maxlength = 25, ng_model = "Quote.FirstName" })
+                                @Html.ValidationMessageFor(o => o.FirstName)
+                            </div>
+                            <div class="col-sm-2">
+                                @Html.LabelFor(o => o.MiddleName, new { @class = "sub-label" })
+                                @Html.TextBoxFor(o => o.MiddleName, new { @class = "form-control nomax alphaonly edititem", maxlength = 25, ng_model = "Quote.MiddleName" })
+                                @Html.ValidationMessageFor(o => o.MiddleName)
+                            </div>
+                            <div class="col-sm-3" id="divPATERNALLASTNAME">
+                                @Html.LabelFor(o => o.PaternalLastName, new { @class = "sub-label" })
+                                @Html.TextBoxFor(o => o.PaternalLastName, new { @class = "form-control nomax alphaonly edititem", maxlength = 25, ng_model = "Quote.PaternalLastName" })
+                                @Html.ValidationMessageFor(o => o.PaternalLastName)
+                            </div>
+                            <div class="col-sm-3" id="divMATERNALLASTNAME">
+                                @Html.LabelFor(o => o.MaternalLastName, new { @class = "sub-label" })
+                                @Html.TextBoxFor(o => o.MaternalLastName, new { @class = "form-control nomax alphaonly edititem", maxlength = 25, ng_model = "Quote.MaternalLastName" })
+                                @Html.ValidationMessageFor(o => o.MaternalLastName)
+                            </div>
+                            <div class="col-sm-1 padbottom">
+                                @Html.LabelFor(o => o.Suffix, new { @class = "sub-label" })
+                                @Html.TextBoxFor(o => o.Suffix, new { @class = "form-control nomax alphaonly", maxlength = 20, ng_model = "Quote.Suffix" })
+                                @Html.ValidationMessageFor(o => o.Suffix)
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <label>@HCResources.ShipToAddress:</label>
+                        </div>
+                    </div>
+
+                    <!-- ADDRESS -->
+                    <div class="row form-group">
+                        <div class="col-xs-12">
+                            @Html.LabelFor(o => o.Address, new { @class = "sub-label" })
+                            @Html.TextBoxFor(o => o.Address, new { @class = "form-control nomax", ng_model = "Quote.Address", ng_disabled = "Quote.OrderType === 'D'" })
+                            @Html.ValidationMessageFor(o => o.Address)
+                        </div>
+                    </div>
+
+                    <!-- COLONY -->
+                    <div class="row form-group">
+                        <div class="col-xs-12 col-sm-8 col-md-6">
+                            @Html.LabelFor(o => o.Colony, new { @class = "sub-label" })
+                            @Html.TextBoxFor(o => o.Colony, new { @class = "form-control nomax", ng_model = "Quote.Colony", ng_disabled = "Quote.OrderType === 'D'" })
+                            @Html.ValidationMessageFor(o => o.Colony)
+                        </div>
+                    </div>
+
+                    <div class="row form-group">
+                        <div class="inline-text-group inline-text-group-xs">
+
+                            <!-- STATE OR STATE LIST -->
+                            <div class="col-sm-4">
+                                @Html.LabelFor(o => o.State, new { @class = "sub-label" })
+                                @Html.TextBoxFor(o => o.State, new { @class = "form-control nomax", ng_model = "Quote.State", maxlength = AddressControlDTOConstants.MaxStateLength, ng_disabled = "Quote.OrderType === 'D'" })
+                                @Html.ValidationMessageFor(o => o.State)
+                            </div>
+
+                            <!-- CITY -->
+                            <div class="col-sm-4">
+                                @Html.LabelFor(o => o.City, new { @class = "sub-label" })
+                                @Html.TextBoxFor(o => o.City, new { @class = "form-control nomax", ng_model = "Quote.City", maxlength = AddressControlDTOConstants.MaxCityLength, ng_disabled = "Quote.OrderType === 'D'" })
+                                @Html.ValidationMessageFor(o => o.City)
+                            </div>
+
+                            <!-- POSTAL CODE -->
+                            <div class="col-sm-4">
+                                @Html.LabelFor(o => o.ZipCode, new { @class = "sub-label" })
+                                @Html.TextBoxFor(o => o.ZipCode, new { @class = "form-control nomax", ng_model = "Quote.ZipCode", maxlength = 12, ng_disabled = "Quote.OrderType === 'D'" })
+                                @Html.ValidationMessageFor(o => o.ZipCode)
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- PRODUCTS -->
+                <div class="row form-group">
+                    <div class="col-xs-12 padbottom">
+                        <button id="btnADDPRODUCTS" type="button" class="btn btn-primary">@HCResources.AddProducts  &nbsp;<span class="fa fa-search-plus fa-lg"></span></button>
+                    </div>
+                    <div class="col-xs-12" ng-hide="Quote.Items.length <= 0">
+                        <table class="table table-hover table-striped table-bordered" id="tabPQPRODUCTS">
+                            <thead>
+                                <tr class="column-header-row">
+                                    <th>@HCResources.ProductCode</th>
+                                    <th class="hidden-xs">@HCResources.Description</th>
+                                    <th>@HCResources.Quantity</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="product in Quote.Items">
+                                    <td>{{ product.ProductCode }}<span class="hidden-sm hidden-md hidden-lg smallgraytext"><br />{{ product.Description }}</span></td>
+                                    <td class="hidden-xs">{{ product.Description }}</td>
+                                    <td>
+                                        <input class="form-control input-sm" style="min-width: 50px !important;" type="number" ng-model="product.Quantity" data-type="QUOTEITEM" data-product-code="{{ product.ProductCode }}" data-client="MX" min="1" max="5000">
+                                    </td>
+                                    <td class="text-center">
+                                        <span data-type="REMOVEPRODUCT" class="fa fa-times fa-lg text-danger" data-product-code="{{ product.ProductCode }}"></span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel-footer text-right">
+                <div class="pull-right"><a href="#" class="btn btn-default" onclick="HCE.PriceQuotes.CloseWindow(this)">@HCResources.Cancel <span class="fa fa-close fa-lg"></span></a></div>
+                <div class="text-left">
+                    <button type="submit" class="btn btn-default" ng-disabled="Quote.Items.length <= 0 || Quote.OrderType === '' || (!Quote.VolumeOnly && (Quote.DeliveryMethod === '' || Quote.FirstName === '' || Quote.ZipCode === ''))">@HCResources.GenerateQuote &nbsp;<span class="fa fa-save fa-lg"></span></button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<div ng-app="HCE" style="clear: both;">
+
+    @using (Html.BeginCustomDynamicForm<PriceQuoteDTO>(DistributorWebsite.MVC.WebUI.Helpers.Application.Instance.APIS.DistributorWebAPI, "PriceQuotes", Constants.DYNAMICTABLEWITHHEADERS, detailUrl: "PriceQuotes({quoteid})/Default.GetItems", additionalTableClasses: "mobile-table", autoInit: true))
+    {
+        <tbody>
+            <tr class="ng-cloak ng-class:{'highlight' : entity.Highlight}" ng-repeat="entity in entities" data-keys='{"quoteid":{{ entity.QuoteID | json}}}'>
+                <td class="hidden-xs hidden-sm hidden-md">{{ entity.Client }}</td>
+                <td class="hidden-xs hidden-sm">{{ entity.QuoteDate | hcdate }}</td>
+                <td class="hidden-xs hidden-sm">{{ entity.OrderType | hcquotetype }}</td>
+                <td class="hidden-xs hidden-sm">{{ entity.ShipName }}</td>
+                <td class="hidden-xs hidden-sm text-right" ng-bind-html="entity.GrandTotalJSON | hccurrency:'both':DisplayCurrency:2:true:false"></td>
+                <td class="hidden-md hidden-lg td-mobile" colspan="2">
+                    <div>
+                        <div class="row padbottom-sm">
+                            <div class="col-xs-12">
+                                <table class="cell-table header50">
+                                    <thead>
+                                        <tr>
+                                            <th colspan="2">@HCResources.ID: {{ entity.QuoteID }}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td class="header">@HCResources.Date:</td>
+                                            <td>{{ entity.QuoteDate | hcdate }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="header">@HCResources.ShipToName:</td>
+                                            <td>{{ entity.ShipName }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="header">@HCResources.Type:</td>
+                                            <td>{{ entity.OrderType | hcquotetype }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="header">@HCResources.Total:</td>
+                                            <td ng-bind-html="entity.GrandTotalJSON | hccurrency:'both':DisplayCurrency:2:true:false"></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12 text-right">
+                                <button class="btn btn-primary btn-block">@HCResources.Details &nbsp;<span class="fa fa-search"></span></button>
+                            </div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    }
+
+    <!--------------------------->
+    <!-- PRODUCT SEARCH WINDOW -->
+    <!--------------------------->
+    <div class="modal modal-styled fade" id="divFINDPRODUCTS" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="FindProducts" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header modal-header-primary">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"> <span aria-hidden="true">&times;</span> </button>
+                    <h1 style="margin-top: 0; margin-bottom: 0;"><span class="fa fa-search"></span> &nbsp;@HCResources.Products</h1>
+                </div>
+                <div class="modal-body">
+                    @using (Html.BeginCustomDynamicForm<PriceQuoteProductDTO>(DistributorWebsite.MVC.WebUI.Helpers.Application.Instance.APIS.DistributorWebAPI, "Products", Constants.DYNAMICTABLEWITHHEADERSANDBODYHEADER, entityPath: "/Default.Products(client='MX')", autoInit: false, additionalItems: new Dictionary<string, string>() { { "data-norecords-entity", HCResources.Products } }))
+                    {
+                        <td>{{ entity.ProductCode }}<span class="hidden-sm hidden-md hidden-lg"><span class="smallgraytext"><br />{{ entity.ProductDescription }}</span></span></td>
+                        <td class="hidden-xs">{{ entity.ProductDescription}}</td>
+                        <td>
+                            <div class="input-group">
+                                <input class="form-control input-sm" style="min-width: 50px !important;" type="number" value="0" data-type="QUOTEITEM" data-product-code="{{ entity.ProductCode }}" data-description="{{ entity.ProductDescription }}" data-client="{{ entity.Client }}" min="0" max="5000" />
+                                <span class="input-group-btn input-group-sm">
+                                    <button class="btn btn-sm btn-success" type="button" data-type="ADDITEMTOQUOTE" data-product-code="{{ entity.ProductCode }}" data-price="entity.PriceJSON"><span class="fa fa-cart-plus fa-lg"></span></button>
+                                </span>
+                            </div>
+                        </td>
+                    }
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">@HCResources.Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+@section scripts {
+
+    @Scripts.Render("~/bundles/Pages/DistributorService/PriceQuotes")
+
+
+    <script type="text/javascript">
+	 <!--
+
+        HCE.Resources.OrderTypes = {};
+        HCE.Resources.OrderTypes.F = "@HCResources.Financed";
+        HCE.Resources.OrderTypes.D = "@HCResources.DistributorCash";
+        HCE.Resources.OrderTypes.C = "@HCResources.ConsumerCash";
+        HCE.Resources.Unknown = "@HCResources.Unknown";
+        HCE.Resources.DeleteConfirm = "@HCResources.DeletePriceQuoteConfirm";
+        HCE.Resources.DeleteSuccess = "@HCResources.DeletePriceQuoteSuccess";
+        HCE.Resources.Yes = "@HCResources.Yes";
+        HCE.Resources.Cancel = "@HCResources.Cancel";
+
+        $(function () {
+        });
+
+                 //-->
+    </script>
+}
+

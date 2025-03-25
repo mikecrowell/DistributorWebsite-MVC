@@ -1,0 +1,118 @@
+﻿@using DistributorWebsite.MVC.WebUI.Models
+@model DistributorWebsite.MVC.WebUI.Models.TaxLookupDTO
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1 class="HC-page-header">@ViewBag.Title</h1>
+
+<div ng-app="HCE" style="clear: both;">
+
+    @using (Html.BeginCustomDynamicForm<TaxLookupDTO>(DistributorWebsite.MVC.WebUI.Helpers.Application.Instance.APIS.DistributorWebAPI, "Distributors", eDynamicFormSection.DynamicOptionButtons, autoInit: false))
+    {
+        <div class="panel HC-panel-det HC-panel-det-sm" data-type="HCDYNAMICDET" data-container="HCDYNAMICGRID_Distributors" ng-hide="showdetails == true">
+            <div class="panel-heading">
+                <h1 style="margin-top: 0; margin-bottom: 0;"><span class="fa fa-search"></span> @HCResources.Search</h1>
+            </div>
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-xs-12 ng-cloak">
+                        @using (Html.BeginForm("TaxLookup", "DistributorService", FormMethod.Post, new { target = "_blank", id = "TAXLOOKUPFORM", data_action = Url.Action("") }))
+                        {
+
+                            @Html.AntiForgeryToken()
+
+                            <div class="form-group">
+                                <div class="col-xs-12 padbottom">
+                                    @Html.LabelFor(o => o.State)
+                                    @Html.DropDownListFor(o => o.State, (SelectList)ViewBag.ListUSStates, new { @class = "form-control nomax", id = "formSTATE" })
+                                    @Html.ValidationMessageFor(o => o.State)
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="col-xs-12 padbottom">
+                                    @Html.LabelFor(o => o.Address)
+                                    @Html.TextBoxFor(o => o.Address, new { @class = "form-control nomax", id = "formADDRESS" })
+                                    @Html.ValidationMessageFor(o => o.Address)
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="col-xs-12 padbottom">
+                                    @Html.LabelFor(o => o.City)
+                                    @Html.TextBoxFor(o => o.City, new { @class = "form-control", id = "formCITY", name = "reqCity" })
+                                    @Html.ValidationMessageFor(o => o.City)
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="col-xs-12 padbottom">
+                                    @Html.LabelFor(o => o.ZipCode)
+                                    @Html.TextBoxFor(o => o.ZipCode, new { @class = "form-control", id = "formZIP", name = "reqZip" })
+                                    @Html.ValidationMessageFor(o => o.ZipCode)
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="col-xs-12 padbottom">
+                                    @Html.LabelFor(o => o.SalesPrice)
+                                    @Html.TextBoxFor(o => o.SalesPrice, new { @class = "form-control", id = "formSALESPRICE", type="CURRENCY", name = "reqSalesPrice" })
+                                    @Html.ValidationMessageFor(o => o.SalesPrice)
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="col-xs-12 padbottom">
+                                    @Html.LabelFor(o => o.Shipping)
+                                    @Html.TextBoxFor(o => o.Shipping, new { @class = "form-control", id = "formSHIPPING", type = "CURRENCY", name = "reqShipping" })
+                                    @Html.ValidationMessageFor(o => o.Shipping)
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="col-xs-12 padbottom" style="font-weight: bold;">
+                                    @Html.LabelFor(o => o.TaxQuote)
+                                    @Html.TextBoxFor(o => o.TaxQuote, new { @class = "form-control", id = "formTAXQUOTE", type = "CURRENCY", disabled = "disabled", @readonly = "readonly" })
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="col-xs-12 padbottom" style="font-weight: bold;">
+                                    @Html.LabelFor(o => o.TaxRate)
+                                    @Html.TextBoxFor(o => o.TaxRate, new { @class = "form-control", id = "formTAXRATE", type = "CURRENCY", disabled = "disabled", @readonly = "readonly" })
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+            <div class="panel-footer text-center hidden-print">
+                <button type="button" class="btn btn-primary" data-type="CALLAPIBUTTON" data-fmt="api"><span class="fa fa-check-circle-o"></span> @HCResources.Submit</button>
+            </div>
+        </div>
+
+        <div class="dynamic-search-table ng-cloak" data-defaultsort="Client" style="padding-top: 5px;">
+        </div>
+    }
+</div>
+
+@section scripts {
+    
+    @Scripts.Render("~/bundles/Pages/DistributorService/TaxLookup")
+
+<script type="text/javascript">
+	 <!--
+
+        HCE.Resources.CurrentState = "@ViewBag.CurrentState";
+        HCE.Resources.CurrentCountry = "@ViewBag.CurrentCountry";
+        HCE.Resources.CurrentClient = "@ViewBag.CurrentClient";
+        HCE.Resources.DistributorNo = "@ViewBag.DistributorNo";
+
+		$(function () {
+		});
+
+	 //-->
+</script>
+}
+

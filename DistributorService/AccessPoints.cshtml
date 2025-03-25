@@ -1,0 +1,95 @@
+﻿@using DistributorWebsite.MVC.WebUI.Models
+@model DistributorWebsite.MVC.WebUI.Models.AccessPointDTO
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1 class="HC-page-header">@ViewBag.Title</h1>
+
+<div id="dialogHASACCESSPOINT" class="modal modal-styled fade" style="z-index: 999999">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header modal-header-success">
+                <h3 class="modal-title">@HCResources.AccessPointAvailableHeader</h3>
+            </div>
+            <div class="modal-body">
+                @Html.Raw(HCResources.AccessPointAvailableMessage)
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" data-dismiss="modal">@HCResources.Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="dialogNOACCESSPOINT" class="modal modal-styled fade" style="z-index: 999999">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header modal-header-error">
+                <h3 class="modal-title"><i class="fa fa-exclamation-circle"></i>&nbsp; @HCResources.AccessPointNotAvailableHeader</h3>
+            </div>
+            <div class="modal-body">
+                @Html.Raw(HCResources.AccessPointNotAvailableMessage)
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">@HCResources.Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div ng-app="HCE" style="clear: both;">
+
+    @using (Html.BeginCustomDynamicForm<PriceListDTO>(DistributorWebsite.MVC.WebUI.Helpers.Application.Instance.APIS.DistributorWebAPI, "Distributors", eDynamicFormSection.DynamicOptionButtons, detailUrl: "Distributors/Default.CheckUPSAccessPoint(Country='{country}',PostalCode='{postalcode}')", autoInit: false, additionalItems: new Dictionary<string, string>() { { "data-norecords-entity", HCResources.Records } }))
+    {
+        <div class="panel HC-panel-det HC-panel-det-sm" data-type="HCDYNAMICDET" data-container="HCDYNAMICGRID_Distributors" ng-hide="showdetails == true">
+            <div class="panel-heading">
+                <h1 style="margin-top: 0; margin-bottom: 0;"><span class="fa fa-search"></span> @HCResources.Search</h1>
+            </div>
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <form method="post" id="frmCHECKACCESSPOINT">
+                            <div class="form-group">
+                                @Html.LabelFor(o => o.CountryCode, new { @class = "col-sm-12" })
+                                <div class="col-xs-12 padbottom">
+                                    @Html.DropDownListFor(o => o.CountryCode, (SelectList)ViewBag.COUNTRIES, new { id = "CountryCode", @class = "form-control nomax" })
+                                    @Html.HCValidationMessageFor(o => o.CountryCode)
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                @Html.LabelFor(o => o.PostalCode, new { @class = "col-sm-12" })
+                                <div class="col-xs-12 padbottom">
+                                    @Html.TextBoxFor(o => o.PostalCode, new { id = "PostalCode", @class = "form-control" })
+                                    @Html.HCValidationMessageFor(o => o.PostalCode)
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="panel-footer text-center hidden-print">
+                <button class="btn btn-primary" data-type="SEARCHBUTTON"><span class="fa fa-search"></span> @HCResources.Search</button>
+            </div>
+        </div>
+
+        <div class="dynamic-search-table ng-cloak" data-defaultsort="CountryCode" style="padding-top: 5px;">
+        </div>
+    }
+</div>
+
+@section scripts {
+
+    @Scripts.Render("~/bundles/Pages/DistributorService/AccessPoints")
+
+    <script type="text/javascript">
+	 <!--
+
+		$(function () {
+		});
+
+	 //-->
+    </script>
+}
+

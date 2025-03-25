@@ -1,0 +1,107 @@
+﻿@using DistributorWebsite.MVC.WebUI.Models
+@model DistributorWebsite.MVC.WebUI.Models.PreQualificationHotlineDTO
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1 class="HC-page-header">@ViewBag.Title</h1>
+
+<div class="panel HC-panel-det ng-cloak" data-type="HCDYNAMICDET" data-container="HCDYNAMICGRID_PreQualificationHotline" ng-show="showdetails">
+    <div class="panel-heading">
+        <div class="btn-group pull-right">
+            <a href="#" class="btn btn-default" onclick="HCE.PreQualifications.CloseDetailWindow(this)"><span class="fa fa-close fa-lg"></span></a>
+        </div>
+        <h1>{{ entity.SalespersonCode }}</h1>
+    </div>
+    <div class="panel-body">
+
+        <div style="padding-top: 5px;">
+            <div class="row detailsection even">
+                <div class="col-sm-12 padbottom">
+                    <div class="row">
+                        <div class="col-md-12 itemheader">@HCResources.Salesperson:</div>
+                        <div class="col-md-12 itemdetail">{{ entity.SalespersonCode }}-{{ entity.SalespersonName}}</div>
+                    </div>
+                </div>
+                <div class="col-sm-12 padbottom" ng-hide="entity.DateCreated === null">
+                    <div class="row">
+                        <div class="col-md-12 itemheader">@HCResources.DateCreated:</div>
+                        <div class="col-md-12 itemdetail">{{ entity.DateCreated | hcdate }}</div>
+                    </div>
+                </div>
+                <div class="col-sm-12 padbottom" ng-hide="entity.TUSalespersonCode === null">
+                    <div class="row">
+                        <div class="col-md-12 itemheader">@HCResources.HotlineSPCode:</div>
+                        <div class="col-md-12 itemdetail">{{ entity.TUSalespersonCode }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <form method="post" id="frmSETUPTUCREDIT">
+            <div class="form-group">
+                @Html.LabelFor(o => o.TUActive)
+                <div class="checkbox" style="margin-top: 0; margin-bottom: 0;">
+                    <label>
+                        <input type="checkbox" ng-checked="entity.TUActive == true" ng-model="entity.TUActive" /> {{entity.TUActive | hcboolean}}
+                    </label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(o => o.PinNumber)
+                @Html.TextBoxFor(o => o.PinNumber, new { @class = "form-control", id = "PinNumber", ng_model = "entity.PinNumber" })
+                @Html.HCValidationMessageFor(o => o.PinNumber)
+            </div>
+
+            <div class="row">
+                <div class="col-xs-12">
+                    <button type="submit" class="btn btn-primary"><span class="fa fa-save"></span> @HCResources.Save</button>
+                    <a href="#" onclick="HCE.PreQualifications.CloseDetailWindow(this);" class="btn btn-default"><span class="fa fa-times"></span> @HCResources.Cancel</a>
+                </div>
+            </div>
+        </form>
+
+    </div>
+
+    <div class="panel-footer text-right"><a href="#" class="btn btn-default" onclick="HCE.PreQualifications.CloseDetailWindow(this)">@HCResources.Close <span class="fa fa-close"></span></a></div>
+</div>
+
+<div ng-app="HCE" style="clear: both;">
+
+    @using (Html.BeginCustomDynamicForm<PreQualificationHotlineDTO>(DistributorWebsite.MVC.WebUI.Helpers.Application.Instance.APIS.DistributorWebAPI, "PreQualificationHotline", Constants.DYNAMICTABLEWITHHEADERS, autoInit: true))
+    {
+        <tbody>
+            <tr class="ng-cloak ng-class:{'highlight' : entity.Highlight, 'disabled' : !entity.TUActive}" ng-repeat="entity in entities" data-keys='{"SalespersonCode":{{ entity.SalespersonCode | json}},"Client":{{ entity.Client | json}}}'>
+                <td class="hidden-md hidden-lg">
+                    TODO: REACTIVE {{ entity.CustomerNo }}
+                </td>
+                <td class="hidden-xs hidden-sm" ng-bind-html="entity.TUActive | hcboolean:'CHECKSQUARE':'SQUARE'"></td>
+                <td class="hidden-xs hidden-sm">{{ entity.SalespersonCode }}</td>
+                <td class="hidden-xs hidden-sm">{{ entity.Client }}</td>
+                <td class="hidden-xs hidden-sm">{{ entity.SalespersonName }}</td>
+                <td class="hidden-xs hidden-sm">{{ entity.DateCreated | hcdate }}</td>
+                <td class="hidden-xs hidden-sm">{{ entity.TUSalespersonCode }}</td>
+                <td class="hidden-xs hidden-sm">{{ entity.PinNumber }}</td>
+            </tr>
+        </tbody>
+    }
+
+</div>
+
+@section scripts {
+
+    @Scripts.Render("~/bundles/Pages/DistributorService/PreQualifications")
+
+    <script type="text/javascript">
+	 <!--
+        HCE.Resources.SuccessTitle = "@HCResources.RecordUpdatedSuccessfullyTitle";
+        HCE.Resources.SuccessMessage = "@HCResources.RecordUpdatedSuccessfullyMessage";
+
+		$(function () {
+		});
+
+	 //-->
+    </script>
+}
+

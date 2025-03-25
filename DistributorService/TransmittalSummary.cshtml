@@ -1,0 +1,106 @@
+﻿@using DistributorWebsite.MVC.WebUI.Models
+@model DistributorWebsite.MVC.WebUI.Models.TransmittalSummaryReportDTO
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1 class="HC-page-header">@ViewBag.Title</h1>
+
+<div class="panel HC-panel-det HC-panel-det-sm">
+    <div class="panel-heading">
+        <h1 style="margin-top: 0; margin-bottom: 0;"><span class="fa fa-search"></span> @ViewBag.Title</h1>
+    </div>
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-xs-12">
+                <form id="transmittalSummaryForm" method="post" action="@Url.Action("TransmittalSummary", "Reports")" target="_blank">
+                    @Html.AntiForgeryToken()
+
+                    <input type="hidden" id="exportformat" name="exportformat" value="pdf" />
+                    <input type="hidden" id="startdate" name="startdate" value="" />
+                    <input type="hidden" id="enddate" name="enddate" value="" />
+
+                    <div class="form-group">
+                        @Html.LabelFor(o => o.Client, new { @class = "col-sm-12" })
+                        <div class="col-xs-12 padbottom">
+                            @Html.DropDownList("Client", DistributorWebsite.MVC.WebUI.Helpers.Common.GetSecurityItemClients(eSecurityItem.mnuTransmittalSummary, false), new { id = "Client", @class = "form-control" })
+                            @Html.HCValidationMessageFor(o => o.Client)
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-xs-12 padbottom">
+                            @Html.LabelFor(o => o.DateFrom)
+                            <div class="input-group date" id="dtDateFrom">
+                                @Html.TextBoxFor(o => o.DateFrom, new { @class = "form-control" })
+                                <span class="input-group-addon">
+                                    <span class="glyphicon glyphicon-calendar"></span>
+                                </span>
+                            </div>
+                            @Html.HCValidationMessageFor(o => o.DateFrom)
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-xs-12 padbottom">
+                            @Html.LabelFor(o => o.DateTo)
+                            <div class="input-group date" id="dtDateTo">
+                                @Html.TextBoxFor(o => o.DateTo, new { @class = "form-control" })
+                                <span class="input-group-addon">
+                                    <span class="glyphicon glyphicon-calendar"></span>
+                                </span>
+                            </div>
+                            @Html.HCValidationMessageFor(o => o.DateTo)
+                        </div>
+
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="panel-footer text-center hidden-print"><button class="btn btn-primary" id="btnCREATEREPORT" data-report-url="@Url.Action("TransmittalSummary","Reports")"><span class="fa fa-file-pdf-o"></span> @HCResources.CreateReport</button></div>
+</div>
+
+@section scripts {
+
+    @Scripts.Render("~/bundles/Pages/DistributorService/TransmittalSummary")
+
+    <script type="text/javascript">
+	 <!--
+
+        $(function () {
+
+            //----------------------------------------------------------------------------------------------
+            // INITIALIZE THE DATE/TIME PICKERS ON THE ANNOUNCEMENT PAGE
+            //----------------------------------------------------------------------------------------------
+            HCE.TransmittalSummary.InitializeDatePickers = function () {
+                $('#dtDateFrom')
+                .datetimepicker({
+                    format: 'MM/DD/YYYY',
+                    locale: '@ViewBag.CurrentLanguage',
+                    useCurrent: true,
+                    maxDate: new Date()
+                })
+                .on("dp.change", function (e) {
+                    $('#dtDateTo').data('DateTimePicker').minDate(e.date);
+                });
+
+                $('#dtDateTo')
+                 .datetimepicker({
+                     format: 'MM/DD/YYYY',
+                     locale: '@ViewBag.CurrentLanguage',
+                     maxDate: new Date(),
+                     useCurrent: true
+                 })
+                 .on("dp.change", function (e) {
+                     $('#dtDateFrom').data('DateTimePicker').maxDate(e.date);
+                 });
+            }
+
+            HCE.TransmittalSummary.InitializeDatePickers();
+		});
+
+	 //-->
+    </script>
+}
+

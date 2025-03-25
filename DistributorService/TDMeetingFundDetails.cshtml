@@ -1,0 +1,103 @@
+﻿@using DistributorWebsite.MVC.WebUI.Models
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1 class="HC-page-header">@ViewBag.Title</h1>
+
+<div class="panel HC-panel-det ng-cloak" data-type="HCDYNAMICDET" data-container="HCDYNAMICGRID_Distributors" ng-show="showdetails" id="panelRECEIPTS">
+    <div class="panel-heading">
+        <div class="btn-group pull-right hidden-print">
+            <a href="#" class="btn btn-default" onclick="HCE.TDMeetingFundDetails.CloseDetailWindow(this)"><span class="fa fa-close fa-lg"></span></a>
+        </div>
+        <h1 style="margin-top: 0; margin-bottom: 0;">@HCResources.TDMeetingFundReceipts</h1>
+    </div>
+    <div class="panel-body">
+
+        <div class="dynamic-search-table ng-cloak" data-defaultsort="LastUpdate desc" style="padding-top: 5px; padding-bottom: 15px;">
+            <div class="row-group-a" ng-cloak>
+                <div class="row row-hoverlink row-doc-link" ng-repeat="receipt in entity.value">
+                    <a href="@Url.Content("~/DistributorService/TDMeetingFundReceipt")?client={{ Client }}&id={{ VoucherNo }}&seq={{ SequenceNo }}&docID={{ receipt.DocumentID }}" target="@(ViewBag.UseInlineFiles == true ? "_blank" : "_self")">
+                        <div class="col-md-12">
+                            <div style="color: #ff0000;"><span class="fa fa-file-pdf-o fa-lg"></span></div> 
+                            <div><p>{{receipt.DocumentTitle}}</p><p class="smalltext">{{receipt.DocumentDate | hcdate}}</p></div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div ng-show="entity === null || entity.value === null || entity.value.length <= 0" class="ng-cloak">
+            <div class="row">
+                <div class="col-xs-12 col-lg-offset-1 col-lg-10">
+                    <div><span class="fa fa-search fa-5x"></span></div>
+                    <div>
+                        <h2>@String.Format(DistributorWebsite.MVC.LocalResources.HCResources.NoMatchingEntitiesFound, DistributorWebsite.MVC.LocalResources.HCResources.TDMeetingFundReceipts)).ToUpper())</h2>
+                        <p>@String.Format(DistributorWebsite.MVC.LocalResources.HCResources.NoMathingEntitiesText, DistributorWebsite.MVC.LocalResources.HCResources.TDMeetingFundReceipts))</p>
+                        <br />
+                    </div>" 
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="panel-footer text-right hidden-print"><a href="#" class="btn btn-default" onclick="HCE.TDMeetingFundDetails.CloseDetailWindow(this)">@HCResources.Close <span class="fa fa-close"></span></a></div>
+</div>
+
+<div ng-app="HCE" style="clear: both;">
+
+    <div id="trClientSelection" class="table-header-row hidden-print ng-cloak">
+        <th colspan="6">
+            <div class="row ng-cloak">
+                <div class="col-xs-12 col-sm-4 col-md-3 padbottom">
+                    <label class="small-header-label" for="TDFUNDCLIENT">@HCResources.Client:</label>
+                    @Html.DropDownList("TDFUNDCLIENT", DistributorWebsite.MVC.WebUI.Helpers.Common.GetSecurityItemClients(eSecurityItem.mnuTDMeetingFund, false), new { id = "TDFUNDCLIENT", @class = "form-control input-sm table-header-filter-sm nomax" })
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12 smallgraytext">
+                    @HCResources.TDMeetingFundPaymentsNote
+                </div>
+            </div>
+        </th>
+    </div>
+
+    @using (Html.BeginCustomDynamicForm<TDMeetingFundDetailDTO>(DistributorWebsite.MVC.WebUI.Helpers.Application.Instance.APIS.DistributorWebAPI, "Distributors", eDynamicFormSection.DynamicOptionButtons | eDynamicFormSection.DynamicSearchGrid | eDynamicFormSection.DynamicSearchGridHeaders | eDynamicFormSection.DynamicSearchGridBodyHeader | eDynamicFormSection.AdvancedSearchForm, entityPath: "/Default.TDMeetingFundDetails(Client='HC')", detailUrl: "Distributors/Default.TDMeetingFundReceipts(Client='{Client}',ID={VoucherNo},Seq={SequenceNo})?$pagesize=999", autoInit: false, additionalItems: new Dictionary<string, string>() { { "data-norecords-entity", HCResources.Records } }))
+    {
+        <td class="hidden-md hidden-lg">
+            <div class="row">
+                <div class="col-xs-12">{{ entity.Client }} - <strong>{{ entity.DistributorNo }}</strong> - {{ entity.VoucherDate | hcdate }}</div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12 smallgraytext">{{ entity.Description }}</div>
+            </div>
+            <div class="row" ng-hide="!entity.HasReceipts" style="padding-top: 2px;">
+                <div class="col-xs-12">
+                    <span class="fa fa-file-pdf-o fa-lg" style="color: #ff0000"></span>
+                </div>
+                @*<div class="col-xs-12"><button class="btn btn-sm btn-primary">@HCResources.ViewReceipt <span class="fa fa-file-pdf-o"></span></button></div>*@
+            </div>
+        </td>
+        <td class="hidden-xs hidden-sm">{{ entity.Client }}</td>
+        <td class="hidden-xs hidden-sm">{{ entity.DistributorNo }}</td>
+        <td class="hidden-xs hidden-sm">{{ entity.Description }}</td>
+        <td class="hidden-xs hidden-sm" style="text-align: center;"><span ng-hide="entity.HasReceipts" class="fa fa-square-o fa-lg"></span><span ng-hide="!entity.HasReceipts" class="fa fa-check-square-o fa-lg"></span></td>
+        <td class="hidden-xs hidden-sm">{{ entity.VoucherDate | hcdate }}</td>
+        <td class="text-right" ng-bind-html="entity.AmountJSON | hccurrency:'both':DisplayCurrency:2:true:false"></td>
+    }
+
+</div>
+
+@section scripts {
+
+    @Scripts.Render("~/bundles/Pages/DistributorService/TDMeetingFundDetails")
+
+    <script type="text/javascript">
+	 <!--
+
+		$(function () {
+		});
+
+	 //-->
+    </script>
+}
+

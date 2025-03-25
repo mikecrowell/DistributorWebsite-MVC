@@ -1,0 +1,80 @@
+﻿@using DistributorWebsite.MVC.WebUI.Models
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1 class="HC-page-header">@ViewBag.Title</h1>
+
+<div ng-app="HCE" class="box-max-large" style="clear: both;">
+
+    @using (Html.BeginCustomDynamicForm<TransmittalSummaryDTO>(DistributorWebsite.MVC.WebUI.Helpers.Application.Instance.APIS.DistributorWebAPI, "DistributorTransmittalSummary", Constants.DYNAMICTABLEWITHHEADERS, additionalTableClasses: "mobile-table", autoInit: true))
+    {
+        <tbody>
+            <tr class="ng-cloak" ng-repeat="entity in entities" data-keys='{"RemittID":{{ entity.RemittID | json}},"Client":{{ entity.Client | json}}}' data-client="{{ entity.Client }}" data-remittdate="{{ entity.RemittDate | hcdate }}">
+                <td class="hidden-xs hidden-sm">{{ entity.RemittDate | hcdate }}</td>
+                <td class="hidden-xs hidden-sm">{{ entity.Client }}<span class="hidden-md hidden-lg smallgraytext"><br />{{ entity.RemittDate | hcdate }}</span></td>
+                <td class="hidden-xs hidden-sm text-right" ng-bind-html="entity.ItemsBeingPaidJSON | hccurrency:'both':DisplayCurrency:2:true:false"></td>
+                <td class="hidden-xs hidden-sm text-right" ng-bind-html="entity.PreviewOfNextWeekJSON | hccurrency:'both':DisplayCurrency:2:true:false"></td>
+                <td class="hidden-xs hidden-sm text-center text-nowrap">
+                    <a href="@(Url.Content("~/Reports/Transmittal/")){{entity.Client}}/{{entity.RemittID}}/PDF" target="@(ViewBag.UseInlineFiles == true ? "_blank" : "_self")" class="btn btn-xs btn-default">
+                        PDF &nbsp;<span class="fa fa-file-pdf-o text-danger"></span>
+                    </a>
+                    <a href="@(Url.Content("~/Reports/Transmittal/")){{entity.Client}}/{{entity.RemittID}}/EXCEL" target="@(ViewBag.UseInlineFiles == true ? "_blank" : "_self")" class="btn btn-xs btn-default">
+                        EXCEL &nbsp;<span class="fa fa-file-excel-o text-success"></span>
+                    </a>
+                </td>
+               <td class="hidden-md hidden-lg td-mobile" colspan="3">
+                    <div>
+                        <div class="row padbottom-sm">
+                            <div class="col-xs-12">
+                                <table class="cell-table header50">
+                                    <thead>
+                                        <tr>
+                                            <th colspan="2">{{ entity.Client }} - {{ entity.RemittDate | hcdate }}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td class="header">@HCResources.ItemsBeingPaid:</td>
+                                            <td class="text-right" ng-bind-html="entity.ItemsBeingPaidJSON | hccurrency:'both':DisplayCurrency:2:true:true"></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="header">@HCResources.PreviewOfNextWeek:</td>
+                                            <td class="text-right" ng-bind-html="entity.PreviewOfNextWeekJSON | hccurrency:'both':DisplayCurrency:2:true:true"></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12 text-right">
+                                <a href="@(Url.Content("~/Reports/Transmittal/")){{entity.Client}}/{{entity.RemittID}}/PDF" target="@(ViewBag.UseInlineFiles == true ? "_blank" : "_self")" class="btn btn-sm btn-default">
+                                    PDF &nbsp;<span class="fa fa-file-pdf-o text-danger"></span>
+                                </a>
+                                <a href="@(Url.Content("~/Reports/Transmittal/")){{entity.Client}}/{{entity.RemittID}}/EXCEL" target="@(ViewBag.UseInlineFiles == true ? "_blank" : "_self")" class="btn btn-sm btn-default">
+                                    EXCEL &nbsp;<span class="fa fa-file-excel-o text-success"></span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    }
+
+</div>
+
+@section scripts {
+
+    @Scripts.Render("~/bundles/Pages/DistributorService/Transmittals")
+
+    <script type="text/javascript">
+	 <!--
+
+		$(function () {
+		});
+
+	 //-->
+    </script>
+}
+

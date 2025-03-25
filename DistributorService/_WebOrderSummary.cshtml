@@ -1,0 +1,157 @@
+﻿<div class="row">
+    <div class="col-xs-4 padbottom">
+        <label>@HCResources.OrderDate:</label>
+        <div>{{ OrderEntry.WebOrder.OrderDate | hcdate }}</div>
+    </div>
+    <div class="col-xs-8 padbottom">
+        <label>@HCResources.Client:</label>
+        <div>{{ OrderEntry.WebOrder.Client }} <span class="smallgraytext">({{ OrderEntry.WebOrder.ClientName }})</span></div>
+    </div>
+</div>
+
+
+<h3 class="section-header">@HCResources.ShippingInformation</h3>
+
+<div class="row">
+    <div class="col-xs-12 padbottom">
+        <label>@HCResources.Address:</label>
+        <div>
+            {{ OrderEntry.WebOrder.FirstName }} {{ OrderEntry.WebOrder.MiddleName }} {{OrderEntry.WebOrder.LastName }} {{ OrderEntry.WebOrder.Suffix }}<br />
+            <span ng-bind-html="OrderEntry.WebOrder.FormattedAddress | to_trusted"></span><br />
+            {{ OrderEntry.WebOrder.Country }} <span class="smallgraytext">({{ OrderEntry.WebOrder.CountryName}})</span>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div ng-class="{ 'col-sm-12 padbottom' : OrderEntry.WebOrder.DeliveryMethodIsUPS && OrderEntry.EnableShippingInsurance, 'col-sm-4 padbottom' : OrderEntry.WebOrder.DeliveryMethodIsUPS || OrderEntry.EnableShippingInsurance, 'col-sm-8 padbottom' : !OrderEntry.WebOrder.DeliveryMethodIsUPS && !OrderEntry.EnableShippingInsurance}">
+        <label>@HCResources.DeliveryMethod:</label>
+        <div>{{ OrderEntry.WebOrder.DeliveryMethodDescription }}</div>
+    </div>
+    <div class="col-sm-4 padbottom" ng-hide="!OrderEntry.WebOrder.DeliveryMethodIsUPS">
+        <label>@HCResources.UPSSignatureRequired:</label>
+        <div>{{OrderEntry.WebOrder.RequireSignature | hcboolean}}</div>
+    </div>
+    <div class="col-sm-4 padbottom" ng-hide="!OrderEntry.EnableShippingInsurance">
+        <label>@HCResources.Insured:</label>
+        <div>{{OrderEntry.WebOrder.Insured | hcboolean}}</div>
+    </div>
+</div>
+
+<h3 class="section-header">@HCResources.OrderOptions</h3>
+
+<div class="row">
+    <div class="col-sm-4 padbottom" ng-hide="OrderEntry.WebOrders.OrderOptions === 'NONE'">
+        <label>@HCResources.OrderOptions:</label>
+        <div>
+            <span ng-show="OrderEntry.WebOrder.OrderOptions == 'NONE'">@HCResources.None</span>
+            <span ng-show="OrderEntry.WebOrder.OrderOptions == 'SAMPLE'">@HCResources.ChargeSampleBalance</span>
+        </div>
+    </div>
+
+    <div class="col-sm-4 padbottom" ng-hide="!OrderEntry.EnablePaymentMethod">
+        <label>@HCResources.PaymentMethod:</label>
+        <div>
+            <span ng-show="OrderEntry.WebOrder.PaymentMethod == 'TRANSMITTAL'">@HCResources.Transmittal</span>
+            <span ng-show="OrderEntry.WebOrder.PaymentMethod === 'PAYMENTACCOUNT'">{{ OrderEntry.PaymentAccountText }}</span>
+        </div>
+    </div>
+
+
+    @*<div class="col-xs-4">
+            <label>@HCResources.DirectDeliveryOnly:</label>
+            <div>{{OrderEntry.WebOrder.DirectDeliveryOnly | hcboolean }}</div>
+        </div>*@
+</div>
+
+<div class="row">
+    <div class="col-xs-12 padbottom">
+        <label>@HCResources.EmailAddress:</label>
+        <div>{{ OrderEntry.WebOrder.Email }}</div>
+    </div>
+</div>
+
+<div class="row" ng-hide="OrderEntry.WebOrder.Notes === null || OrderEntry.WebOrder.Notes === ''">
+    <div class="col-xs-12 padbottom">
+        <label>@HCResources.OrderNotes:</label>
+        <div>{{ OrderEntry.WebOrder.Notes }}</div>
+    </div>
+</div>
+
+<h3 class="section-header">@HCResources.Products</h3>
+
+<div class="row">
+    <div class="col-sm-12 padbottom">
+        <table class="table table-striped table-bordered dynamic-search-table" data-defaultsort="ItemID">
+
+            <thead>
+                <tr class="column-header-row">
+                    <th data-field="ProductCode">@HCResources.Article</th>
+                    <th data-field="ProductDescription" class="hidden-xs">@HCResources.Description</th>
+                    <th data-field="Quantity" class="hidden-xs">@HCResources.Quantity</th>
+                    <th data-field="UnitPrice" class="text-right hidden-xs">@HCResources.UnitPrice</th>
+                    <th data-field="TotalPrice" class="text-right">@HCResources.Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="entity in OrderEntry.WebOrder.Items | filter:{ProductCode:'!TOTAL'}">
+                    <td>{{ entity.ProductCode }}<span class="hidden-sm hidden-md hidden-lg"> &nbsp;<i>({{ entity.Quantity }} @@ <span ng-bind-html="entity.UnitPriceJSON | hccurrency:'both':DisplayCurrency:2:true:false"></span>)</i><br /><span class="smallgraytext">{{ entity.ProductDescription }}</span></span></td>
+                    <td class="hidden-xs">{{ entity.ProductDescription }}</td>
+                    <td class="hidden-xs">{{ entity.Quantity }}</td>
+                    <td class="text-right hidden-xs" ng-bind-html="entity.UnitPriceJSON | hccurrency:'both':DisplayCurrency:2:true:false"></td>
+                    <td class="text-right" ng-bind-html="entity.TotalPriceJSON | hccurrency:'both':DisplayCurrency:2:true:false"></td>
+                </tr>
+                <tr class="table-subtotal-row" ng-repeat="entity in OrderEntry.WebOrder.Items | filter:{ProductCode:'TOTAL'}">
+                    <td colspan="4" class="hidden-xs"><strong>@HCResources.Total:</strong></td>
+                    <td class="hidden-sm hidden-md hidden-lg"><strong>@HCResources.Total:</strong></td>
+                    <td class="text-right" ng-bind-html="entity.TotalPriceJSON | hccurrency:'both':DisplayCurrency:2:true:false"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<h3 class="section-header" ng-show="OrderEntry.Quote !== null">@HCResources.EstimatedCharges</h3>
+
+<div class="row" ng-show="OrderEntry.Quote !== null">
+
+    <div class="col-xs-12">
+        <div class="alert alert-danger">
+            <span class="fa fa-exclamation-circle"></span> @Html.Raw(HCResources.WebOrderQuoteNote)
+        </div>
+    </div>
+
+    <div class="col-sm-12 padbottom" ng-repeat="charge in OrderEntry.Quote.Charges">
+        <table class="table table-striped table-bordered dynamic-search-table" data-defaultsort="SequenceNo">
+            <thead>
+                <tr class="table-header-row">
+                    <th colspan="2" ng-show="charge.Type === 'PROMOFUND'">@HCResources.PromoFundCharges</th>
+                    <th colspan="2" ng-show="charge.Type === 'TRANSMITTAL'">@HCResources.TransmittalCharges</th>
+                </tr>
+                <tr class="column-header-row">
+                    <th data-field="Description">@HCResources.Description</th>
+                    <th data-field="Amount" class="text-right">@HCResources.Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="trans in charge.Charges">
+                    <td>{{ trans.Description }}<span class="smallgraytext" ng-hide="trans.Note === null || trans.Note === ''"><br/>{{ trans.Note }}</span></td>
+                    <td ng-bind-html="trans.AmountJSON | hccurrency:'both':DisplayCurrency:2:true:false" class="text-right"></td>
+                </tr>
+                <tr class="table-subtotal-row">
+                    <td>@HCResources.Total:</td>
+                    <td ng-bind-html="charge.TotalJSON | hccurrency:'both':DisplayCurrency:2:true:false" class="text-right"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+<div class="row" ng-show="OrderEntry.Quote === null">
+    <div class="col-xs-12">
+        <div class="alert alert-danger">
+            <span class="fa fa-exclamation-circle"></span> @Html.Raw(HCResources.WebOrderNoQuoteNote)
+        </div>
+    </div>
+</div>

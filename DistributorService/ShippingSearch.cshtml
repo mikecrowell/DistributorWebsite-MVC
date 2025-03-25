@@ -1,0 +1,84 @@
+﻿@using DistributorWebsite.MVC.WebUI.Models
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    Boolean showRemitoNo = (Boolean)ViewBag.ShowRemitoNo;
+}
+
+<h1 class="HC-page-header">@ViewBag.Title</h1>
+
+<div class="panel HC-panel-det ng-cloak" data-type="HCDYNAMICDET" data-container="HCDYNAMICGRID_ShippedOrders" ng-show="showdetails">
+    <div class="panel-heading">
+        <div class="btn-group pull-right">
+            <a href="#" class="btn btn-default" onclick="HCE.ShippingSearch.CloseDetailWindow(this)"><span class="fa fa-close fa-lg"></span></a>
+        </div>
+        <h1>@HCResources.OrderNo: {{ entity.OrderNo }}</h1>
+    </div>
+    <div class="panel-body">        
+        @Html.Partial("~/Views/Shared/_OrderDetails.cshtml", null, new ViewDataDictionary { { "AngularEntity", "entity" } })      
+    </div>
+
+    <div class="panel-footer text-right"><a href="#" class="btn btn-default" onclick="HCE.ShippingSearch.CloseDetailWindow(this)">@HCResources.Close <span class="fa fa-close"></span></a></div>
+</div>
+
+<div ng-app="HCE" style="clear: both;">
+
+    @using (Html.BeginCustomDynamicForm<ShippedOrderDTO>(DistributorWebsite.MVC.WebUI.Helpers.Application.Instance.APIS.DistributorWebAPI, "ShippedOrders", Constants.DYNAMICTABLEWITHHEADERS, detailUrl: "ShippedOrders/Default.GetOrderDetails(OrderNo={orderno},Client='{client}',CustomerNo='{customerno}',Type='{type}')", autoInit: true))
+    {
+        <tbody>
+            <tr class="ng-cloak" ng-repeat="entity in entities" data-keys='{"OrderNo":{{ entity.OrderNo | json}},"Client":{{ entity.Client | json}},"CustomerNo":{{entity.CustomerNo | json}},"Type":{{ entity.OrderType | json}}}'>
+                <td class="hidden-md hidden-lg">
+                    <div class="container-fluid docucite-item" ng-cloak>
+                        <div class="row">
+                            <div class="col-sm-12"><span class="mobile-row-header">{{ entity.Name }}</span></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-8">@HCResources.OrderNo: <strong>{{ entity.OrderNo }}</strong><span ng-show="entity.OrderType === 'R'"> <span class="label label-warning" style="font-size: 8pt">RMA</span></span></div>
+                            <div class="col-xs-4 text-right"><strong>{{ entity.Client }}</strong></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-6">@HCResources.ShipDate:</div>
+                            <div class="col-xs-6 text-right"><strong>{{ entity.ShipDate | hcdate }}</strong></div>
+                        </div>
+                        <div class="row" ng-hide="entity.DeliveryDate === null">
+                            <div class="col-xs-6">@HCResources.DeliveryDate:</div>
+                            <div class="col-xs-6 text-right">{{ entity.DeliveryDate | hcdate }}</div>
+                        </div>
+                        <div class="row" ng-hide="entity.TrackingNumber === null || entity.TrackingNumber === ''">                            
+                            <div class="col-xs-5">@HCResources.TrackingNo:</div>
+                            <div class="col-xs-7 text-right"><strong><span class="fa fa-barcode"></span> {{ entity.TrackingNumber }}</strong></div>
+                        </div>
+                        <div class="row" ng-hide="entity.DeliveryStatus === null || entity.DeliveryStatus === ''">
+                            <div class="col-xs-12" style="font-size: 14pt;">{{ entity.DeliveryStatus }}</div>
+                        </div>
+                    </div>                    
+                </td>
+                <td class="hidden-xs hidden-sm">{{ entity.OrderNo }}<span ng-show="entity.OrderType === 'R'"> <span class="label label-warning" style="font-size: 8pt">RMA</span></span></td>
+                <td class="hidden-xs hidden-sm">{{ entity.Client }}</td>
+                <td class="hidden-xs hidden-sm">{{ entity.ShipDate | hcdate }}</td>
+                <td class="hidden-xs hidden-sm">{{ entity.CustomerNo }}</td>
+                <td class="hidden-xs hidden-sm">{{ entity.Name }}</td>                
+                <td class="hidden-xs hidden-sm" @(showRemitoNo ? "" : "ng-hide='true'")>{{ entity.RemitoNo }}</td>
+                <td class="hidden-xs hidden-sm">{{ entity.TrackingNumber }}</td>
+                <td class="hidden-xs hidden-sm">{{ entity.DeliveryStatus }}</td>
+            </tr>
+        </tbody>
+    }
+
+</div>
+
+@section scripts {
+
+    @Scripts.Render("~/bundles/Pages/DistributorService/ShippingSearch")
+
+    <script type="text/javascript">
+	 <!--
+        HCE.ShippingSearch.ShowRemitoNo = @(showRemitoNo.ToString().ToLower());
+        @(showRemitoNo ? "" : "HCE.ShippingSearch.HideRemitoNo();")
+
+		$(function () {
+        });
+
+	 //-->
+    </script>
+}
+

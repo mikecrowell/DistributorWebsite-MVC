@@ -1,0 +1,55 @@
+﻿@using DistributorWebsite.MVC.WebUI.Models
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1 class="HC-page-header">@ViewBag.Title</h1>
+
+<!-- BACKORDER REPORT GENERATION FORM -->
+@using (Html.BeginForm("Backorders", "Reports", FormMethod.Post, new { target = "_blank", id = "BACKORDEREXPORTFORM", data_action = Url.Action("Backorders", "Reports") }))
+{
+    <input type="hidden" name="whid" id="whid" value="" />
+    <input type="hidden" name="exportformat" id="exportformat" value="" />
+}
+
+<div ng-app="HCE">
+
+    @using (Html.BeginCustomDynamicForm<BackorderReportLinkDTO>(DistributorWebsite.MVC.WebUI.Helpers.Application.Instance.APIS.DistributorWebAPI, "Distributors", eDynamicFormSection.DynamicSearchGridBody, entityPath: "/Default.Backorders", fixedPageSize: 9999))
+    {
+        <div class="dynamic-search-table ng-cloak" data-defaultsort="LastUpdate desc" style="padding-top: 5px; padding-bottom: 15px;">
+            <div class="row-group-a" ng-cloak>
+                <div class="row row-doc-link" ng-repeat="entity in entities">
+                    <div>
+                        <div class="col-md-12">
+                            <div><span class="fa fa-file-pdf-o fa-lg" style="color: #ff0000;"></span></div>
+                            <div>
+                                <p>{{ entity.Title }}</p>
+                                <p class="smalltext">@HCResources.BackorderedProductReport</p>
+                                <p>
+                                    <button class="btn btn-primary btn-sm actionbutton" data-type="BACKORDER" data-wh="{{ entity.WarehouseID }}" data-ne="{{ entity.IsNutraease }}" data-fmt="pdf"><span class="fa fa-file-pdf-o"></span> PDF</button>
+                                    <button class="btn btn-primary btn-sm actionbutton" data-type="BACKORDER" data-wh="{{ entity.WarehouseID }}" data-ne="{{ entity.IsNutraease }}" data-fmt="excel"><span class="fa fa-file-excel-o"></span> Excel</button>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+</div>
+
+    @section scripts {
+
+        @Scripts.Render("~/bundles/Pages/DistributorService/Backorders")
+
+        <script type="text/javascript">
+	 <!--
+
+		$(function () {
+		});
+
+	 //-->
+        </script>
+    }
+

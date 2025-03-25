@@ -1,0 +1,110 @@
+﻿@using DistributorWebsite.MVC.WebUI.Models
+@model DistributorWebsite.MVC.WebUI.Models.PriceListDTO
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1 class="HC-page-header">@ViewBag.Title</h1>
+
+<div ng-app="HCE" style="clear: both;">
+
+    @using (Html.BeginCustomDynamicForm<PriceListDTO>(DistributorWebsite.MVC.WebUI.Helpers.Application.Instance.APIS.DistributorWebAPI, "Distributors", eDynamicFormSection.DynamicOptionButtons, detailUrl: "/Distributors/Default.Pricelists", autoInit: false, additionalItems: new Dictionary<string, string>() { { "data-norecords-entity", HCResources.Records } }))
+    {
+        <div class="panel HC-panel-det HC-panel-det-sm" data-type="HCDYNAMICDET" data-container="HCDYNAMICGRID_Distributors" ng-hide="showdetails == true">
+            <div class="panel-heading">
+                <h1 style="margin-top: 0; margin-bottom: 0;"><span class="fa fa-search"></span> @HCResources.Search</h1>
+            </div>
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-xs-12 ng-cloak">
+                       @using (Html.BeginForm("PriceList", "Reports", FormMethod.Post, new { target = "_blank", id = "PLEXPORTFORM", data_action = Url.Action("PriceList", "Reports") }))
+                       {
+                           <input type="hidden" name="exportformat" id="exportformat" value="pdf" />
+
+                            @Html.AntiForgeryToken()
+
+                            <div class="form-group">
+                                @Html.LabelFor(o => o.Client, new { @class = "col-sm-12" })
+                                <div class="col-xs-12 padbottom">
+                                    <select id="Client" name="Client" class="form-control ng-cloak">
+                                        <option ng-repeat="client in PLData.Clients" value="{{ client.Client }}" data-country="{{ client.CountryCode }}">{{ client.ClientName }}</option>
+                                    </select>
+                                    @Html.HCValidationMessageFor(o => o.Client)
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                @Html.LabelFor(o => o.Level, new { @class = "col-sm-12" })
+                                <div class="col-xs-12 padbottom">
+                                    <select id="Level" name="Level" class="form-control ng-cloak">
+                                        <option ng-repeat="lvl in PLData.PriceLevel" ng-if="lvl <= MaxLevel" value="{{ lvl }}">{{ lvl }}</option>
+                                    </select>
+                                    @Html.HCValidationMessageFor(o => o.Level)
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                @Html.LabelFor(o => o.Year, new { @class = "col-sm-12" })
+                                <div class="col-xs-12 padbottom">
+                                    <select id="Year" name="Year" class="form-control ng-cloak">
+                                        <option ng-repeat="year in PLData.ReportYear" value="{{ year }}">{{ year }}</option>
+                                    </select>
+                                    @Html.HCValidationMessageFor(o => o.Year)
+                                </div>
+                            </div>
+
+                            <div class="form-group" ng-show="ShowStates">
+                                @Html.LabelFor(o => o.State, new { @class = "col-sm-12" })
+                                <div class="col-xs-12 padbottom">
+                                    <select id="State" name="State" class="form-control ng-cloak">
+                                        <option ng-repeat="state in PLData.States | filter:{CountryCode:CurrentCountryCode}" value="{{ state.StateAbbreviation }}">{{ state.StateName }}</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group" ng-show="ShowType">
+                                @Html.LabelFor(o => o.Type, new { @class = "col-sm-12" })
+                                <div class="col-xs-12 padbottom">
+                                    <select id="TranType" name="TranType" class="form-control">
+                                        <option value="RESALE">@HCResources.Resale</option>
+                                        <option value="CONSUMPTION">@HCResources.Consumption</option>
+                                    </select>
+                                </div>
+                            </div>
+                       }
+                    </div>
+                </div>
+            </div>
+            <div class="panel-footer text-center hidden-print">
+                <button class="btn btn-primary" data-type="GENERATEREPORTBUTTON" data-format="pdf"><span class="fa fa-file-pdf-o"></span> PDF</button>
+                <button class="btn btn-primary" data-type="GENERATEREPORTBUTTON" data-format="excel"><span class="fa fa-file-excel-o"></span> EXCEL</button>
+            </div>
+        </div>
+
+        <div class="dynamic-search-table ng-cloak" data-defaultsort="Client" style="padding-top: 5px;">
+        </div>
+    }
+</div>
+
+@section scripts {
+    
+    @Scripts.Render("~/bundles/Pages/DistributorService/PriceLists")
+
+    <script type="text/javascript">
+	 <!--
+
+        HCE.PriceLists.LVL = "@ViewBag.MINPRICELEVEL";
+        HCE.PriceLists.Clients = {};
+
+        @foreach (string client in (String[])ViewBag.CLIENTLIST)
+        {
+        @:HCE.PriceLists.Clients["@client"] = true;
+        }
+
+		$(function () {
+		});
+
+	 //-->
+    </script>
+}
+
